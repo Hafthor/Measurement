@@ -19,16 +19,16 @@ jobs:
           dotnet-version: '10.0.x'
 
       - name: Restore
-        run: dotnet restore
+        run: dotnet restore Measurement.slnx
 
       - name: Build
-        run: dotnet build --configuration Release --no-restore -p:EnforceCodeStyleInBuild=true
+        run: dotnet build Measurement.slnx --configuration Release --no-restore -p:EnforceCodeStyleInBuild=true
 
       - name: Test
-        run: dotnet test --configuration Release --no-build --verbosity normal
+        run: dotnet test Measurement.slnx --configuration Release --no-build --verbosity normal
 
-      - name: Pack (library only, no tests)
-        run: dotnet pack --configuration Release -p:IncludeTests=false --output ./artifacts
+      - name: Pack (library only)
+        run: dotnet pack Measurement/Measurement.csproj --configuration Release --output ./artifacts
 
       - name: Upload package
         uses: actions/upload-artifact@v7

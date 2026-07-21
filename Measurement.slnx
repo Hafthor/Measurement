@@ -1,3 +1,5 @@
 <Solution>
-  <Project Path="Measurement.csproj" />
+  <Project Path="Measurement/Measurement.csproj" />
+  <Project Path="Measurement.Generators/Measurement.Generators.csproj" />
+  <Project Path="Measurement.Tests/Measurement.Tests.csproj" />
 </Solution>
