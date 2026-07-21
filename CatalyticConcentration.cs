@@ -6,14 +6,14 @@ public class CatalyticConcentration {
     private CatalyticConcentration(double katalsPerCubicMeter) => this.katalsPerCubicMeter = katalsPerCubicMeter;
 
     // Arithmetic
-    public static CatalyticConcentration operator +(CatalyticConcentration a, CatalyticConcentration b) => new CatalyticConcentration(a.katalsPerCubicMeter + b.katalsPerCubicMeter);
-    public static CatalyticConcentration operator -(CatalyticConcentration a, CatalyticConcentration b) => new CatalyticConcentration(a.katalsPerCubicMeter - b.katalsPerCubicMeter);
-    public static CatalyticConcentration operator -(CatalyticConcentration x) => new CatalyticConcentration(-x.katalsPerCubicMeter);
+    public static CatalyticConcentration operator +(CatalyticConcentration a, CatalyticConcentration b) => new(a.katalsPerCubicMeter + b.katalsPerCubicMeter);
+    public static CatalyticConcentration operator -(CatalyticConcentration a, CatalyticConcentration b) => new(a.katalsPerCubicMeter - b.katalsPerCubicMeter);
+    public static CatalyticConcentration operator -(CatalyticConcentration x) => new(-x.katalsPerCubicMeter);
 
     // Units
-    public static CatalyticConcentration FromKatalsPerCubicMeter(double katalsPerCubicMeter) => new CatalyticConcentration(katalsPerCubicMeter);
+    public static CatalyticConcentration FromKatalsPerCubicMeter(double katalsPerCubicMeter) => new(katalsPerCubicMeter);
     public double ToKatalsPerCubicMeter() => katalsPerCubicMeter;
-    public static CatalyticConcentration FromKatalsPerLiter(double katalsPerLiter) => new CatalyticConcentration(katalsPerLiter * (1000));
+    public static CatalyticConcentration FromKatalsPerLiter(double katalsPerLiter) => new(katalsPerLiter * (1000));
     public double ToKatalsPerLiter() => katalsPerCubicMeter / (1000);
 
     // Composite relationships

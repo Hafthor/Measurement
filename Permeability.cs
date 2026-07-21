@@ -6,12 +6,12 @@ public class Permeability {
     private Permeability(double henriesPerMeter) => this.henriesPerMeter = henriesPerMeter;
 
     // Arithmetic
-    public static Permeability operator +(Permeability a, Permeability b) => new Permeability(a.henriesPerMeter + b.henriesPerMeter);
-    public static Permeability operator -(Permeability a, Permeability b) => new Permeability(a.henriesPerMeter - b.henriesPerMeter);
-    public static Permeability operator -(Permeability x) => new Permeability(-x.henriesPerMeter);
+    public static Permeability operator +(Permeability a, Permeability b) => new(a.henriesPerMeter + b.henriesPerMeter);
+    public static Permeability operator -(Permeability a, Permeability b) => new(a.henriesPerMeter - b.henriesPerMeter);
+    public static Permeability operator -(Permeability x) => new(-x.henriesPerMeter);
 
     // Units
-    public static Permeability FromHenriesPerMeter(double henriesPerMeter) => new Permeability(henriesPerMeter);
+    public static Permeability FromHenriesPerMeter(double henriesPerMeter) => new(henriesPerMeter);
     public double ToHenriesPerMeter() => henriesPerMeter;
 
     // Composite relationships

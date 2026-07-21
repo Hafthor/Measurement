@@ -6,16 +6,16 @@ public class LuminousEnergy {
     private LuminousEnergy(double lumenSeconds) => this.lumenSeconds = lumenSeconds;
 
     // Arithmetic
-    public static LuminousEnergy operator +(LuminousEnergy a, LuminousEnergy b) => new LuminousEnergy(a.lumenSeconds + b.lumenSeconds);
-    public static LuminousEnergy operator -(LuminousEnergy a, LuminousEnergy b) => new LuminousEnergy(a.lumenSeconds - b.lumenSeconds);
-    public static LuminousEnergy operator -(LuminousEnergy x) => new LuminousEnergy(-x.lumenSeconds);
+    public static LuminousEnergy operator +(LuminousEnergy a, LuminousEnergy b) => new(a.lumenSeconds + b.lumenSeconds);
+    public static LuminousEnergy operator -(LuminousEnergy a, LuminousEnergy b) => new(a.lumenSeconds - b.lumenSeconds);
+    public static LuminousEnergy operator -(LuminousEnergy x) => new(-x.lumenSeconds);
 
     // Units
-    public static LuminousEnergy FromLumenSeconds(double lumenSeconds) => new LuminousEnergy(lumenSeconds);
+    public static LuminousEnergy FromLumenSeconds(double lumenSeconds) => new(lumenSeconds);
     public double ToLumenSeconds() => lumenSeconds;
-    public static LuminousEnergy FromLumenHours(double lumenHours) => new LuminousEnergy(lumenHours * (3600));
+    public static LuminousEnergy FromLumenHours(double lumenHours) => new(lumenHours * (3600));
     public double ToLumenHours() => lumenSeconds / (3600);
-    public static LuminousEnergy FromTalbots(double talbots) => new LuminousEnergy(talbots);
+    public static LuminousEnergy FromTalbots(double talbots) => new(talbots);
     public double ToTalbots() => lumenSeconds;
 
     // Composite relationships

@@ -6,26 +6,26 @@ public class Voltage {
     private Voltage(double volts) => this.volts = volts;
 
     // Arithmetic
-    public static Voltage operator +(Voltage a, Voltage b) => new Voltage(a.volts + b.volts);
-    public static Voltage operator -(Voltage a, Voltage b) => new Voltage(a.volts - b.volts);
-    public static Voltage operator -(Voltage x) => new Voltage(-x.volts);
+    public static Voltage operator +(Voltage a, Voltage b) => new(a.volts + b.volts);
+    public static Voltage operator -(Voltage a, Voltage b) => new(a.volts - b.volts);
+    public static Voltage operator -(Voltage x) => new(-x.volts);
 
     // SI units
-    public static Voltage FromMegavolts(double megavolts) => new Voltage(megavolts * 1e6);
+    public static Voltage FromMegavolts(double megavolts) => new(megavolts * 1e6);
     public double ToMegavolts() => volts / 1e6;
-    public static Voltage FromKilovolts(double kilovolts) => new Voltage(kilovolts * 1e3);
+    public static Voltage FromKilovolts(double kilovolts) => new(kilovolts * 1e3);
     public double ToKilovolts() => volts / 1e3;
-    public static Voltage FromVolts(double volts) => new Voltage(volts);
+    public static Voltage FromVolts(double volts) => new(volts);
     public double ToVolts() => volts;
-    public static Voltage FromMillivolts(double millivolts) => new Voltage(millivolts * 1e-3);
+    public static Voltage FromMillivolts(double millivolts) => new(millivolts * 1e-3);
     public double ToMillivolts() => volts / 1e-3;
-    public static Voltage FromMicrovolts(double microvolts) => new Voltage(microvolts * 1e-6);
+    public static Voltage FromMicrovolts(double microvolts) => new(microvolts * 1e-6);
     public double ToMicrovolts() => volts / 1e-6;
 
     // CGS units
-    public static Voltage FromAbvolts(double abvolts) => new Voltage(abvolts * 1e-8);
+    public static Voltage FromAbvolts(double abvolts) => new(abvolts * 1e-8);
     public double ToAbvolts() => volts / 1e-8;
-    public static Voltage FromStatvolts(double statvolts) => new Voltage(statvolts * 299.792458);
+    public static Voltage FromStatvolts(double statvolts) => new(statvolts * 299.792458);
     public double ToStatvolts() => volts / 299.792458;
 
     // Composite relationships

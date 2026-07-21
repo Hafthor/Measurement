@@ -6,16 +6,16 @@ public class DoseRate {
     private DoseRate(double graysPerSecond) => this.graysPerSecond = graysPerSecond;
 
     // Arithmetic
-    public static DoseRate operator +(DoseRate a, DoseRate b) => new DoseRate(a.graysPerSecond + b.graysPerSecond);
-    public static DoseRate operator -(DoseRate a, DoseRate b) => new DoseRate(a.graysPerSecond - b.graysPerSecond);
-    public static DoseRate operator -(DoseRate x) => new DoseRate(-x.graysPerSecond);
+    public static DoseRate operator +(DoseRate a, DoseRate b) => new(a.graysPerSecond + b.graysPerSecond);
+    public static DoseRate operator -(DoseRate a, DoseRate b) => new(a.graysPerSecond - b.graysPerSecond);
+    public static DoseRate operator -(DoseRate x) => new(-x.graysPerSecond);
 
     // Units
-    public static DoseRate FromGraysPerSecond(double graysPerSecond) => new DoseRate(graysPerSecond);
+    public static DoseRate FromGraysPerSecond(double graysPerSecond) => new(graysPerSecond);
     public double ToGraysPerSecond() => graysPerSecond;
-    public static DoseRate FromMilligraysPerSecond(double milligraysPerSecond) => new DoseRate(milligraysPerSecond * (1e-3));
+    public static DoseRate FromMilligraysPerSecond(double milligraysPerSecond) => new(milligraysPerSecond * (1e-3));
     public double ToMilligraysPerSecond() => graysPerSecond / (1e-3);
-    public static DoseRate FromGraysPerHour(double graysPerHour) => new DoseRate(graysPerHour * (1.0 / 3600));
+    public static DoseRate FromGraysPerHour(double graysPerHour) => new(graysPerHour * (1.0 / 3600));
     public double ToGraysPerHour() => graysPerSecond / (1.0 / 3600);
 
     // Composite relationships

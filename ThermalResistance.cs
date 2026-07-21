@@ -6,12 +6,12 @@ public class ThermalResistance {
     private ThermalResistance(double kelvinsPerWatt) => this.kelvinsPerWatt = kelvinsPerWatt;
 
     // Arithmetic
-    public static ThermalResistance operator +(ThermalResistance a, ThermalResistance b) => new ThermalResistance(a.kelvinsPerWatt + b.kelvinsPerWatt);
-    public static ThermalResistance operator -(ThermalResistance a, ThermalResistance b) => new ThermalResistance(a.kelvinsPerWatt - b.kelvinsPerWatt);
-    public static ThermalResistance operator -(ThermalResistance x) => new ThermalResistance(-x.kelvinsPerWatt);
+    public static ThermalResistance operator +(ThermalResistance a, ThermalResistance b) => new(a.kelvinsPerWatt + b.kelvinsPerWatt);
+    public static ThermalResistance operator -(ThermalResistance a, ThermalResistance b) => new(a.kelvinsPerWatt - b.kelvinsPerWatt);
+    public static ThermalResistance operator -(ThermalResistance x) => new(-x.kelvinsPerWatt);
 
     // Units
-    public static ThermalResistance FromKelvinsPerWatt(double kelvinsPerWatt) => new ThermalResistance(kelvinsPerWatt);
+    public static ThermalResistance FromKelvinsPerWatt(double kelvinsPerWatt) => new(kelvinsPerWatt);
     public double ToKelvinsPerWatt() => kelvinsPerWatt;
 
     // Composite relationships

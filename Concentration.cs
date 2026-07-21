@@ -6,18 +6,18 @@ public class Concentration {
     private Concentration(double molesPerCubicMeter) => this.molesPerCubicMeter = molesPerCubicMeter;
 
     // Arithmetic
-    public static Concentration operator +(Concentration a, Concentration b) => new Concentration(a.molesPerCubicMeter + b.molesPerCubicMeter);
-    public static Concentration operator -(Concentration a, Concentration b) => new Concentration(a.molesPerCubicMeter - b.molesPerCubicMeter);
-    public static Concentration operator -(Concentration x) => new Concentration(-x.molesPerCubicMeter);
+    public static Concentration operator +(Concentration a, Concentration b) => new(a.molesPerCubicMeter + b.molesPerCubicMeter);
+    public static Concentration operator -(Concentration a, Concentration b) => new(a.molesPerCubicMeter - b.molesPerCubicMeter);
+    public static Concentration operator -(Concentration x) => new(-x.molesPerCubicMeter);
 
     // Units
-    public static Concentration FromMolesPerCubicMeter(double molesPerCubicMeter) => new Concentration(molesPerCubicMeter);
+    public static Concentration FromMolesPerCubicMeter(double molesPerCubicMeter) => new(molesPerCubicMeter);
     public double ToMolesPerCubicMeter() => molesPerCubicMeter;
-    public static Concentration FromMolesPerLiter(double molesPerLiter) => new Concentration(molesPerLiter * (1000));
+    public static Concentration FromMolesPerLiter(double molesPerLiter) => new(molesPerLiter * (1000));
     public double ToMolesPerLiter() => molesPerCubicMeter / (1000);
-    public static Concentration FromMillimolesPerLiter(double millimolesPerLiter) => new Concentration(millimolesPerLiter);
+    public static Concentration FromMillimolesPerLiter(double millimolesPerLiter) => new(millimolesPerLiter);
     public double ToMillimolesPerLiter() => molesPerCubicMeter;
-    public static Concentration FromMicromolesPerLiter(double micromolesPerLiter) => new Concentration(micromolesPerLiter * (1e-3));
+    public static Concentration FromMicromolesPerLiter(double micromolesPerLiter) => new(micromolesPerLiter * (1e-3));
     public double ToMicromolesPerLiter() => molesPerCubicMeter / (1e-3);
 
     // Composite relationships

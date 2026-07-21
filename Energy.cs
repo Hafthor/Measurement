@@ -6,44 +6,44 @@ public class Energy {
     private Energy(double joules) => this.joules = joules;
 
     // Arithmetic
-    public static Energy operator +(Energy a, Energy b) => new Energy(a.joules + b.joules);
-    public static Energy operator -(Energy a, Energy b) => new Energy(a.joules - b.joules);
-    public static Energy operator -(Energy x) => new Energy(-x.joules);
+    public static Energy operator +(Energy a, Energy b) => new(a.joules + b.joules);
+    public static Energy operator -(Energy a, Energy b) => new(a.joules - b.joules);
+    public static Energy operator -(Energy x) => new(-x.joules);
 
     // SI units
-    public static Energy FromGigajoules(double gigajoules) => new Energy(gigajoules * 1e9);
+    public static Energy FromGigajoules(double gigajoules) => new(gigajoules * 1e9);
     public double ToGigajoules() => joules / 1e9;
-    public static Energy FromMegajoules(double megajoules) => new Energy(megajoules * 1e6);
+    public static Energy FromMegajoules(double megajoules) => new(megajoules * 1e6);
     public double ToMegajoules() => joules / 1e6;
-    public static Energy FromKilojoules(double kilojoules) => new Energy(kilojoules * 1e3);
+    public static Energy FromKilojoules(double kilojoules) => new(kilojoules * 1e3);
     public double ToKilojoules() => joules / 1e3;
-    public static Energy FromJoules(double joules) => new Energy(joules);
+    public static Energy FromJoules(double joules) => new(joules);
     public double ToJoules() => joules;
-    public static Energy FromMillijoules(double millijoules) => new Energy(millijoules * 1e-3);
+    public static Energy FromMillijoules(double millijoules) => new(millijoules * 1e-3);
     public double ToMillijoules() => joules / 1e-3;
-    public static Energy FromErgs(double ergs) => new Energy(ergs * 1e-7);
+    public static Energy FromErgs(double ergs) => new(ergs * 1e-7);
     public double ToErgs() => joules / 1e-7;
 
     // Calorie units
-    public static Energy FromKilocalories(double kilocalories) => new Energy(kilocalories * 4184);
+    public static Energy FromKilocalories(double kilocalories) => new(kilocalories * 4184);
     public double ToKilocalories() => joules / 4184;
-    public static Energy FromCalories(double calories) => new Energy(calories * 4.184);
+    public static Energy FromCalories(double calories) => new(calories * 4.184);
     public double ToCalories() => joules / 4.184;
 
     // Electrical units
-    public static Energy FromKilowattHours(double kilowattHours) => new Energy(kilowattHours * 3.6e6);
+    public static Energy FromKilowattHours(double kilowattHours) => new(kilowattHours * 3.6e6);
     public double ToKilowattHours() => joules / 3.6e6;
-    public static Energy FromWattHours(double wattHours) => new Energy(wattHours * 3600);
+    public static Energy FromWattHours(double wattHours) => new(wattHours * 3600);
     public double ToWattHours() => joules / 3600;
-    public static Energy FromElectronvolts(double electronvolts) => new Energy(electronvolts * 1.602176634e-19);
+    public static Energy FromElectronvolts(double electronvolts) => new(electronvolts * 1.602176634e-19);
     public double ToElectronvolts() => joules / 1.602176634e-19;
 
     // Imperial & other units
-    public static Energy FromBritishThermalUnits(double britishThermalUnits) => new Energy(britishThermalUnits * 1055.05585262);
+    public static Energy FromBritishThermalUnits(double britishThermalUnits) => new(britishThermalUnits * 1055.05585262);
     public double ToBritishThermalUnits() => joules / 1055.05585262;
-    public static Energy FromFootPounds(double footPounds) => new Energy(footPounds * 1.3558179483314004);
+    public static Energy FromFootPounds(double footPounds) => new(footPounds * 1.3558179483314004);
     public double ToFootPounds() => joules / 1.3558179483314004;
-    public static Energy FromTonsOfTnt(double tonsOfTnt) => new Energy(tonsOfTnt * 4.184e9);
+    public static Energy FromTonsOfTnt(double tonsOfTnt) => new(tonsOfTnt * 4.184e9);
     public double ToTonsOfTnt() => joules / 4.184e9;
 
     // Composite relationships

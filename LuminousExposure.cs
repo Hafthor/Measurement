@@ -6,14 +6,14 @@ public class LuminousExposure {
     private LuminousExposure(double luxSeconds) => this.luxSeconds = luxSeconds;
 
     // Arithmetic
-    public static LuminousExposure operator +(LuminousExposure a, LuminousExposure b) => new LuminousExposure(a.luxSeconds + b.luxSeconds);
-    public static LuminousExposure operator -(LuminousExposure a, LuminousExposure b) => new LuminousExposure(a.luxSeconds - b.luxSeconds);
-    public static LuminousExposure operator -(LuminousExposure x) => new LuminousExposure(-x.luxSeconds);
+    public static LuminousExposure operator +(LuminousExposure a, LuminousExposure b) => new(a.luxSeconds + b.luxSeconds);
+    public static LuminousExposure operator -(LuminousExposure a, LuminousExposure b) => new(a.luxSeconds - b.luxSeconds);
+    public static LuminousExposure operator -(LuminousExposure x) => new(-x.luxSeconds);
 
     // Units
-    public static LuminousExposure FromLuxSeconds(double luxSeconds) => new LuminousExposure(luxSeconds);
+    public static LuminousExposure FromLuxSeconds(double luxSeconds) => new(luxSeconds);
     public double ToLuxSeconds() => luxSeconds;
-    public static LuminousExposure FromLuxHours(double luxHours) => new LuminousExposure(luxHours * (3600));
+    public static LuminousExposure FromLuxHours(double luxHours) => new(luxHours * (3600));
     public double ToLuxHours() => luxSeconds / (3600);
 
     // Composite relationships

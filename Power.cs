@@ -6,32 +6,32 @@ public class Power {
     private Power(double watts) => this.watts = watts;
 
     // Arithmetic
-    public static Power operator +(Power a, Power b) => new Power(a.watts + b.watts);
-    public static Power operator -(Power a, Power b) => new Power(a.watts - b.watts);
-    public static Power operator -(Power x) => new Power(-x.watts);
+    public static Power operator +(Power a, Power b) => new(a.watts + b.watts);
+    public static Power operator -(Power a, Power b) => new(a.watts - b.watts);
+    public static Power operator -(Power x) => new(-x.watts);
 
     // SI units
-    public static Power FromGigawatts(double gigawatts) => new Power(gigawatts * 1e9);
+    public static Power FromGigawatts(double gigawatts) => new(gigawatts * 1e9);
     public double ToGigawatts() => watts / 1e9;
-    public static Power FromMegawatts(double megawatts) => new Power(megawatts * 1e6);
+    public static Power FromMegawatts(double megawatts) => new(megawatts * 1e6);
     public double ToMegawatts() => watts / 1e6;
-    public static Power FromKilowatts(double kilowatts) => new Power(kilowatts * 1e3);
+    public static Power FromKilowatts(double kilowatts) => new(kilowatts * 1e3);
     public double ToKilowatts() => watts / 1e3;
-    public static Power FromWatts(double watts) => new Power(watts);
+    public static Power FromWatts(double watts) => new(watts);
     public double ToWatts() => watts;
-    public static Power FromMilliwatts(double milliwatts) => new Power(milliwatts * 1e-3);
+    public static Power FromMilliwatts(double milliwatts) => new(milliwatts * 1e-3);
     public double ToMilliwatts() => watts / 1e-3;
 
     // Horsepower units
-    public static Power FromHorsepower(double horsepower) => new Power(horsepower * 745.6998715822702);
+    public static Power FromHorsepower(double horsepower) => new(horsepower * 745.6998715822702);
     public double ToHorsepower() => watts / 745.6998715822702;
-    public static Power FromMetricHorsepower(double metricHorsepower) => new Power(metricHorsepower * 735.49875);
+    public static Power FromMetricHorsepower(double metricHorsepower) => new(metricHorsepower * 735.49875);
     public double ToMetricHorsepower() => watts / 735.49875;
 
     // Thermal & other units
-    public static Power FromBritishThermalUnitsPerHour(double britishThermalUnitsPerHour) => new Power(britishThermalUnitsPerHour * 0.29307107017);
+    public static Power FromBritishThermalUnitsPerHour(double britishThermalUnitsPerHour) => new(britishThermalUnitsPerHour * 0.29307107017);
     public double ToBritishThermalUnitsPerHour() => watts / 0.29307107017;
-    public static Power FromFootPoundsPerSecond(double footPoundsPerSecond) => new Power(footPoundsPerSecond * 1.3558179483314004);
+    public static Power FromFootPoundsPerSecond(double footPoundsPerSecond) => new(footPoundsPerSecond * 1.3558179483314004);
     public double ToFootPoundsPerSecond() => watts / 1.3558179483314004;
 
     // Composite relationships

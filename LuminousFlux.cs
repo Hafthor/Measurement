@@ -6,16 +6,16 @@ public class LuminousFlux {
     private LuminousFlux(double lumens) => this.lumens = lumens;
 
     // Arithmetic
-    public static LuminousFlux operator +(LuminousFlux a, LuminousFlux b) => new LuminousFlux(a.lumens + b.lumens);
-    public static LuminousFlux operator -(LuminousFlux a, LuminousFlux b) => new LuminousFlux(a.lumens - b.lumens);
-    public static LuminousFlux operator -(LuminousFlux x) => new LuminousFlux(-x.lumens);
+    public static LuminousFlux operator +(LuminousFlux a, LuminousFlux b) => new(a.lumens + b.lumens);
+    public static LuminousFlux operator -(LuminousFlux a, LuminousFlux b) => new(a.lumens - b.lumens);
+    public static LuminousFlux operator -(LuminousFlux x) => new(-x.lumens);
 
     // SI units
-    public static LuminousFlux FromKilolumens(double kilolumens) => new LuminousFlux(kilolumens * 1e3);
+    public static LuminousFlux FromKilolumens(double kilolumens) => new(kilolumens * 1e3);
     public double ToKilolumens() => lumens / 1e3;
-    public static LuminousFlux FromLumens(double lumens) => new LuminousFlux(lumens);
+    public static LuminousFlux FromLumens(double lumens) => new(lumens);
     public double ToLumens() => lumens;
-    public static LuminousFlux FromMillilumens(double millilumens) => new LuminousFlux(millilumens * 1e-3);
+    public static LuminousFlux FromMillilumens(double millilumens) => new(millilumens * 1e-3);
     public double ToMillilumens() => lumens / 1e-3;
 
     // Composite relationships

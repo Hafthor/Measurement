@@ -6,16 +6,16 @@ public class Resistivity {
     private Resistivity(double ohmMeters) => this.ohmMeters = ohmMeters;
 
     // Arithmetic
-    public static Resistivity operator +(Resistivity a, Resistivity b) => new Resistivity(a.ohmMeters + b.ohmMeters);
-    public static Resistivity operator -(Resistivity a, Resistivity b) => new Resistivity(a.ohmMeters - b.ohmMeters);
-    public static Resistivity operator -(Resistivity x) => new Resistivity(-x.ohmMeters);
+    public static Resistivity operator +(Resistivity a, Resistivity b) => new(a.ohmMeters + b.ohmMeters);
+    public static Resistivity operator -(Resistivity a, Resistivity b) => new(a.ohmMeters - b.ohmMeters);
+    public static Resistivity operator -(Resistivity x) => new(-x.ohmMeters);
 
     // Units
-    public static Resistivity FromOhmMeters(double ohmMeters) => new Resistivity(ohmMeters);
+    public static Resistivity FromOhmMeters(double ohmMeters) => new(ohmMeters);
     public double ToOhmMeters() => ohmMeters;
-    public static Resistivity FromOhmCentimeters(double ohmCentimeters) => new Resistivity(ohmCentimeters * (1e-2));
+    public static Resistivity FromOhmCentimeters(double ohmCentimeters) => new(ohmCentimeters * (1e-2));
     public double ToOhmCentimeters() => ohmMeters / (1e-2);
-    public static Resistivity FromMicroohmCentimeters(double microohmCentimeters) => new Resistivity(microohmCentimeters * (1e-8));
+    public static Resistivity FromMicroohmCentimeters(double microohmCentimeters) => new(microohmCentimeters * (1e-8));
     public double ToMicroohmCentimeters() => ohmMeters / (1e-8);
 
     // Composite relationships

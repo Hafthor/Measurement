@@ -6,18 +6,18 @@ public class AngularVelocity {
     private AngularVelocity(double radiansPerSecond) => this.radiansPerSecond = radiansPerSecond;
 
     // Arithmetic
-    public static AngularVelocity operator +(AngularVelocity a, AngularVelocity b) => new AngularVelocity(a.radiansPerSecond + b.radiansPerSecond);
-    public static AngularVelocity operator -(AngularVelocity a, AngularVelocity b) => new AngularVelocity(a.radiansPerSecond - b.radiansPerSecond);
-    public static AngularVelocity operator -(AngularVelocity x) => new AngularVelocity(-x.radiansPerSecond);
+    public static AngularVelocity operator +(AngularVelocity a, AngularVelocity b) => new(a.radiansPerSecond + b.radiansPerSecond);
+    public static AngularVelocity operator -(AngularVelocity a, AngularVelocity b) => new(a.radiansPerSecond - b.radiansPerSecond);
+    public static AngularVelocity operator -(AngularVelocity x) => new(-x.radiansPerSecond);
 
     // Units
-    public static AngularVelocity FromRadiansPerSecond(double radiansPerSecond) => new AngularVelocity(radiansPerSecond);
+    public static AngularVelocity FromRadiansPerSecond(double radiansPerSecond) => new(radiansPerSecond);
     public double ToRadiansPerSecond() => radiansPerSecond;
-    public static AngularVelocity FromDegreesPerSecond(double degreesPerSecond) => new AngularVelocity(degreesPerSecond * (Math.PI / 180));
+    public static AngularVelocity FromDegreesPerSecond(double degreesPerSecond) => new(degreesPerSecond * (Math.PI / 180));
     public double ToDegreesPerSecond() => radiansPerSecond / (Math.PI / 180);
-    public static AngularVelocity FromRevolutionsPerSecond(double revolutionsPerSecond) => new AngularVelocity(revolutionsPerSecond * (2 * Math.PI));
+    public static AngularVelocity FromRevolutionsPerSecond(double revolutionsPerSecond) => new(revolutionsPerSecond * (2 * Math.PI));
     public double ToRevolutionsPerSecond() => radiansPerSecond / (2 * Math.PI);
-    public static AngularVelocity FromRevolutionsPerMinute(double revolutionsPerMinute) => new AngularVelocity(revolutionsPerMinute * (2 * Math.PI / 60));
+    public static AngularVelocity FromRevolutionsPerMinute(double revolutionsPerMinute) => new(revolutionsPerMinute * (2 * Math.PI / 60));
     public double ToRevolutionsPerMinute() => radiansPerSecond / (2 * Math.PI / 60);
 
     // Composite relationships

@@ -6,12 +6,12 @@ public class SurfaceChargeDensity {
     private SurfaceChargeDensity(double coulombsPerSquareMeter) => this.coulombsPerSquareMeter = coulombsPerSquareMeter;
 
     // Arithmetic
-    public static SurfaceChargeDensity operator +(SurfaceChargeDensity a, SurfaceChargeDensity b) => new SurfaceChargeDensity(a.coulombsPerSquareMeter + b.coulombsPerSquareMeter);
-    public static SurfaceChargeDensity operator -(SurfaceChargeDensity a, SurfaceChargeDensity b) => new SurfaceChargeDensity(a.coulombsPerSquareMeter - b.coulombsPerSquareMeter);
-    public static SurfaceChargeDensity operator -(SurfaceChargeDensity x) => new SurfaceChargeDensity(-x.coulombsPerSquareMeter);
+    public static SurfaceChargeDensity operator +(SurfaceChargeDensity a, SurfaceChargeDensity b) => new(a.coulombsPerSquareMeter + b.coulombsPerSquareMeter);
+    public static SurfaceChargeDensity operator -(SurfaceChargeDensity a, SurfaceChargeDensity b) => new(a.coulombsPerSquareMeter - b.coulombsPerSquareMeter);
+    public static SurfaceChargeDensity operator -(SurfaceChargeDensity x) => new(-x.coulombsPerSquareMeter);
 
     // Units
-    public static SurfaceChargeDensity FromCoulombsPerSquareMeter(double coulombsPerSquareMeter) => new SurfaceChargeDensity(coulombsPerSquareMeter);
+    public static SurfaceChargeDensity FromCoulombsPerSquareMeter(double coulombsPerSquareMeter) => new(coulombsPerSquareMeter);
     public double ToCoulombsPerSquareMeter() => coulombsPerSquareMeter;
 
     // Composite relationships

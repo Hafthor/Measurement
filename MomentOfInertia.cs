@@ -6,18 +6,18 @@ public class MomentOfInertia {
     private MomentOfInertia(double kilogramSquareMeters) => this.kilogramSquareMeters = kilogramSquareMeters;
 
     // Arithmetic
-    public static MomentOfInertia operator +(MomentOfInertia a, MomentOfInertia b) => new MomentOfInertia(a.kilogramSquareMeters + b.kilogramSquareMeters);
-    public static MomentOfInertia operator -(MomentOfInertia a, MomentOfInertia b) => new MomentOfInertia(a.kilogramSquareMeters - b.kilogramSquareMeters);
-    public static MomentOfInertia operator -(MomentOfInertia x) => new MomentOfInertia(-x.kilogramSquareMeters);
+    public static MomentOfInertia operator +(MomentOfInertia a, MomentOfInertia b) => new(a.kilogramSquareMeters + b.kilogramSquareMeters);
+    public static MomentOfInertia operator -(MomentOfInertia a, MomentOfInertia b) => new(a.kilogramSquareMeters - b.kilogramSquareMeters);
+    public static MomentOfInertia operator -(MomentOfInertia x) => new(-x.kilogramSquareMeters);
 
     // Units
-    public static MomentOfInertia FromKilogramSquareMeters(double kilogramSquareMeters) => new MomentOfInertia(kilogramSquareMeters);
+    public static MomentOfInertia FromKilogramSquareMeters(double kilogramSquareMeters) => new(kilogramSquareMeters);
     public double ToKilogramSquareMeters() => kilogramSquareMeters;
-    public static MomentOfInertia FromKilogramSquareCentimeters(double kilogramSquareCentimeters) => new MomentOfInertia(kilogramSquareCentimeters * (1e-4));
+    public static MomentOfInertia FromKilogramSquareCentimeters(double kilogramSquareCentimeters) => new(kilogramSquareCentimeters * (1e-4));
     public double ToKilogramSquareCentimeters() => kilogramSquareMeters / (1e-4);
-    public static MomentOfInertia FromGramSquareCentimeters(double gramSquareCentimeters) => new MomentOfInertia(gramSquareCentimeters * (1e-7));
+    public static MomentOfInertia FromGramSquareCentimeters(double gramSquareCentimeters) => new(gramSquareCentimeters * (1e-7));
     public double ToGramSquareCentimeters() => kilogramSquareMeters / (1e-7);
-    public static MomentOfInertia FromPoundSquareFeet(double poundSquareFeet) => new MomentOfInertia(poundSquareFeet * (0.04214011009380));
+    public static MomentOfInertia FromPoundSquareFeet(double poundSquareFeet) => new(poundSquareFeet * (0.04214011009380));
     public double ToPoundSquareFeet() => kilogramSquareMeters / (0.04214011009380);
 
     // Composite relationships

@@ -6,14 +6,14 @@ public class ElectricDipoleMoment {
     private ElectricDipoleMoment(double coulombMeters) => this.coulombMeters = coulombMeters;
 
     // Arithmetic
-    public static ElectricDipoleMoment operator +(ElectricDipoleMoment a, ElectricDipoleMoment b) => new ElectricDipoleMoment(a.coulombMeters + b.coulombMeters);
-    public static ElectricDipoleMoment operator -(ElectricDipoleMoment a, ElectricDipoleMoment b) => new ElectricDipoleMoment(a.coulombMeters - b.coulombMeters);
-    public static ElectricDipoleMoment operator -(ElectricDipoleMoment x) => new ElectricDipoleMoment(-x.coulombMeters);
+    public static ElectricDipoleMoment operator +(ElectricDipoleMoment a, ElectricDipoleMoment b) => new(a.coulombMeters + b.coulombMeters);
+    public static ElectricDipoleMoment operator -(ElectricDipoleMoment a, ElectricDipoleMoment b) => new(a.coulombMeters - b.coulombMeters);
+    public static ElectricDipoleMoment operator -(ElectricDipoleMoment x) => new(-x.coulombMeters);
 
     // Units
-    public static ElectricDipoleMoment FromCoulombMeters(double coulombMeters) => new ElectricDipoleMoment(coulombMeters);
+    public static ElectricDipoleMoment FromCoulombMeters(double coulombMeters) => new(coulombMeters);
     public double ToCoulombMeters() => coulombMeters;
-    public static ElectricDipoleMoment FromDebyes(double debyes) => new ElectricDipoleMoment(debyes * (3.33564095198e-30));
+    public static ElectricDipoleMoment FromDebyes(double debyes) => new(debyes * (3.33564095198e-30));
     public double ToDebyes() => coulombMeters / (3.33564095198e-30);
 
     // Composite relationships

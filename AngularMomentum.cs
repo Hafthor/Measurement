@@ -6,16 +6,16 @@ public class AngularMomentum {
     private AngularMomentum(double kilogramSquareMetersPerSecond) => this.kilogramSquareMetersPerSecond = kilogramSquareMetersPerSecond;
 
     // Arithmetic
-    public static AngularMomentum operator +(AngularMomentum a, AngularMomentum b) => new AngularMomentum(a.kilogramSquareMetersPerSecond + b.kilogramSquareMetersPerSecond);
-    public static AngularMomentum operator -(AngularMomentum a, AngularMomentum b) => new AngularMomentum(a.kilogramSquareMetersPerSecond - b.kilogramSquareMetersPerSecond);
-    public static AngularMomentum operator -(AngularMomentum x) => new AngularMomentum(-x.kilogramSquareMetersPerSecond);
+    public static AngularMomentum operator +(AngularMomentum a, AngularMomentum b) => new(a.kilogramSquareMetersPerSecond + b.kilogramSquareMetersPerSecond);
+    public static AngularMomentum operator -(AngularMomentum a, AngularMomentum b) => new(a.kilogramSquareMetersPerSecond - b.kilogramSquareMetersPerSecond);
+    public static AngularMomentum operator -(AngularMomentum x) => new(-x.kilogramSquareMetersPerSecond);
 
     // Units
-    public static AngularMomentum FromKilogramSquareMetersPerSecond(double kilogramSquareMetersPerSecond) => new AngularMomentum(kilogramSquareMetersPerSecond);
+    public static AngularMomentum FromKilogramSquareMetersPerSecond(double kilogramSquareMetersPerSecond) => new(kilogramSquareMetersPerSecond);
     public double ToKilogramSquareMetersPerSecond() => kilogramSquareMetersPerSecond;
-    public static AngularMomentum FromJouleSeconds(double jouleSeconds) => new AngularMomentum(jouleSeconds);
+    public static AngularMomentum FromJouleSeconds(double jouleSeconds) => new(jouleSeconds);
     public double ToJouleSeconds() => kilogramSquareMetersPerSecond;
-    public static AngularMomentum FromNewtonMeterSeconds(double newtonMeterSeconds) => new AngularMomentum(newtonMeterSeconds);
+    public static AngularMomentum FromNewtonMeterSeconds(double newtonMeterSeconds) => new(newtonMeterSeconds);
     public double ToNewtonMeterSeconds() => kilogramSquareMetersPerSecond;
 
     // Composite relationships

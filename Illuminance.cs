@@ -6,24 +6,24 @@ public class Illuminance {
     private Illuminance(double lux) => this.lux = lux;
 
     // Arithmetic
-    public static Illuminance operator +(Illuminance a, Illuminance b) => new Illuminance(a.lux + b.lux);
-    public static Illuminance operator -(Illuminance a, Illuminance b) => new Illuminance(a.lux - b.lux);
-    public static Illuminance operator -(Illuminance x) => new Illuminance(-x.lux);
+    public static Illuminance operator +(Illuminance a, Illuminance b) => new(a.lux + b.lux);
+    public static Illuminance operator -(Illuminance a, Illuminance b) => new(a.lux - b.lux);
+    public static Illuminance operator -(Illuminance x) => new(-x.lux);
 
     // SI units
-    public static Illuminance FromKilolux(double kilolux) => new Illuminance(kilolux * 1e3);
+    public static Illuminance FromKilolux(double kilolux) => new(kilolux * 1e3);
     public double ToKilolux() => lux / 1e3;
-    public static Illuminance FromLux(double lux) => new Illuminance(lux);
+    public static Illuminance FromLux(double lux) => new(lux);
     public double ToLux() => lux;
-    public static Illuminance FromMillilux(double millilux) => new Illuminance(millilux * 1e-3);
+    public static Illuminance FromMillilux(double millilux) => new(millilux * 1e-3);
     public double ToMillilux() => lux / 1e-3;
 
     // CGS units
-    public static Illuminance FromPhots(double phots) => new Illuminance(phots * 1e4);
+    public static Illuminance FromPhots(double phots) => new(phots * 1e4);
     public double ToPhots() => lux / 1e4;
 
     // Imperial / US units
-    public static Illuminance FromFootcandles(double footcandles) => new Illuminance(footcandles * 10.763910416709722);
+    public static Illuminance FromFootcandles(double footcandles) => new(footcandles * 10.763910416709722);
     public double ToFootcandles() => lux / 10.763910416709722;
 
     // Composite relationships

@@ -6,14 +6,14 @@ public class Molality {
     private Molality(double molesPerKilogram) => this.molesPerKilogram = molesPerKilogram;
 
     // Arithmetic
-    public static Molality operator +(Molality a, Molality b) => new Molality(a.molesPerKilogram + b.molesPerKilogram);
-    public static Molality operator -(Molality a, Molality b) => new Molality(a.molesPerKilogram - b.molesPerKilogram);
-    public static Molality operator -(Molality x) => new Molality(-x.molesPerKilogram);
+    public static Molality operator +(Molality a, Molality b) => new(a.molesPerKilogram + b.molesPerKilogram);
+    public static Molality operator -(Molality a, Molality b) => new(a.molesPerKilogram - b.molesPerKilogram);
+    public static Molality operator -(Molality x) => new(-x.molesPerKilogram);
 
     // Units
-    public static Molality FromMolesPerKilogram(double molesPerKilogram) => new Molality(molesPerKilogram);
+    public static Molality FromMolesPerKilogram(double molesPerKilogram) => new(molesPerKilogram);
     public double ToMolesPerKilogram() => molesPerKilogram;
-    public static Molality FromMillimolesPerKilogram(double millimolesPerKilogram) => new Molality(millimolesPerKilogram * (1e-3));
+    public static Molality FromMillimolesPerKilogram(double millimolesPerKilogram) => new(millimolesPerKilogram * (1e-3));
     public double ToMillimolesPerKilogram() => molesPerKilogram / (1e-3);
 
     // Composite relationships

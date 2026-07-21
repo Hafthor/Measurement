@@ -6,14 +6,14 @@ public class MagneticFieldStrength {
     private MagneticFieldStrength(double amperesPerMeter) => this.amperesPerMeter = amperesPerMeter;
 
     // Arithmetic
-    public static MagneticFieldStrength operator +(MagneticFieldStrength a, MagneticFieldStrength b) => new MagneticFieldStrength(a.amperesPerMeter + b.amperesPerMeter);
-    public static MagneticFieldStrength operator -(MagneticFieldStrength a, MagneticFieldStrength b) => new MagneticFieldStrength(a.amperesPerMeter - b.amperesPerMeter);
-    public static MagneticFieldStrength operator -(MagneticFieldStrength x) => new MagneticFieldStrength(-x.amperesPerMeter);
+    public static MagneticFieldStrength operator +(MagneticFieldStrength a, MagneticFieldStrength b) => new(a.amperesPerMeter + b.amperesPerMeter);
+    public static MagneticFieldStrength operator -(MagneticFieldStrength a, MagneticFieldStrength b) => new(a.amperesPerMeter - b.amperesPerMeter);
+    public static MagneticFieldStrength operator -(MagneticFieldStrength x) => new(-x.amperesPerMeter);
 
     // Units
-    public static MagneticFieldStrength FromAmperesPerMeter(double amperesPerMeter) => new MagneticFieldStrength(amperesPerMeter);
+    public static MagneticFieldStrength FromAmperesPerMeter(double amperesPerMeter) => new(amperesPerMeter);
     public double ToAmperesPerMeter() => amperesPerMeter;
-    public static MagneticFieldStrength FromOersteds(double oersteds) => new MagneticFieldStrength(oersteds * (79.57747154594767));
+    public static MagneticFieldStrength FromOersteds(double oersteds) => new(oersteds * (79.57747154594767));
     public double ToOersteds() => amperesPerMeter / (79.57747154594767);
 
     // Composite relationships

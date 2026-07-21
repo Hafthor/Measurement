@@ -6,12 +6,12 @@ public class Permittivity {
     private Permittivity(double faradsPerMeter) => this.faradsPerMeter = faradsPerMeter;
 
     // Arithmetic
-    public static Permittivity operator +(Permittivity a, Permittivity b) => new Permittivity(a.faradsPerMeter + b.faradsPerMeter);
-    public static Permittivity operator -(Permittivity a, Permittivity b) => new Permittivity(a.faradsPerMeter - b.faradsPerMeter);
-    public static Permittivity operator -(Permittivity x) => new Permittivity(-x.faradsPerMeter);
+    public static Permittivity operator +(Permittivity a, Permittivity b) => new(a.faradsPerMeter + b.faradsPerMeter);
+    public static Permittivity operator -(Permittivity a, Permittivity b) => new(a.faradsPerMeter - b.faradsPerMeter);
+    public static Permittivity operator -(Permittivity x) => new(-x.faradsPerMeter);
 
     // Units
-    public static Permittivity FromFaradsPerMeter(double faradsPerMeter) => new Permittivity(faradsPerMeter);
+    public static Permittivity FromFaradsPerMeter(double faradsPerMeter) => new(faradsPerMeter);
     public double ToFaradsPerMeter() => faradsPerMeter;
 
     // Composite relationships

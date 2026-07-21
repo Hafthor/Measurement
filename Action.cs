@@ -6,16 +6,16 @@ public class Action {
     private Action(double jouleSeconds) => this.jouleSeconds = jouleSeconds;
 
     // Arithmetic
-    public static Action operator +(Action a, Action b) => new Action(a.jouleSeconds + b.jouleSeconds);
-    public static Action operator -(Action a, Action b) => new Action(a.jouleSeconds - b.jouleSeconds);
-    public static Action operator -(Action x) => new Action(-x.jouleSeconds);
+    public static Action operator +(Action a, Action b) => new(a.jouleSeconds + b.jouleSeconds);
+    public static Action operator -(Action a, Action b) => new(a.jouleSeconds - b.jouleSeconds);
+    public static Action operator -(Action x) => new(-x.jouleSeconds);
 
     // Units
-    public static Action FromJouleSeconds(double jouleSeconds) => new Action(jouleSeconds);
+    public static Action FromJouleSeconds(double jouleSeconds) => new(jouleSeconds);
     public double ToJouleSeconds() => jouleSeconds;
-    public static Action FromErgSeconds(double ergSeconds) => new Action(ergSeconds * (1e-7));
+    public static Action FromErgSeconds(double ergSeconds) => new(ergSeconds * (1e-7));
     public double ToErgSeconds() => jouleSeconds / (1e-7);
-    public static Action FromPlanckConstants(double planckConstants) => new Action(planckConstants * (6.62607015e-34));
+    public static Action FromPlanckConstants(double planckConstants) => new(planckConstants * (6.62607015e-34));
     public double ToPlanckConstants() => jouleSeconds / (6.62607015e-34);
 
     // Composite relationships

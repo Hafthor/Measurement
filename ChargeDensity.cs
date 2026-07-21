@@ -6,12 +6,12 @@ public class ChargeDensity {
     private ChargeDensity(double coulombsPerCubicMeter) => this.coulombsPerCubicMeter = coulombsPerCubicMeter;
 
     // Arithmetic
-    public static ChargeDensity operator +(ChargeDensity a, ChargeDensity b) => new ChargeDensity(a.coulombsPerCubicMeter + b.coulombsPerCubicMeter);
-    public static ChargeDensity operator -(ChargeDensity a, ChargeDensity b) => new ChargeDensity(a.coulombsPerCubicMeter - b.coulombsPerCubicMeter);
-    public static ChargeDensity operator -(ChargeDensity x) => new ChargeDensity(-x.coulombsPerCubicMeter);
+    public static ChargeDensity operator +(ChargeDensity a, ChargeDensity b) => new(a.coulombsPerCubicMeter + b.coulombsPerCubicMeter);
+    public static ChargeDensity operator -(ChargeDensity a, ChargeDensity b) => new(a.coulombsPerCubicMeter - b.coulombsPerCubicMeter);
+    public static ChargeDensity operator -(ChargeDensity x) => new(-x.coulombsPerCubicMeter);
 
     // Units
-    public static ChargeDensity FromCoulombsPerCubicMeter(double coulombsPerCubicMeter) => new ChargeDensity(coulombsPerCubicMeter);
+    public static ChargeDensity FromCoulombsPerCubicMeter(double coulombsPerCubicMeter) => new(coulombsPerCubicMeter);
     public double ToCoulombsPerCubicMeter() => coulombsPerCubicMeter;
 
     // Composite relationships

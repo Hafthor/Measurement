@@ -6,16 +6,16 @@ public class SpecificHeatCapacity {
     private SpecificHeatCapacity(double joulesPerKilogramKelvin) => this.joulesPerKilogramKelvin = joulesPerKilogramKelvin;
 
     // Arithmetic
-    public static SpecificHeatCapacity operator +(SpecificHeatCapacity a, SpecificHeatCapacity b) => new SpecificHeatCapacity(a.joulesPerKilogramKelvin + b.joulesPerKilogramKelvin);
-    public static SpecificHeatCapacity operator -(SpecificHeatCapacity a, SpecificHeatCapacity b) => new SpecificHeatCapacity(a.joulesPerKilogramKelvin - b.joulesPerKilogramKelvin);
-    public static SpecificHeatCapacity operator -(SpecificHeatCapacity x) => new SpecificHeatCapacity(-x.joulesPerKilogramKelvin);
+    public static SpecificHeatCapacity operator +(SpecificHeatCapacity a, SpecificHeatCapacity b) => new(a.joulesPerKilogramKelvin + b.joulesPerKilogramKelvin);
+    public static SpecificHeatCapacity operator -(SpecificHeatCapacity a, SpecificHeatCapacity b) => new(a.joulesPerKilogramKelvin - b.joulesPerKilogramKelvin);
+    public static SpecificHeatCapacity operator -(SpecificHeatCapacity x) => new(-x.joulesPerKilogramKelvin);
 
     // Units
-    public static SpecificHeatCapacity FromJoulesPerKilogramKelvin(double joulesPerKilogramKelvin) => new SpecificHeatCapacity(joulesPerKilogramKelvin);
+    public static SpecificHeatCapacity FromJoulesPerKilogramKelvin(double joulesPerKilogramKelvin) => new(joulesPerKilogramKelvin);
     public double ToJoulesPerKilogramKelvin() => joulesPerKilogramKelvin;
-    public static SpecificHeatCapacity FromKilojoulesPerKilogramKelvin(double kilojoulesPerKilogramKelvin) => new SpecificHeatCapacity(kilojoulesPerKilogramKelvin * (1e3));
+    public static SpecificHeatCapacity FromKilojoulesPerKilogramKelvin(double kilojoulesPerKilogramKelvin) => new(kilojoulesPerKilogramKelvin * (1e3));
     public double ToKilojoulesPerKilogramKelvin() => joulesPerKilogramKelvin / (1e3);
-    public static SpecificHeatCapacity FromCaloriesPerGramKelvin(double caloriesPerGramKelvin) => new SpecificHeatCapacity(caloriesPerGramKelvin * (4184));
+    public static SpecificHeatCapacity FromCaloriesPerGramKelvin(double caloriesPerGramKelvin) => new(caloriesPerGramKelvin * (4184));
     public double ToCaloriesPerGramKelvin() => joulesPerKilogramKelvin / (4184);
 
     // Composite relationships

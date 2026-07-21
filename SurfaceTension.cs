@@ -6,16 +6,16 @@ public class SurfaceTension {
     private SurfaceTension(double newtonsPerMeter) => this.newtonsPerMeter = newtonsPerMeter;
 
     // Arithmetic
-    public static SurfaceTension operator +(SurfaceTension a, SurfaceTension b) => new SurfaceTension(a.newtonsPerMeter + b.newtonsPerMeter);
-    public static SurfaceTension operator -(SurfaceTension a, SurfaceTension b) => new SurfaceTension(a.newtonsPerMeter - b.newtonsPerMeter);
-    public static SurfaceTension operator -(SurfaceTension x) => new SurfaceTension(-x.newtonsPerMeter);
+    public static SurfaceTension operator +(SurfaceTension a, SurfaceTension b) => new(a.newtonsPerMeter + b.newtonsPerMeter);
+    public static SurfaceTension operator -(SurfaceTension a, SurfaceTension b) => new(a.newtonsPerMeter - b.newtonsPerMeter);
+    public static SurfaceTension operator -(SurfaceTension x) => new(-x.newtonsPerMeter);
 
     // Units
-    public static SurfaceTension FromNewtonsPerMeter(double newtonsPerMeter) => new SurfaceTension(newtonsPerMeter);
+    public static SurfaceTension FromNewtonsPerMeter(double newtonsPerMeter) => new(newtonsPerMeter);
     public double ToNewtonsPerMeter() => newtonsPerMeter;
-    public static SurfaceTension FromMillinewtonsPerMeter(double millinewtonsPerMeter) => new SurfaceTension(millinewtonsPerMeter * (1e-3));
+    public static SurfaceTension FromMillinewtonsPerMeter(double millinewtonsPerMeter) => new(millinewtonsPerMeter * (1e-3));
     public double ToMillinewtonsPerMeter() => newtonsPerMeter / (1e-3);
-    public static SurfaceTension FromDynesPerCentimeter(double dynesPerCentimeter) => new SurfaceTension(dynesPerCentimeter * (1e-3));
+    public static SurfaceTension FromDynesPerCentimeter(double dynesPerCentimeter) => new(dynesPerCentimeter * (1e-3));
     public double ToDynesPerCentimeter() => newtonsPerMeter / (1e-3);
 
     // Composite relationships

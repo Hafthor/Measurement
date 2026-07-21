@@ -6,16 +6,16 @@ public class HeatCapacity {
     private HeatCapacity(double joulesPerKelvin) => this.joulesPerKelvin = joulesPerKelvin;
 
     // Arithmetic
-    public static HeatCapacity operator +(HeatCapacity a, HeatCapacity b) => new HeatCapacity(a.joulesPerKelvin + b.joulesPerKelvin);
-    public static HeatCapacity operator -(HeatCapacity a, HeatCapacity b) => new HeatCapacity(a.joulesPerKelvin - b.joulesPerKelvin);
-    public static HeatCapacity operator -(HeatCapacity x) => new HeatCapacity(-x.joulesPerKelvin);
+    public static HeatCapacity operator +(HeatCapacity a, HeatCapacity b) => new(a.joulesPerKelvin + b.joulesPerKelvin);
+    public static HeatCapacity operator -(HeatCapacity a, HeatCapacity b) => new(a.joulesPerKelvin - b.joulesPerKelvin);
+    public static HeatCapacity operator -(HeatCapacity x) => new(-x.joulesPerKelvin);
 
     // Units
-    public static HeatCapacity FromJoulesPerKelvin(double joulesPerKelvin) => new HeatCapacity(joulesPerKelvin);
+    public static HeatCapacity FromJoulesPerKelvin(double joulesPerKelvin) => new(joulesPerKelvin);
     public double ToJoulesPerKelvin() => joulesPerKelvin;
-    public static HeatCapacity FromKilojoulesPerKelvin(double kilojoulesPerKelvin) => new HeatCapacity(kilojoulesPerKelvin * (1e3));
+    public static HeatCapacity FromKilojoulesPerKelvin(double kilojoulesPerKelvin) => new(kilojoulesPerKelvin * (1e3));
     public double ToKilojoulesPerKelvin() => joulesPerKelvin / (1e3);
-    public static HeatCapacity FromCaloriesPerKelvin(double caloriesPerKelvin) => new HeatCapacity(caloriesPerKelvin * (4.184));
+    public static HeatCapacity FromCaloriesPerKelvin(double caloriesPerKelvin) => new(caloriesPerKelvin * (4.184));
     public double ToCaloriesPerKelvin() => joulesPerKelvin / (4.184);
 
     // Composite relationships

@@ -6,18 +6,18 @@ public class Luminance {
     private Luminance(double candelasPerSquareMeter) => this.candelasPerSquareMeter = candelasPerSquareMeter;
 
     // Arithmetic
-    public static Luminance operator +(Luminance a, Luminance b) => new Luminance(a.candelasPerSquareMeter + b.candelasPerSquareMeter);
-    public static Luminance operator -(Luminance a, Luminance b) => new Luminance(a.candelasPerSquareMeter - b.candelasPerSquareMeter);
-    public static Luminance operator -(Luminance x) => new Luminance(-x.candelasPerSquareMeter);
+    public static Luminance operator +(Luminance a, Luminance b) => new(a.candelasPerSquareMeter + b.candelasPerSquareMeter);
+    public static Luminance operator -(Luminance a, Luminance b) => new(a.candelasPerSquareMeter - b.candelasPerSquareMeter);
+    public static Luminance operator -(Luminance x) => new(-x.candelasPerSquareMeter);
 
     // Units
-    public static Luminance FromCandelasPerSquareMeter(double candelasPerSquareMeter) => new Luminance(candelasPerSquareMeter);
+    public static Luminance FromCandelasPerSquareMeter(double candelasPerSquareMeter) => new(candelasPerSquareMeter);
     public double ToCandelasPerSquareMeter() => candelasPerSquareMeter;
-    public static Luminance FromNits(double nits) => new Luminance(nits);
+    public static Luminance FromNits(double nits) => new(nits);
     public double ToNits() => candelasPerSquareMeter;
-    public static Luminance FromStilbs(double stilbs) => new Luminance(stilbs * (1e4));
+    public static Luminance FromStilbs(double stilbs) => new(stilbs * (1e4));
     public double ToStilbs() => candelasPerSquareMeter / (1e4);
-    public static Luminance FromFootLamberts(double footLamberts) => new Luminance(footLamberts * (3.4262590996));
+    public static Luminance FromFootLamberts(double footLamberts) => new(footLamberts * (3.4262590996));
     public double ToFootLamberts() => candelasPerSquareMeter / (3.4262590996);
 
     // Composite relationships

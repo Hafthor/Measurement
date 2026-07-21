@@ -6,14 +6,14 @@ public class ReactionRate {
     private ReactionRate(double molesPerCubicMeterSecond) => this.molesPerCubicMeterSecond = molesPerCubicMeterSecond;
 
     // Arithmetic
-    public static ReactionRate operator +(ReactionRate a, ReactionRate b) => new ReactionRate(a.molesPerCubicMeterSecond + b.molesPerCubicMeterSecond);
-    public static ReactionRate operator -(ReactionRate a, ReactionRate b) => new ReactionRate(a.molesPerCubicMeterSecond - b.molesPerCubicMeterSecond);
-    public static ReactionRate operator -(ReactionRate x) => new ReactionRate(-x.molesPerCubicMeterSecond);
+    public static ReactionRate operator +(ReactionRate a, ReactionRate b) => new(a.molesPerCubicMeterSecond + b.molesPerCubicMeterSecond);
+    public static ReactionRate operator -(ReactionRate a, ReactionRate b) => new(a.molesPerCubicMeterSecond - b.molesPerCubicMeterSecond);
+    public static ReactionRate operator -(ReactionRate x) => new(-x.molesPerCubicMeterSecond);
 
     // Units
-    public static ReactionRate FromMolesPerCubicMeterSecond(double molesPerCubicMeterSecond) => new ReactionRate(molesPerCubicMeterSecond);
+    public static ReactionRate FromMolesPerCubicMeterSecond(double molesPerCubicMeterSecond) => new(molesPerCubicMeterSecond);
     public double ToMolesPerCubicMeterSecond() => molesPerCubicMeterSecond;
-    public static ReactionRate FromMolesPerLiterSecond(double molesPerLiterSecond) => new ReactionRate(molesPerLiterSecond * (1000));
+    public static ReactionRate FromMolesPerLiterSecond(double molesPerLiterSecond) => new(molesPerLiterSecond * (1000));
     public double ToMolesPerLiterSecond() => molesPerCubicMeterSecond / (1000);
 
     // Composite relationships

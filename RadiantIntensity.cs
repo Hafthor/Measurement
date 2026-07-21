@@ -6,12 +6,12 @@ public class RadiantIntensity {
     private RadiantIntensity(double wattsPerSteradian) => this.wattsPerSteradian = wattsPerSteradian;
 
     // Arithmetic
-    public static RadiantIntensity operator +(RadiantIntensity a, RadiantIntensity b) => new RadiantIntensity(a.wattsPerSteradian + b.wattsPerSteradian);
-    public static RadiantIntensity operator -(RadiantIntensity a, RadiantIntensity b) => new RadiantIntensity(a.wattsPerSteradian - b.wattsPerSteradian);
-    public static RadiantIntensity operator -(RadiantIntensity x) => new RadiantIntensity(-x.wattsPerSteradian);
+    public static RadiantIntensity operator +(RadiantIntensity a, RadiantIntensity b) => new(a.wattsPerSteradian + b.wattsPerSteradian);
+    public static RadiantIntensity operator -(RadiantIntensity a, RadiantIntensity b) => new(a.wattsPerSteradian - b.wattsPerSteradian);
+    public static RadiantIntensity operator -(RadiantIntensity x) => new(-x.wattsPerSteradian);
 
     // Units
-    public static RadiantIntensity FromWattsPerSteradian(double wattsPerSteradian) => new RadiantIntensity(wattsPerSteradian);
+    public static RadiantIntensity FromWattsPerSteradian(double wattsPerSteradian) => new(wattsPerSteradian);
     public double ToWattsPerSteradian() => wattsPerSteradian;
 
     // Composite relationships

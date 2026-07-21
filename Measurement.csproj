@@ -24,6 +24,10 @@
       <NoWarn>$(NoWarn);CS1591</NoWarn>
     </PropertyGroup>
 
+    <ItemGroup>
+        <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
     <ItemGroup Condition="'$(IncludeTests)' != 'true'">
         <Compile Remove="**/*Tests.cs" />
         <Compile Remove="MSTestSettings.cs" />

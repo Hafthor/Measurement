@@ -6,14 +6,14 @@ public class Exposure {
     private Exposure(double coulombsPerKilogram) => this.coulombsPerKilogram = coulombsPerKilogram;
 
     // Arithmetic
-    public static Exposure operator +(Exposure a, Exposure b) => new Exposure(a.coulombsPerKilogram + b.coulombsPerKilogram);
-    public static Exposure operator -(Exposure a, Exposure b) => new Exposure(a.coulombsPerKilogram - b.coulombsPerKilogram);
-    public static Exposure operator -(Exposure x) => new Exposure(-x.coulombsPerKilogram);
+    public static Exposure operator +(Exposure a, Exposure b) => new(a.coulombsPerKilogram + b.coulombsPerKilogram);
+    public static Exposure operator -(Exposure a, Exposure b) => new(a.coulombsPerKilogram - b.coulombsPerKilogram);
+    public static Exposure operator -(Exposure x) => new(-x.coulombsPerKilogram);
 
     // Units
-    public static Exposure FromCoulombsPerKilogram(double coulombsPerKilogram) => new Exposure(coulombsPerKilogram);
+    public static Exposure FromCoulombsPerKilogram(double coulombsPerKilogram) => new(coulombsPerKilogram);
     public double ToCoulombsPerKilogram() => coulombsPerKilogram;
-    public static Exposure FromRoentgens(double roentgens) => new Exposure(roentgens * (2.58e-4));
+    public static Exposure FromRoentgens(double roentgens) => new(roentgens * (2.58e-4));
     public double ToRoentgens() => coulombsPerKilogram / (2.58e-4);
 
     // Composite relationships

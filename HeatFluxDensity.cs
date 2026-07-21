@@ -6,16 +6,16 @@ public class HeatFluxDensity {
     private HeatFluxDensity(double wattsPerSquareMeter) => this.wattsPerSquareMeter = wattsPerSquareMeter;
 
     // Arithmetic
-    public static HeatFluxDensity operator +(HeatFluxDensity a, HeatFluxDensity b) => new HeatFluxDensity(a.wattsPerSquareMeter + b.wattsPerSquareMeter);
-    public static HeatFluxDensity operator -(HeatFluxDensity a, HeatFluxDensity b) => new HeatFluxDensity(a.wattsPerSquareMeter - b.wattsPerSquareMeter);
-    public static HeatFluxDensity operator -(HeatFluxDensity x) => new HeatFluxDensity(-x.wattsPerSquareMeter);
+    public static HeatFluxDensity operator +(HeatFluxDensity a, HeatFluxDensity b) => new(a.wattsPerSquareMeter + b.wattsPerSquareMeter);
+    public static HeatFluxDensity operator -(HeatFluxDensity a, HeatFluxDensity b) => new(a.wattsPerSquareMeter - b.wattsPerSquareMeter);
+    public static HeatFluxDensity operator -(HeatFluxDensity x) => new(-x.wattsPerSquareMeter);
 
     // Units
-    public static HeatFluxDensity FromWattsPerSquareMeter(double wattsPerSquareMeter) => new HeatFluxDensity(wattsPerSquareMeter);
+    public static HeatFluxDensity FromWattsPerSquareMeter(double wattsPerSquareMeter) => new(wattsPerSquareMeter);
     public double ToWattsPerSquareMeter() => wattsPerSquareMeter;
-    public static HeatFluxDensity FromMilliwattsPerSquareMeter(double milliwattsPerSquareMeter) => new HeatFluxDensity(milliwattsPerSquareMeter * (1e-3));
+    public static HeatFluxDensity FromMilliwattsPerSquareMeter(double milliwattsPerSquareMeter) => new(milliwattsPerSquareMeter * (1e-3));
     public double ToMilliwattsPerSquareMeter() => wattsPerSquareMeter / (1e-3);
-    public static HeatFluxDensity FromWattsPerSquareCentimeter(double wattsPerSquareCentimeter) => new HeatFluxDensity(wattsPerSquareCentimeter * (1e4));
+    public static HeatFluxDensity FromWattsPerSquareCentimeter(double wattsPerSquareCentimeter) => new(wattsPerSquareCentimeter * (1e4));
     public double ToWattsPerSquareCentimeter() => wattsPerSquareMeter / (1e4);
 
     // Composite relationships

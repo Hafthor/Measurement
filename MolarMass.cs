@@ -6,14 +6,14 @@ public class MolarMass {
     private MolarMass(double kilogramsPerMole) => this.kilogramsPerMole = kilogramsPerMole;
 
     // Arithmetic
-    public static MolarMass operator +(MolarMass a, MolarMass b) => new MolarMass(a.kilogramsPerMole + b.kilogramsPerMole);
-    public static MolarMass operator -(MolarMass a, MolarMass b) => new MolarMass(a.kilogramsPerMole - b.kilogramsPerMole);
-    public static MolarMass operator -(MolarMass x) => new MolarMass(-x.kilogramsPerMole);
+    public static MolarMass operator +(MolarMass a, MolarMass b) => new(a.kilogramsPerMole + b.kilogramsPerMole);
+    public static MolarMass operator -(MolarMass a, MolarMass b) => new(a.kilogramsPerMole - b.kilogramsPerMole);
+    public static MolarMass operator -(MolarMass x) => new(-x.kilogramsPerMole);
 
     // Units
-    public static MolarMass FromKilogramsPerMole(double kilogramsPerMole) => new MolarMass(kilogramsPerMole);
+    public static MolarMass FromKilogramsPerMole(double kilogramsPerMole) => new(kilogramsPerMole);
     public double ToKilogramsPerMole() => kilogramsPerMole;
-    public static MolarMass FromGramsPerMole(double gramsPerMole) => new MolarMass(gramsPerMole * (1e-3));
+    public static MolarMass FromGramsPerMole(double gramsPerMole) => new(gramsPerMole * (1e-3));
     public double ToGramsPerMole() => kilogramsPerMole / (1e-3);
 
     // Composite relationships

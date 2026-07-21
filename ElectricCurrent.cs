@@ -6,28 +6,28 @@ public class ElectricCurrent {
     private ElectricCurrent(double amperes) => this.amperes = amperes;
 
     // Arithmetic
-    public static ElectricCurrent operator +(ElectricCurrent a, ElectricCurrent b) => new ElectricCurrent(a.amperes + b.amperes);
-    public static ElectricCurrent operator -(ElectricCurrent a, ElectricCurrent b) => new ElectricCurrent(a.amperes - b.amperes);
-    public static ElectricCurrent operator -(ElectricCurrent x) => new ElectricCurrent(-x.amperes);
+    public static ElectricCurrent operator +(ElectricCurrent a, ElectricCurrent b) => new(a.amperes + b.amperes);
+    public static ElectricCurrent operator -(ElectricCurrent a, ElectricCurrent b) => new(a.amperes - b.amperes);
+    public static ElectricCurrent operator -(ElectricCurrent x) => new(-x.amperes);
 
     // SI units
-    public static ElectricCurrent FromKiloamperes(double kiloamperes) => new ElectricCurrent(kiloamperes * 1e3);
+    public static ElectricCurrent FromKiloamperes(double kiloamperes) => new(kiloamperes * 1e3);
     public double ToKiloamperes() => amperes / 1e3;
-    public static ElectricCurrent FromAmperes(double amperes) => new ElectricCurrent(amperes);
+    public static ElectricCurrent FromAmperes(double amperes) => new(amperes);
     public double ToAmperes() => amperes;
-    public static ElectricCurrent FromMilliamperes(double milliamperes) => new ElectricCurrent(milliamperes * 1e-3);
+    public static ElectricCurrent FromMilliamperes(double milliamperes) => new(milliamperes * 1e-3);
     public double ToMilliamperes() => amperes / 1e-3;
-    public static ElectricCurrent FromMicroamperes(double microamperes) => new ElectricCurrent(microamperes * 1e-6);
+    public static ElectricCurrent FromMicroamperes(double microamperes) => new(microamperes * 1e-6);
     public double ToMicroamperes() => amperes / 1e-6;
-    public static ElectricCurrent FromNanoamperes(double nanoamperes) => new ElectricCurrent(nanoamperes * 1e-9);
+    public static ElectricCurrent FromNanoamperes(double nanoamperes) => new(nanoamperes * 1e-9);
     public double ToNanoamperes() => amperes / 1e-9;
-    public static ElectricCurrent FromPicoamperes(double picoamperes) => new ElectricCurrent(picoamperes * 1e-12);
+    public static ElectricCurrent FromPicoamperes(double picoamperes) => new(picoamperes * 1e-12);
     public double ToPicoamperes() => amperes / 1e-12;
 
     // Electromagnetic (CGS) units
-    public static ElectricCurrent FromAbamperes(double abamperes) => new ElectricCurrent(abamperes * 10);
+    public static ElectricCurrent FromAbamperes(double abamperes) => new(abamperes * 10);
     public double ToAbamperes() => amperes / 10;
-    public static ElectricCurrent FromStatamperes(double statamperes) => new ElectricCurrent(statamperes * 3.335641e-10);
+    public static ElectricCurrent FromStatamperes(double statamperes) => new(statamperes * 3.335641e-10);
     public double ToStatamperes() => amperes / 3.335641e-10;
 
     // Composite relationships
