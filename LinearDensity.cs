@@ -1,0 +1,28 @@
+namespace com.hafthor.Measurement;
+
+public class LinearDensity {
+    private readonly double kilogramsPerMeter;
+
+    private LinearDensity(double kilogramsPerMeter) => this.kilogramsPerMeter = kilogramsPerMeter;
+
+    // Arithmetic
+    public static LinearDensity operator +(LinearDensity a, LinearDensity b) => new LinearDensity(a.kilogramsPerMeter + b.kilogramsPerMeter);
+    public static LinearDensity operator -(LinearDensity a, LinearDensity b) => new LinearDensity(a.kilogramsPerMeter - b.kilogramsPerMeter);
+    public static LinearDensity operator -(LinearDensity x) => new LinearDensity(-x.kilogramsPerMeter);
+
+    // Units
+    public static LinearDensity FromKilogramsPerMeter(double kilogramsPerMeter) => new LinearDensity(kilogramsPerMeter);
+    public double ToKilogramsPerMeter() => kilogramsPerMeter;
+    public static LinearDensity FromGramsPerMeter(double gramsPerMeter) => new LinearDensity(gramsPerMeter * (1e-3));
+    public double ToGramsPerMeter() => kilogramsPerMeter / (1e-3);
+    public static LinearDensity FromGramsPerCentimeter(double gramsPerCentimeter) => new LinearDensity(gramsPerCentimeter * (0.1));
+    public double ToGramsPerCentimeter() => kilogramsPerMeter / (0.1);
+    public static LinearDensity FromTex(double tex) => new LinearDensity(tex * (1e-6));
+    public double ToTex() => kilogramsPerMeter / (1e-6);
+    public static LinearDensity FromDenier(double denier) => new LinearDensity(denier * (1.1111111111111e-7));
+    public double ToDenier() => kilogramsPerMeter / (1.1111111111111e-7);
+
+    // Composite relationships
+    public static Mass operator *(LinearDensity linearDensity, Length length) => Mass.FromKilograms(linearDensity.ToKilogramsPerMeter() * length.ToMeters());
+    public static Mass operator *(Length length, LinearDensity linearDensity) => Mass.FromKilograms(length.ToMeters() * linearDensity.ToKilogramsPerMeter());
+}

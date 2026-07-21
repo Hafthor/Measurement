@@ -1,0 +1,37 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <LangVersion>latest</LangVersion>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>disable</Nullable>
+        <RootNamespace>com.hafthor.Measurement</RootNamespace>
+
+        <!-- Include tests by default; pass -p:IncludeTests=false to produce a clean library/package -->
+        <IncludeTests Condition="'$(IncludeTests)' == ''">true</IncludeTests>
+        <IsPackable Condition="'$(IncludeTests)' == 'true'">false</IsPackable>
+
+      <PackageId>Measurement</PackageId>
+      <Version>1.0.0</Version>
+      <Authors>Hafthor Stefansson</Authors>
+      <Description>A library of strongly-typed measurement classes.</Description>
+      <PackageLicenseExpression>MIT</PackageLicenseExpression>
+      <PackageReadmeFile>README.md</PackageReadmeFile>
+      <RepositoryUrl>https://github.com/Hafthor/Measurement</RepositoryUrl>
+      <PackageProjectUrl>https://github.com/Hafthor/Measurement</PackageProjectUrl>
+      <PackageTags>measurements;units;length;mass;temperature;SI;imperial</PackageTags>
+      <GenerateDocumentationFile>false</GenerateDocumentationFile>
+      <NoWarn>$(NoWarn);CS1591</NoWarn>
+    </PropertyGroup>
+
+    <ItemGroup Condition="'$(IncludeTests)' != 'true'">
+        <Compile Remove="**/*Tests.cs" />
+        <Compile Remove="MSTestSettings.cs" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(IncludeTests)' == 'true'">
+        <PackageReference Include="MSTest" Version="4.0.2"/>
+        <Using Include="Microsoft.VisualStudio.TestTools.UnitTesting"/>
+    </ItemGroup>
+
+</Project>
