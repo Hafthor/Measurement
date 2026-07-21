@@ -21,4 +21,7 @@ public class CatalyticConcentration {
     public static CatalyticActivity operator *(Volume volume, CatalyticConcentration catalyticConcentration) => CatalyticActivity.FromKatals(volume.ToCubicMeters() * catalyticConcentration.ToKatalsPerCubicMeter());
 
     public override string ToString() => $"{katalsPerCubicMeter} kat/m³";
+
+    public override bool Equals(object obj) => obj is CatalyticConcentration other && other.katalsPerCubicMeter == katalsPerCubicMeter;
+    public override int GetHashCode() => katalsPerCubicMeter.GetHashCode();
 }

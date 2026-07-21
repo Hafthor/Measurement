@@ -19,4 +19,7 @@ public class RadiantIntensity {
     public static Power operator *(SolidAngle solidAngle, RadiantIntensity radiantIntensity) => Power.FromWatts(solidAngle.ToSteradians() * radiantIntensity.ToWattsPerSteradian());
 
     public override string ToString() => $"{wattsPerSteradian} W/sr";
+
+    public override bool Equals(object obj) => obj is RadiantIntensity other && other.wattsPerSteradian == wattsPerSteradian;
+    public override int GetHashCode() => wattsPerSteradian.GetHashCode();
 }

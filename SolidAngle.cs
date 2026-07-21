@@ -21,4 +21,7 @@ public class SolidAngle {
     public static LuminousFlux operator *(SolidAngle solidAngle, LuminousIntensity intensity) => LuminousFlux.FromLumens(solidAngle.steradians * intensity.ToCandelas());
 
     public override string ToString() => $"{steradians} sr";
+
+    public override bool Equals(object obj) => obj is SolidAngle other && other.steradians == steradians;
+    public override int GetHashCode() => steradians.GetHashCode();
 }

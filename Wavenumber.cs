@@ -21,4 +21,7 @@ public class Wavenumber {
     public Length ToWavelength() => Length.FromMeters(1 / perMeter);
 
     public override string ToString() => $"{perMeter} m⁻¹";
+
+    public override bool Equals(object obj) => obj is Wavenumber other && other.perMeter == perMeter;
+    public override int GetHashCode() => perMeter.GetHashCode();
 }

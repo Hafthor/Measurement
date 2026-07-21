@@ -25,4 +25,7 @@ public class Luminance {
     public static LuminousIntensity operator *(Area area, Luminance luminance) => LuminousIntensity.FromCandelas(area.ToSquareMeters() * luminance.ToCandelasPerSquareMeter());
 
     public override string ToString() => $"{candelasPerSquareMeter} cd/m²";
+
+    public override bool Equals(object obj) => obj is Luminance other && other.candelasPerSquareMeter == candelasPerSquareMeter;
+    public override int GetHashCode() => candelasPerSquareMeter.GetHashCode();
 }

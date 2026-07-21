@@ -19,4 +19,7 @@ public class ThermalConductivity {
     public double ToBtuPerHourFootFahrenheit() => wattsPerMeterKelvin / (1.730734666);
 
     public override string ToString() => $"{wattsPerMeterKelvin} W/(m·K)";
+
+    public override bool Equals(object obj) => obj is ThermalConductivity other && other.wattsPerMeterKelvin == wattsPerMeterKelvin;
+    public override int GetHashCode() => wattsPerMeterKelvin.GetHashCode();
 }

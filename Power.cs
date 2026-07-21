@@ -46,4 +46,7 @@ public class Power {
     public static RadiantIntensity operator /(Power power, SolidAngle solidAngle) => RadiantIntensity.FromWattsPerSteradian(power.ToWatts() / solidAngle.ToSteradians());
 
     public override string ToString() => $"{watts} W";
+
+    public override bool Equals(object obj) => obj is Power other && other.watts == watts;
+    public override int GetHashCode() => watts.GetHashCode();
 }

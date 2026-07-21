@@ -26,4 +26,7 @@ public class LuminousFlux {
     public static LuminousEnergy operator *(LuminousFlux luminousFlux, Duration duration) => LuminousEnergy.FromLumenSeconds(luminousFlux.ToLumens() * duration.ToSeconds());
 
     public override string ToString() => $"{lumens} lm";
+
+    public override bool Equals(object obj) => obj is LuminousFlux other && other.lumens == lumens;
+    public override int GetHashCode() => lumens.GetHashCode();
 }

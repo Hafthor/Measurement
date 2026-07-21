@@ -21,4 +21,7 @@ public class LuminousExposure {
     public static Duration operator /(LuminousExposure luminousExposure, Illuminance illuminance) => Duration.FromSeconds(luminousExposure.ToLuxSeconds() / illuminance.ToLux());
 
     public override string ToString() => $"{luxSeconds} lx·s";
+
+    public override bool Equals(object obj) => obj is LuminousExposure other && other.luxSeconds == luxSeconds;
+    public override int GetHashCode() => luxSeconds.GetHashCode();
 }

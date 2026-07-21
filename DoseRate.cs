@@ -23,4 +23,7 @@ public class DoseRate {
     public static AbsorbedDose operator *(Duration duration, DoseRate doseRate) => AbsorbedDose.FromGrays(duration.ToSeconds() * doseRate.ToGraysPerSecond());
 
     public override string ToString() => $"{graysPerSecond} Gy/s";
+
+    public override bool Equals(object obj) => obj is DoseRate other && other.graysPerSecond == graysPerSecond;
+    public override int GetHashCode() => graysPerSecond.GetHashCode();
 }

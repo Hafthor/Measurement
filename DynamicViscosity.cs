@@ -25,4 +25,7 @@ public class DynamicViscosity {
     public static Duration operator /(DynamicViscosity dynamicViscosity, Pressure pressure) => Duration.FromSeconds(dynamicViscosity.ToPascalSeconds() / pressure.ToPascals());
 
     public override string ToString() => $"{pascalSeconds} Pa·s";
+
+    public override bool Equals(object obj) => obj is DynamicViscosity other && other.pascalSeconds == pascalSeconds;
+    public override int GetHashCode() => pascalSeconds.GetHashCode();
 }

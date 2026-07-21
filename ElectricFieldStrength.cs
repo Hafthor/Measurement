@@ -23,4 +23,7 @@ public class ElectricFieldStrength {
     public static Voltage operator *(Length length, ElectricFieldStrength electricFieldStrength) => Voltage.FromVolts(length.ToMeters() * electricFieldStrength.ToVoltsPerMeter());
 
     public override string ToString() => $"{voltsPerMeter} V/m";
+
+    public override bool Equals(object obj) => obj is ElectricFieldStrength other && other.voltsPerMeter == voltsPerMeter;
+    public override int GetHashCode() => voltsPerMeter.GetHashCode();
 }

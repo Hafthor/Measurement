@@ -23,4 +23,7 @@ public class KinematicViscosity {
     public static Area operator *(Duration duration, KinematicViscosity kinematicViscosity) => Area.FromSquareMeters(duration.ToSeconds() * kinematicViscosity.ToSquareMetersPerSecond());
 
     public override string ToString() => $"{squareMetersPerSecond} m²/s";
+
+    public override bool Equals(object obj) => obj is KinematicViscosity other && other.squareMetersPerSecond == squareMetersPerSecond;
+    public override int GetHashCode() => squareMetersPerSecond.GetHashCode();
 }

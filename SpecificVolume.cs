@@ -23,4 +23,7 @@ public class SpecificVolume {
     public static Volume operator *(Mass mass, SpecificVolume specificVolume) => Volume.FromCubicMeters(mass.ToKilograms() * specificVolume.ToCubicMetersPerKilogram());
 
     public override string ToString() => $"{cubicMetersPerKilogram} m³/kg";
+
+    public override bool Equals(object obj) => obj is SpecificVolume other && other.cubicMetersPerKilogram == cubicMetersPerKilogram;
+    public override int GetHashCode() => cubicMetersPerKilogram.GetHashCode();
 }

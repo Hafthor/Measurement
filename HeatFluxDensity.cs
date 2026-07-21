@@ -23,4 +23,7 @@ public class HeatFluxDensity {
     public static Power operator *(Area area, HeatFluxDensity heatFluxDensity) => Power.FromWatts(area.ToSquareMeters() * heatFluxDensity.ToWattsPerSquareMeter());
 
     public override string ToString() => $"{wattsPerSquareMeter} W/m²";
+
+    public override bool Equals(object obj) => obj is HeatFluxDensity other && other.wattsPerSquareMeter == wattsPerSquareMeter;
+    public override int GetHashCode() => wattsPerSquareMeter.GetHashCode();
 }

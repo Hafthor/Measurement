@@ -45,4 +45,7 @@ public class Speed {
     public static Length operator /(Speed speed, Frequency frequency) => Length.FromMeters(speed.ToMetersPerSecond() / frequency.ToHertz());
 
     public override string ToString() => $"{metersPerSecond} m/s";
+
+    public override bool Equals(object obj) => obj is Speed other && other.metersPerSecond == metersPerSecond;
+    public override int GetHashCode() => metersPerSecond.GetHashCode();
 }

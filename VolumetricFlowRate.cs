@@ -27,4 +27,7 @@ public class VolumetricFlowRate {
     public static Volume operator *(Duration duration, VolumetricFlowRate volumetricFlowRate) => Volume.FromCubicMeters(duration.ToSeconds() * volumetricFlowRate.ToCubicMetersPerSecond());
 
     public override string ToString() => $"{cubicMetersPerSecond} m³/s";
+
+    public override bool Equals(object obj) => obj is VolumetricFlowRate other && other.cubicMetersPerSecond == cubicMetersPerSecond;
+    public override int GetHashCode() => cubicMetersPerSecond.GetHashCode();
 }

@@ -21,4 +21,7 @@ public class Molality {
     public static Quantity operator *(Mass mass, Molality molality) => Quantity.FromMoles(mass.ToKilograms() * molality.ToMolesPerKilogram());
 
     public override string ToString() => $"{molesPerKilogram} mol/kg";
+
+    public override bool Equals(object obj) => obj is Molality other && other.molesPerKilogram == molesPerKilogram;
+    public override int GetHashCode() => molesPerKilogram.GetHashCode();
 }

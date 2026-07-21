@@ -19,4 +19,7 @@ public class Permeability {
     public static Inductance operator *(Length length, Permeability permeability) => Inductance.FromHenries(length.ToMeters() * permeability.ToHenriesPerMeter());
 
     public override string ToString() => $"{henriesPerMeter} H/m";
+
+    public override bool Equals(object obj) => obj is Permeability other && other.henriesPerMeter == henriesPerMeter;
+    public override int GetHashCode() => henriesPerMeter.GetHashCode();
 }

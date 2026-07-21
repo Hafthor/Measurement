@@ -21,4 +21,7 @@ public class MolarMass {
     public static Mass operator *(Quantity quantity, MolarMass molarMass) => Mass.FromKilograms(quantity.ToMoles() * molarMass.ToKilogramsPerMole());
 
     public override string ToString() => $"{kilogramsPerMole} kg/mol";
+
+    public override bool Equals(object obj) => obj is MolarMass other && other.kilogramsPerMole == kilogramsPerMole;
+    public override int GetHashCode() => kilogramsPerMole.GetHashCode();
 }

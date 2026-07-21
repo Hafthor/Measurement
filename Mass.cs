@@ -85,4 +85,7 @@ public class Mass {
     public static MomentOfInertia operator *(Mass mass, Area area) => MomentOfInertia.FromKilogramSquareMeters(mass.ToKilograms() * area.ToSquareMeters());
 
     public override string ToString() => $"{kilograms} kg";
+
+    public override bool Equals(object obj) => obj is Mass other && other.kilograms == kilograms;
+    public override int GetHashCode() => kilograms.GetHashCode();
 }

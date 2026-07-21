@@ -52,4 +52,7 @@ public class Pressure {
     public static Energy operator *(Pressure pressure, Volume volume) => Energy.FromJoules(pressure.ToPascals() * volume.ToCubicMeters());
 
     public override string ToString() => $"{pascals} Pa";
+
+    public override bool Equals(object obj) => obj is Pressure other && other.pascals == pascals;
+    public override int GetHashCode() => pascals.GetHashCode();
 }

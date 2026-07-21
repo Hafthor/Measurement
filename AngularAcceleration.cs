@@ -23,4 +23,7 @@ public class AngularAcceleration {
     public static AngularVelocity operator *(Duration duration, AngularAcceleration angularAcceleration) => AngularVelocity.FromRadiansPerSecond(duration.ToSeconds() * angularAcceleration.ToRadiansPerSecondSquared());
 
     public override string ToString() => $"{radiansPerSecondSquared} rad/s²";
+
+    public override bool Equals(object obj) => obj is AngularAcceleration other && other.radiansPerSecondSquared == radiansPerSecondSquared;
+    public override int GetHashCode() => radiansPerSecondSquared.GetHashCode();
 }

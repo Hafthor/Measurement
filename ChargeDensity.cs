@@ -19,4 +19,7 @@ public class ChargeDensity {
     public static ElectricCharge operator *(Volume volume, ChargeDensity chargeDensity) => ElectricCharge.FromCoulombs(volume.ToCubicMeters() * chargeDensity.ToCoulombsPerCubicMeter());
 
     public override string ToString() => $"{coulombsPerCubicMeter} C/m³";
+
+    public override bool Equals(object obj) => obj is ChargeDensity other && other.coulombsPerCubicMeter == coulombsPerCubicMeter;
+    public override int GetHashCode() => coulombsPerCubicMeter.GetHashCode();
 }

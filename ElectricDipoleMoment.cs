@@ -21,4 +21,7 @@ public class ElectricDipoleMoment {
     public static Length operator /(ElectricDipoleMoment electricDipoleMoment, ElectricCharge electricCharge) => Length.FromMeters(electricDipoleMoment.ToCoulombMeters() / electricCharge.ToCoulombs());
 
     public override string ToString() => $"{coulombMeters} C·m";
+
+    public override bool Equals(object obj) => obj is ElectricDipoleMoment other && other.coulombMeters == coulombMeters;
+    public override int GetHashCode() => coulombMeters.GetHashCode();
 }

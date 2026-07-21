@@ -23,4 +23,7 @@ public class SurfaceTension {
     public static Force operator *(Length length, SurfaceTension surfaceTension) => Force.FromNewtons(length.ToMeters() * surfaceTension.ToNewtonsPerMeter());
 
     public override string ToString() => $"{newtonsPerMeter} N/m";
+
+    public override bool Equals(object obj) => obj is SurfaceTension other && other.newtonsPerMeter == newtonsPerMeter;
+    public override int GetHashCode() => newtonsPerMeter.GetHashCode();
 }

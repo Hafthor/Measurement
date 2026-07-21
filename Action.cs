@@ -29,4 +29,7 @@ public class Action {
     public static Momentum operator /(Action action, Length length) => Momentum.FromKilogramMetersPerSecond(action.ToJouleSeconds() / length.ToMeters());
 
     public override string ToString() => $"{jouleSeconds} J·s";
+
+    public override bool Equals(object obj) => obj is Action other && other.jouleSeconds == jouleSeconds;
+    public override int GetHashCode() => jouleSeconds.GetHashCode();
 }

@@ -21,4 +21,7 @@ public class MagneticFieldStrength {
     public static ElectricCurrent operator *(Length length, MagneticFieldStrength magneticFieldStrength) => ElectricCurrent.FromAmperes(length.ToMeters() * magneticFieldStrength.ToAmperesPerMeter());
 
     public override string ToString() => $"{amperesPerMeter} A/m";
+
+    public override bool Equals(object obj) => obj is MagneticFieldStrength other && other.amperesPerMeter == amperesPerMeter;
+    public override int GetHashCode() => amperesPerMeter.GetHashCode();
 }

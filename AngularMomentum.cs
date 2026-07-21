@@ -23,4 +23,7 @@ public class AngularMomentum {
     public static AngularVelocity operator /(AngularMomentum angularMomentum, MomentOfInertia momentOfInertia) => AngularVelocity.FromRadiansPerSecond(angularMomentum.ToKilogramSquareMetersPerSecond() / momentOfInertia.ToKilogramSquareMeters());
 
     public override string ToString() => $"{kilogramSquareMetersPerSecond} kg·m²/s";
+
+    public override bool Equals(object obj) => obj is AngularMomentum other && other.kilogramSquareMetersPerSecond == kilogramSquareMetersPerSecond;
+    public override int GetHashCode() => kilogramSquareMetersPerSecond.GetHashCode();
 }

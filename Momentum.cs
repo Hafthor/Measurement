@@ -26,4 +26,7 @@ public class Momentum {
     public static Force operator /(Momentum momentum, Duration duration) => Force.FromNewtons(momentum.ToKilogramMetersPerSecond() / duration.ToSeconds());
 
     public override string ToString() => $"{kilogramMetersPerSecond} kg·m/s";
+
+    public override bool Equals(object obj) => obj is Momentum other && other.kilogramMetersPerSecond == kilogramMetersPerSecond;
+    public override int GetHashCode() => kilogramMetersPerSecond.GetHashCode();
 }

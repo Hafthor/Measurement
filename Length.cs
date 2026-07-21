@@ -76,4 +76,7 @@ public class Length {
     public static Speed operator *(Length length, Frequency frequency) => Speed.FromMetersPerSecond(length.ToMeters() * frequency.ToHertz());
 
     public override string ToString() => $"{meters} m";
+
+    public override bool Equals(object obj) => obj is Length other && other.meters == meters;
+    public override int GetHashCode() => meters.GetHashCode();
 }

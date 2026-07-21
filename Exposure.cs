@@ -21,4 +21,7 @@ public class Exposure {
     public static ElectricCharge operator *(Mass mass, Exposure exposure) => ElectricCharge.FromCoulombs(mass.ToKilograms() * exposure.ToCoulombsPerKilogram());
 
     public override string ToString() => $"{coulombsPerKilogram} C/kg";
+
+    public override bool Equals(object obj) => obj is Exposure other && other.coulombsPerKilogram == coulombsPerKilogram;
+    public override int GetHashCode() => coulombsPerKilogram.GetHashCode();
 }

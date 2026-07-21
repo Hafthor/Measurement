@@ -21,4 +21,7 @@ public class ReactionRate {
     public static Concentration operator *(Duration duration, ReactionRate reactionRate) => Concentration.FromMolesPerCubicMeter(duration.ToSeconds() * reactionRate.ToMolesPerCubicMeterSecond());
 
     public override string ToString() => $"{molesPerCubicMeterSecond} mol/(m³·s)";
+
+    public override bool Equals(object obj) => obj is ReactionRate other && other.molesPerCubicMeterSecond == molesPerCubicMeterSecond;
+    public override int GetHashCode() => molesPerCubicMeterSecond.GetHashCode();
 }

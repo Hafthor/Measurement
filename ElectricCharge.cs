@@ -54,4 +54,7 @@ public class ElectricCharge {
     public static Energy operator *(ElectricCharge charge, Voltage voltage) => Energy.FromJoules(charge.ToCoulombs() * voltage.ToVolts());
 
     public override string ToString() => $"{coulombs} C";
+
+    public override bool Equals(object obj) => obj is ElectricCharge other && other.coulombs == coulombs;
+    public override int GetHashCode() => coulombs.GetHashCode();
 }

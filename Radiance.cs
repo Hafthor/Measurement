@@ -15,4 +15,7 @@ public class Radiance {
     public double ToWattsPerSquareMeterSteradian() => wattsPerSquareMeterSteradian;
 
     public override string ToString() => $"{wattsPerSquareMeterSteradian} W/(m²·sr)";
+
+    public override bool Equals(object obj) => obj is Radiance other && other.wattsPerSquareMeterSteradian == wattsPerSquareMeterSteradian;
+    public override int GetHashCode() => wattsPerSquareMeterSteradian.GetHashCode();
 }

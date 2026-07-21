@@ -25,4 +25,7 @@ public class EquivalentDose {
     public double ToMillirems() => sieverts / 1e-5;
 
     public override string ToString() => $"{sieverts} Sv";
+
+    public override bool Equals(object obj) => obj is EquivalentDose other && other.sieverts == sieverts;
+    public override int GetHashCode() => sieverts.GetHashCode();
 }

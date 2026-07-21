@@ -31,4 +31,7 @@ public class Radioactivity {
     public double ToRutherfords() => becquerels / 1e6;
 
     public override string ToString() => $"{becquerels} Bq";
+
+    public override bool Equals(object obj) => obj is Radioactivity other && other.becquerels == becquerels;
+    public override int GetHashCode() => becquerels.GetHashCode();
 }

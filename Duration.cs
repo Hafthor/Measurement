@@ -87,4 +87,7 @@ public class Duration {
     public static Momentum operator *(Duration duration, Force force) => Momentum.FromKilogramMetersPerSecond(duration.ToSeconds() * force.ToNewtons());
 
     public override string ToString() => $"{seconds} s";
+
+    public override bool Equals(object obj) => obj is Duration other && other.seconds == seconds;
+    public override int GetHashCode() => seconds.GetHashCode();
 }

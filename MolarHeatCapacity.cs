@@ -21,4 +21,7 @@ public class MolarHeatCapacity {
     public static HeatCapacity operator *(Quantity quantity, MolarHeatCapacity molarHeatCapacity) => HeatCapacity.FromJoulesPerKelvin(quantity.ToMoles() * molarHeatCapacity.ToJoulesPerMoleKelvin());
 
     public override string ToString() => $"{joulesPerMoleKelvin} J/(mol·K)";
+
+    public override bool Equals(object obj) => obj is MolarHeatCapacity other && other.joulesPerMoleKelvin == joulesPerMoleKelvin;
+    public override int GetHashCode() => joulesPerMoleKelvin.GetHashCode();
 }

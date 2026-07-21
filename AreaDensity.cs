@@ -21,4 +21,7 @@ public class AreaDensity {
     public static Mass operator *(Area area, AreaDensity areaDensity) => Mass.FromKilograms(area.ToSquareMeters() * areaDensity.ToKilogramsPerSquareMeter());
 
     public override string ToString() => $"{kilogramsPerSquareMeter} kg/m²";
+
+    public override bool Equals(object obj) => obj is AreaDensity other && other.kilogramsPerSquareMeter == kilogramsPerSquareMeter;
+    public override int GetHashCode() => kilogramsPerSquareMeter.GetHashCode();
 }

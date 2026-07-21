@@ -29,4 +29,7 @@ public class Angle {
     public static AngularVelocity operator /(Angle angle, Duration duration) => AngularVelocity.FromRadiansPerSecond(angle.ToRadians() / duration.ToSeconds());
 
     public override string ToString() => $"{radians} rad";
+
+    public override bool Equals(object obj) => obj is Angle other && other.radians == radians;
+    public override int GetHashCode() => radians.GetHashCode();
 }

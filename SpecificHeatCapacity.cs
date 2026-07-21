@@ -23,4 +23,7 @@ public class SpecificHeatCapacity {
     public static HeatCapacity operator *(Mass mass, SpecificHeatCapacity specificHeatCapacity) => HeatCapacity.FromJoulesPerKelvin(mass.ToKilograms() * specificHeatCapacity.ToJoulesPerKilogramKelvin());
 
     public override string ToString() => $"{joulesPerKilogramKelvin} J/(kg·K)";
+
+    public override bool Equals(object obj) => obj is SpecificHeatCapacity other && other.joulesPerKilogramKelvin == joulesPerKilogramKelvin;
+    public override int GetHashCode() => joulesPerKilogramKelvin.GetHashCode();
 }

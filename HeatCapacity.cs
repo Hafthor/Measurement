@@ -24,4 +24,7 @@ public class HeatCapacity {
     public static Energy operator *(HeatCapacity heatCapacity, Temperature temperatureChange) => Energy.FromJoules(heatCapacity.ToJoulesPerKelvin() * temperatureChange.ToKelvin());
 
     public override string ToString() => $"{joulesPerKelvin} J/K";
+
+    public override bool Equals(object obj) => obj is HeatCapacity other && other.joulesPerKelvin == joulesPerKelvin;
+    public override int GetHashCode() => joulesPerKelvin.GetHashCode();
 }

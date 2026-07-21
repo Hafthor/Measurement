@@ -68,4 +68,7 @@ public class Volume {
     public static Energy operator *(Volume volume, Pressure pressure) => Energy.FromJoules(volume.ToCubicMeters() * pressure.ToPascals());
 
     public override string ToString() => $"{cubicMeters} m³";
+
+    public override bool Equals(object obj) => obj is Volume other && other.cubicMeters == cubicMeters;
+    public override int GetHashCode() => cubicMeters.GetHashCode();
 }

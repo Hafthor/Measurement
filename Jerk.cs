@@ -23,4 +23,7 @@ public class Jerk {
     public static Acceleration operator *(Duration duration, Jerk jerk) => Acceleration.FromMetersPerSecondSquared(duration.ToSeconds() * jerk.ToMetersPerSecondCubed());
 
     public override string ToString() => $"{metersPerSecondCubed} m/s³";
+
+    public override bool Equals(object obj) => obj is Jerk other && other.metersPerSecondCubed == metersPerSecondCubed;
+    public override int GetHashCode() => metersPerSecondCubed.GetHashCode();
 }

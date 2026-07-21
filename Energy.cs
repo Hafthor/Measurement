@@ -66,4 +66,7 @@ public class Energy {
     public static Temperature operator /(Energy energy, HeatCapacity heatCapacity) => Temperature.FromKelvin(energy.joules / heatCapacity.ToJoulesPerKelvin());
 
     public override string ToString() => $"{joules} J";
+
+    public override bool Equals(object obj) => obj is Energy other && other.joules == joules;
+    public override int GetHashCode() => joules.GetHashCode();
 }

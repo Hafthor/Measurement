@@ -29,4 +29,7 @@ public class MassFlowRate {
     public static Mass operator *(Duration duration, MassFlowRate massFlowRate) => Mass.FromKilograms(duration.ToSeconds() * massFlowRate.ToKilogramsPerSecond());
 
     public override string ToString() => $"{kilogramsPerSecond} kg/s";
+
+    public override bool Equals(object obj) => obj is MassFlowRate other && other.kilogramsPerSecond == kilogramsPerSecond;
+    public override int GetHashCode() => kilogramsPerSecond.GetHashCode();
 }

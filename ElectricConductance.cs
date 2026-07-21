@@ -28,4 +28,7 @@ public class ElectricConductance {
     public static Conductivity operator /(ElectricConductance electricConductance, Length length) => Conductivity.FromSiemensPerMeter(electricConductance.ToSiemens() / length.ToMeters());
 
     public override string ToString() => $"{siemens} S";
+
+    public override bool Equals(object obj) => obj is ElectricConductance other && other.siemens == siemens;
+    public override int GetHashCode() => siemens.GetHashCode();
 }

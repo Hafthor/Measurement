@@ -36,4 +36,7 @@ public class Frequency {
     public static Speed operator *(Frequency frequency, Length length) => Speed.FromMetersPerSecond(frequency.ToHertz() * length.ToMeters());
 
     public override string ToString() => $"{hertz} Hz";
+
+    public override bool Equals(object obj) => obj is Frequency other && other.hertz == hertz;
+    public override int GetHashCode() => hertz.GetHashCode();
 }

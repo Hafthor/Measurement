@@ -19,4 +19,7 @@ public class Permittivity {
     public static Capacitance operator *(Length length, Permittivity permittivity) => Capacitance.FromFarads(length.ToMeters() * permittivity.ToFaradsPerMeter());
 
     public override string ToString() => $"{faradsPerMeter} F/m";
+
+    public override bool Equals(object obj) => obj is Permittivity other && other.faradsPerMeter == faradsPerMeter;
+    public override int GetHashCode() => faradsPerMeter.GetHashCode();
 }

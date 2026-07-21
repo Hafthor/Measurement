@@ -19,4 +19,7 @@ public class SurfaceChargeDensity {
     public static ElectricCharge operator *(Area area, SurfaceChargeDensity surfaceChargeDensity) => ElectricCharge.FromCoulombs(area.ToSquareMeters() * surfaceChargeDensity.ToCoulombsPerSquareMeter());
 
     public override string ToString() => $"{coulombsPerSquareMeter} C/m²";
+
+    public override bool Equals(object obj) => obj is SurfaceChargeDensity other && other.coulombsPerSquareMeter == coulombsPerSquareMeter;
+    public override int GetHashCode() => coulombsPerSquareMeter.GetHashCode();
 }

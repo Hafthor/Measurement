@@ -42,4 +42,7 @@ public class Voltage {
     public static Energy operator *(Voltage voltage, ElectricCharge charge) => Energy.FromJoules(voltage.ToVolts() * charge.ToCoulombs());
 
     public override string ToString() => $"{volts} V";
+
+    public override bool Equals(object obj) => obj is Voltage other && other.volts == volts;
+    public override int GetHashCode() => volts.GetHashCode();
 }

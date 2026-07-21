@@ -46,4 +46,7 @@ public class Force {
     public static Momentum operator *(Force force, Duration duration) => Momentum.FromKilogramMetersPerSecond(force.ToNewtons() * duration.ToSeconds());
 
     public override string ToString() => $"{newtons} N";
+
+    public override bool Equals(object obj) => obj is Force other && other.newtons == newtons;
+    public override int GetHashCode() => newtons.GetHashCode();
 }

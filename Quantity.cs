@@ -41,4 +41,7 @@ public class Quantity {
     public static Concentration operator /(Quantity quantity, Volume volume) => Concentration.FromMolesPerCubicMeter(quantity.ToMoles() / volume.ToCubicMeters());
 
     public override string ToString() => $"{moles} mol";
+
+    public override bool Equals(object obj) => obj is Quantity other && other.moles == moles;
+    public override int GetHashCode() => moles.GetHashCode();
 }

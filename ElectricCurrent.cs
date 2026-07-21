@@ -41,4 +41,7 @@ public class ElectricCurrent {
     public static MagneticFieldStrength operator /(ElectricCurrent electricCurrent, Length length) => MagneticFieldStrength.FromAmperesPerMeter(electricCurrent.ToAmperes() / length.ToMeters());
 
     public override string ToString() => $"{amperes} A";
+
+    public override bool Equals(object obj) => obj is ElectricCurrent other && other.amperes == amperes;
+    public override int GetHashCode() => amperes.GetHashCode();
 }

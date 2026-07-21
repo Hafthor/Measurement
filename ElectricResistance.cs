@@ -31,4 +31,7 @@ public class ElectricResistance {
     public static Resistivity operator *(ElectricResistance electricResistance, Length length) => Resistivity.FromOhmMeters(electricResistance.ToOhms() * length.ToMeters());
 
     public override string ToString() => $"{ohms} Ω";
+
+    public override bool Equals(object obj) => obj is ElectricResistance other && other.ohms == ohms;
+    public override int GetHashCode() => ohms.GetHashCode();
 }

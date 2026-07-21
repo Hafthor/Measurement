@@ -28,4 +28,7 @@ public class MagneticFlux {
     public static MagneticFluxDensity operator /(MagneticFlux flux, Area area) => MagneticFluxDensity.FromTeslas(flux.webers / area.ToSquareMeters());
 
     public override string ToString() => $"{webers} Wb";
+
+    public override bool Equals(object obj) => obj is MagneticFlux other && other.webers == webers;
+    public override int GetHashCode() => webers.GetHashCode();
 }

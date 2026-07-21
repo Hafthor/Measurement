@@ -19,4 +19,7 @@ public class ThermalResistance {
     public static Temperature operator *(Power power, ThermalResistance thermalResistance) => Temperature.FromKelvin(power.ToWatts() * thermalResistance.ToKelvinsPerWatt());
 
     public override string ToString() => $"{kelvinsPerWatt} K/W";
+
+    public override bool Equals(object obj) => obj is ThermalResistance other && other.kelvinsPerWatt == kelvinsPerWatt;
+    public override int GetHashCode() => kelvinsPerWatt.GetHashCode();
 }

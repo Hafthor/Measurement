@@ -33,4 +33,7 @@ public class Illuminance {
     public static LuminousExposure operator *(Illuminance illuminance, Duration duration) => LuminousExposure.FromLuxSeconds(illuminance.ToLux() * duration.ToSeconds());
 
     public override string ToString() => $"{lux} lx";
+
+    public override bool Equals(object obj) => obj is Illuminance other && other.lux == lux;
+    public override int GetHashCode() => lux.GetHashCode();
 }

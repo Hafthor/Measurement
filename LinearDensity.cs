@@ -27,4 +27,7 @@ public class LinearDensity {
     public static Mass operator *(Length length, LinearDensity linearDensity) => Mass.FromKilograms(length.ToMeters() * linearDensity.ToKilogramsPerMeter());
 
     public override string ToString() => $"{kilogramsPerMeter} kg/m";
+
+    public override bool Equals(object obj) => obj is LinearDensity other && other.kilogramsPerMeter == kilogramsPerMeter;
+    public override int GetHashCode() => kilogramsPerMeter.GetHashCode();
 }

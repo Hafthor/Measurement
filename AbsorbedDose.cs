@@ -30,4 +30,7 @@ public class AbsorbedDose {
     public static DoseRate operator /(AbsorbedDose absorbedDose, Duration duration) => DoseRate.FromGraysPerSecond(absorbedDose.ToGrays() / duration.ToSeconds());
 
     public override string ToString() => $"{grays} Gy";
+
+    public override bool Equals(object obj) => obj is AbsorbedDose other && other.grays == grays;
+    public override int GetHashCode() => grays.GetHashCode();
 }

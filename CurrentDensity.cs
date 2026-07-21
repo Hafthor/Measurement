@@ -21,4 +21,7 @@ public class CurrentDensity {
     public static ElectricCurrent operator *(Area area, CurrentDensity currentDensity) => ElectricCurrent.FromAmperes(area.ToSquareMeters() * currentDensity.ToAmperesPerSquareMeter());
 
     public override string ToString() => $"{amperesPerSquareMeter} A/m²";
+
+    public override bool Equals(object obj) => obj is CurrentDensity other && other.amperesPerSquareMeter == amperesPerSquareMeter;
+    public override int GetHashCode() => amperesPerSquareMeter.GetHashCode();
 }

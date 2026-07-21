@@ -27,4 +27,7 @@ public class Ratio {
     public double ToDecibels() => 10 * Math.Log10(value);
 
     public override string ToString() => $"{value}";
+
+    public override bool Equals(object obj) => obj is Ratio other && other.value == value;
+    public override int GetHashCode() => value.GetHashCode();
 }

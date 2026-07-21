@@ -40,4 +40,7 @@ public class Temperature {
     public static Power operator /(Temperature temperatureChange, ThermalResistance thermalResistance) => Power.FromWatts(temperatureChange.kelvin / thermalResistance.ToKelvinsPerWatt());
 
     public override string ToString() => $"{kelvin} K";
+
+    public override bool Equals(object obj) => obj is Temperature other && other.kelvin == kelvin;
+    public override int GetHashCode() => kelvin.GetHashCode();
 }

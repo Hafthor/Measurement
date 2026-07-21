@@ -27,4 +27,7 @@ public class AngularVelocity {
     public static AngularMomentum operator *(AngularVelocity angularVelocity, MomentOfInertia momentOfInertia) => AngularMomentum.FromKilogramSquareMetersPerSecond(angularVelocity.ToRadiansPerSecond() * momentOfInertia.ToKilogramSquareMeters());
 
     public override string ToString() => $"{radiansPerSecond} rad/s";
+
+    public override bool Equals(object obj) => obj is AngularVelocity other && other.radiansPerSecond == radiansPerSecond;
+    public override int GetHashCode() => radiansPerSecond.GetHashCode();
 }

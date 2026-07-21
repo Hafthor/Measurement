@@ -29,4 +29,7 @@ public class Density {
     public static Mass operator *(Volume volume, Density density) => Mass.FromKilograms(volume.ToCubicMeters() * density.ToKilogramsPerCubicMeter());
 
     public override string ToString() => $"{kilogramsPerCubicMeter} kg/m³";
+
+    public override bool Equals(object obj) => obj is Density other && other.kilogramsPerCubicMeter == kilogramsPerCubicMeter;
+    public override int GetHashCode() => kilogramsPerCubicMeter.GetHashCode();
 }

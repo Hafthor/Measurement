@@ -23,4 +23,7 @@ public class Torque {
     public double ToPoundInches() => newtonMeters / (0.11298482902762);
 
     public override string ToString() => $"{newtonMeters} N·m";
+
+    public override bool Equals(object obj) => obj is Torque other && other.newtonMeters == newtonMeters;
+    public override int GetHashCode() => newtonMeters.GetHashCode();
 }
