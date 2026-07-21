@@ -1,14 +1,10 @@
 namespace com.hafthor.Measurement;
 
-public sealed class CurrentDensity : Measurement<CurrentDensity> {
-
-    private CurrentDensity(double value) : base(value) { }
-
-    protected override CurrentDensity Create(double value) => new(value);
-    protected override string Symbol => "A/m²";
+[Measurement("A/m²")]
+public readonly partial struct CurrentDensity {
 
     // Units
-    public static CurrentDensity FromAmperesPerSquareMeter(double value) => new(value);
+    public static CurrentDensity FromAmperesPerSquareMeter(double amperesPerSquareMeter) => new(amperesPerSquareMeter);
     public double ToAmperesPerSquareMeter() => value;
     public static CurrentDensity FromAmperesPerSquareCentimeter(double amperesPerSquareCentimeter) => new(amperesPerSquareCentimeter * (1e4));
     public double ToAmperesPerSquareCentimeter() => value / (1e4);

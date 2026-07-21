@@ -1,14 +1,10 @@
 namespace com.hafthor.Measurement;
 
-public sealed class Exposure : Measurement<Exposure> {
-
-    private Exposure(double value) : base(value) { }
-
-    protected override Exposure Create(double value) => new(value);
-    protected override string Symbol => "C/kg";
+[Measurement("C/kg")]
+public readonly partial struct Exposure {
 
     // Units
-    public static Exposure FromCoulombsPerKilogram(double value) => new(value);
+    public static Exposure FromCoulombsPerKilogram(double coulombsPerKilogram) => new(coulombsPerKilogram);
     public double ToCoulombsPerKilogram() => value;
     public static Exposure FromRoentgens(double roentgens) => new(roentgens * (2.58e-4));
     public double ToRoentgens() => value / (2.58e-4);

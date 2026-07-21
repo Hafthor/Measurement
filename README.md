@@ -6,10 +6,16 @@ methods and `ToXxx` accessors for every supported unit.
 
 ## Conventions
 
-- Each measurement is an immutable, `sealed` class deriving from `Measurement<T>` (a generic
-  self-typed base) which holds the single canonical `double` value and centralises value
-  equality (`Equals`/`GetHashCode`), `ToString`, and the same-type `+`/`-`/negation operators.
-  Values are stored in the **canonical SI unit** (e.g. `Length` stores metres).
+- Each measurement is an immutable **`readonly partial struct`** (a value type — no heap
+  allocation, and `default(Length)` is `0 m`) that stores a single canonical `double` in the
+  **canonical SI unit** (e.g. `Length` stores metres). A **Roslyn source generator**
+  (`Measurement.Generators`) emits the identical-across-every-type surface from a
+  `[Measurement("m")]` attribute: value equality (`Equals`/`GetHashCode`/`==`/`!=`, plus
+  `NearlyEquals` for ULP-tolerant checks), ordering (`IComparable<T>`, `< > <= >=`), formatting
+  (`ToString`, `IFormattable`), the same-type `+`/`-`/negation operators, scalar math
+  (`* k`, `/ k`, and same-type `/` → ratio), `Abs`/`Min`/`Max`/`Clamp`/`Lerp`, and the
+  `IMeasurement<T>` / `System.Numerics` implementation. Each type's hand-written source only
+  contains its `FromXxx`/`ToXxx` unit methods and cross-type operators.
 - Construction is via `public static T FromUnit(double value)` factory methods.
 - Read-out is via `public double ToUnit()` methods.
 - `ToString()` renders the canonical value with the standard SI unit symbol, e.g.
@@ -21,6 +27,11 @@ methods and `ToXxx` accessors for every supported unit.
   (e.g. `Length total = a + b;`). This includes **`Temperature`**: its canonical unit is
   kelvin — an absolute (true-zero) scale — so the arithmetic is well-defined. Just note that
   a sum read back on an offset scale looks shifted (`0 °C + 0 °C` = 546.30 K = 273.15 °C).
+- Every measurement implements `IMeasurement<T>`, opting into **`System.Numerics` generic
+  math** — `IAdditionOperators`, `ISubtractionOperators`, `IUnaryNegationOperators`,
+  `IAdditiveIdentity` (`T.AdditiveIdentity` / `T.Zero`), `IComparisonOperators`, and scalar
+  `IMultiply`/`IDivisionOperators` — so you can write generic algorithms like
+  `T Sum<T>(IEnumerable<T> xs) where T : IMeasurement<T>`.
 
 ## Fluent SI prefixes
 

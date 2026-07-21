@@ -1,14 +1,10 @@
 namespace com.hafthor.Measurement;
 
-public sealed class Capacitance : Measurement<Capacitance> {
-
-    private Capacitance(double value) : base(value) { }
-
-    protected override Capacitance Create(double value) => new(value);
-    protected override string Symbol => "F";
+[Measurement("F")]
+public readonly partial struct Capacitance {
 
     // SI units
-    public static Capacitance FromFarads(double value) => new(value);
+    public static Capacitance FromFarads(double farads) => new(farads);
     public double ToFarads() => value;
     public static Capacitance FromMillifarads(double millifarads) => new(millifarads * 1e-3);
     public double ToMillifarads() => value / 1e-3;

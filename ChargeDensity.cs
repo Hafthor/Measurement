@@ -1,14 +1,10 @@
 namespace com.hafthor.Measurement;
 
-public sealed class ChargeDensity : Measurement<ChargeDensity> {
-
-    private ChargeDensity(double value) : base(value) { }
-
-    protected override ChargeDensity Create(double value) => new(value);
-    protected override string Symbol => "C/m³";
+[Measurement("C/m³")]
+public readonly partial struct ChargeDensity {
 
     // Units
-    public static ChargeDensity FromCoulombsPerCubicMeter(double value) => new(value);
+    public static ChargeDensity FromCoulombsPerCubicMeter(double coulombsPerCubicMeter) => new(coulombsPerCubicMeter);
     public double ToCoulombsPerCubicMeter() => value;
 
     // Composite relationships

@@ -1,14 +1,10 @@
 namespace com.hafthor.Measurement;
 
-public sealed class ElectricDipoleMoment : Measurement<ElectricDipoleMoment> {
-
-    private ElectricDipoleMoment(double value) : base(value) { }
-
-    protected override ElectricDipoleMoment Create(double value) => new(value);
-    protected override string Symbol => "C·m";
+[Measurement("C·m")]
+public readonly partial struct ElectricDipoleMoment {
 
     // Units
-    public static ElectricDipoleMoment FromCoulombMeters(double value) => new(value);
+    public static ElectricDipoleMoment FromCoulombMeters(double coulombMeters) => new(coulombMeters);
     public double ToCoulombMeters() => value;
     public static ElectricDipoleMoment FromDebyes(double debyes) => new(debyes * (3.33564095198e-30));
     public double ToDebyes() => value / (3.33564095198e-30);

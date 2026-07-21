@@ -1,14 +1,10 @@
 namespace com.hafthor.Measurement;
 
-public sealed class ReactionRate : Measurement<ReactionRate> {
-
-    private ReactionRate(double value) : base(value) { }
-
-    protected override ReactionRate Create(double value) => new(value);
-    protected override string Symbol => "mol/(m³·s)";
+[Measurement("mol/(m³·s)")]
+public readonly partial struct ReactionRate {
 
     // Units
-    public static ReactionRate FromMolesPerCubicMeterSecond(double value) => new(value);
+    public static ReactionRate FromMolesPerCubicMeterSecond(double molesPerCubicMeterSecond) => new(molesPerCubicMeterSecond);
     public double ToMolesPerCubicMeterSecond() => value;
     public static ReactionRate FromMolesPerLiterSecond(double molesPerLiterSecond) => new(molesPerLiterSecond * (1000));
     public double ToMolesPerLiterSecond() => value / (1000);

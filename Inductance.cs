@@ -1,14 +1,10 @@
 namespace com.hafthor.Measurement;
 
-public sealed class Inductance : Measurement<Inductance> {
-
-    private Inductance(double value) : base(value) { }
-
-    protected override Inductance Create(double value) => new(value);
-    protected override string Symbol => "H";
+[Measurement("H")]
+public readonly partial struct Inductance {
 
     // SI units
-    public static Inductance FromHenries(double value) => new(value);
+    public static Inductance FromHenries(double henries) => new(henries);
     public double ToHenries() => value;
     public static Inductance FromMillihenries(double millihenries) => new(millihenries * 1e-3);
     public double ToMillihenries() => value / 1e-3;

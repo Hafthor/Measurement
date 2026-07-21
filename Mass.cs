@@ -1,16 +1,12 @@
 namespace com.hafthor.Measurement;
 
-public sealed class Mass : Measurement<Mass> {
-
-    private Mass(double value) : base(value) { }
-
-    protected override Mass Create(double value) => new(value);
-    protected override string Symbol => "kg";
+[Measurement("kg")]
+public readonly partial struct Mass {
 
     // SI units
     public static Mass FromTonnes(double tonnes) => new(tonnes * 1e3);
     public double ToTonnes() => value / 1e3;
-    public static Mass FromKilograms(double value) => new(value);
+    public static Mass FromKilograms(double kilograms) => new(kilograms);
     public double ToKilograms() => value;
     public static Mass FromGrams(double grams) => new(grams * 1e-3);
     public double ToGrams() => value / 1e-3;

@@ -1,16 +1,12 @@
 namespace com.hafthor.Measurement;
 
-public sealed class LuminousIntensity : Measurement<LuminousIntensity> {
-
-    private LuminousIntensity(double value) : base(value) { }
-
-    protected override LuminousIntensity Create(double value) => new(value);
-    protected override string Symbol => "cd";
+[Measurement("cd")]
+public readonly partial struct LuminousIntensity {
 
     // SI units
     public static LuminousIntensity FromKilocandelas(double kilocandelas) => new(kilocandelas * 1e3);
     public double ToKilocandelas() => value / 1e3;
-    public static LuminousIntensity FromCandelas(double value) => new(value);
+    public static LuminousIntensity FromCandelas(double candelas) => new(candelas);
     public double ToCandelas() => value;
     public static LuminousIntensity FromMillicandelas(double millicandelas) => new(millicandelas * 1e-3);
     public double ToMillicandelas() => value / 1e-3;

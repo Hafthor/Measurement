@@ -1,14 +1,10 @@
 namespace com.hafthor.Measurement;
 
-public sealed class Action : Measurement<Action> {
-
-    private Action(double value) : base(value) { }
-
-    protected override Action Create(double value) => new(value);
-    protected override string Symbol => "J·s";
+[Measurement("J·s")]
+public readonly partial struct Action {
 
     // Units
-    public static Action FromJouleSeconds(double value) => new(value);
+    public static Action FromJouleSeconds(double jouleSeconds) => new(jouleSeconds);
     public double ToJouleSeconds() => value;
     public static Action FromErgSeconds(double ergSeconds) => new(ergSeconds * (1e-7));
     public double ToErgSeconds() => value / (1e-7);

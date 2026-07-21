@@ -1,14 +1,10 @@
 namespace com.hafthor.Measurement;
 
-public sealed class Volume : Measurement<Volume> {
-
-    private Volume(double value) : base(value) { }
-
-    protected override Volume Create(double value) => new(value);
-    protected override string Symbol => "m³";
+[Measurement("m³")]
+public readonly partial struct Volume {
 
     // SI units
-    public static Volume FromCubicMeters(double value) => new(value);
+    public static Volume FromCubicMeters(double cubicMeters) => new(cubicMeters);
     public double ToCubicMeters() => value;
     public static Volume FromCubicCentimeters(double cubicCentimeters) => new(cubicCentimeters * 1e-6);
     public double ToCubicCentimeters() => value / 1e-6;

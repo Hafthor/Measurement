@@ -1,14 +1,10 @@
 namespace com.hafthor.Measurement;
 
-public sealed class Permeability : Measurement<Permeability> {
-
-    private Permeability(double value) : base(value) { }
-
-    protected override Permeability Create(double value) => new(value);
-    protected override string Symbol => "H/m";
+[Measurement("H/m")]
+public readonly partial struct Permeability {
 
     // Units
-    public static Permeability FromHenriesPerMeter(double value) => new(value);
+    public static Permeability FromHenriesPerMeter(double henriesPerMeter) => new(henriesPerMeter);
     public double ToHenriesPerMeter() => value;
 
     // Composite relationships

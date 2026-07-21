@@ -1,14 +1,10 @@
 namespace com.hafthor.Measurement;
 
-public sealed class AngularMomentum : Measurement<AngularMomentum> {
-
-    private AngularMomentum(double value) : base(value) { }
-
-    protected override AngularMomentum Create(double value) => new(value);
-    protected override string Symbol => "kg·m²/s";
+[Measurement("kg·m²/s")]
+public readonly partial struct AngularMomentum {
 
     // Units
-    public static AngularMomentum FromKilogramSquareMetersPerSecond(double value) => new(value);
+    public static AngularMomentum FromKilogramSquareMetersPerSecond(double kilogramSquareMetersPerSecond) => new(kilogramSquareMetersPerSecond);
     public double ToKilogramSquareMetersPerSecond() => value;
     public static AngularMomentum FromJouleSeconds(double jouleSeconds) => new(jouleSeconds);
     public double ToJouleSeconds() => value;

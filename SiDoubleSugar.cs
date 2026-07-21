@@ -1,5 +1,3 @@
-using com.hafthor.Measurement;
-
 namespace com.hafthor.Measurement.Fluent;
 
 // OPT-IN double sugar: SI prefixes and unit shortcuts on `double` (5.0.Kilo.Meters, 5.0.Miles).

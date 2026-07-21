@@ -1,14 +1,10 @@
 namespace com.hafthor.Measurement;
 
-public sealed class CatalyticActivity : Measurement<CatalyticActivity> {
-
-    private CatalyticActivity(double value) : base(value) { }
-
-    protected override CatalyticActivity Create(double value) => new(value);
-    protected override string Symbol => "kat";
+[Measurement("kat")]
+public readonly partial struct CatalyticActivity {
 
     // SI units
-    public static CatalyticActivity FromKatals(double value) => new(value);
+    public static CatalyticActivity FromKatals(double katals) => new(katals);
     public double ToKatals() => value;
     public static CatalyticActivity FromMillikatals(double millikatals) => new(millikatals * 1e-3);
     public double ToMillikatals() => value / 1e-3;

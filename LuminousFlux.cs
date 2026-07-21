@@ -1,16 +1,12 @@
 namespace com.hafthor.Measurement;
 
-public sealed class LuminousFlux : Measurement<LuminousFlux> {
-
-    private LuminousFlux(double value) : base(value) { }
-
-    protected override LuminousFlux Create(double value) => new(value);
-    protected override string Symbol => "lm";
+[Measurement("lm")]
+public readonly partial struct LuminousFlux {
 
     // SI units
     public static LuminousFlux FromKilolumens(double kilolumens) => new(kilolumens * 1e3);
     public double ToKilolumens() => value / 1e3;
-    public static LuminousFlux FromLumens(double value) => new(value);
+    public static LuminousFlux FromLumens(double lumens) => new(lumens);
     public double ToLumens() => value;
     public static LuminousFlux FromMillilumens(double millilumens) => new(millilumens * 1e-3);
     public double ToMillilumens() => value / 1e-3;

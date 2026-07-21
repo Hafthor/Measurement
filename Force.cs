@@ -1,18 +1,14 @@
 namespace com.hafthor.Measurement;
 
-public sealed class Force : Measurement<Force> {
-
-    private Force(double value) : base(value) { }
-
-    protected override Force Create(double value) => new(value);
-    protected override string Symbol => "N";
+[Measurement("N")]
+public readonly partial struct Force {
 
     // SI units
     public static Force FromMeganewtons(double meganewtons) => new(meganewtons * 1e6);
     public double ToMeganewtons() => value / 1e6;
     public static Force FromKilonewtons(double kilonewtons) => new(kilonewtons * 1e3);
     public double ToKilonewtons() => value / 1e3;
-    public static Force FromNewtons(double value) => new(value);
+    public static Force FromNewtons(double newtons) => new(newtons);
     public double ToNewtons() => value;
     public static Force FromMillinewtons(double millinewtons) => new(millinewtons * 1e-3);
     public double ToMillinewtons() => value / 1e-3;

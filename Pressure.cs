@@ -1,11 +1,7 @@
 namespace com.hafthor.Measurement;
 
-public sealed class Pressure : Measurement<Pressure> {
-
-    private Pressure(double value) : base(value) { }
-
-    protected override Pressure Create(double value) => new(value);
-    protected override string Symbol => "Pa";
+[Measurement("Pa")]
+public readonly partial struct Pressure {
 
     // SI units
     public static Pressure FromMegapascals(double megapascals) => new(megapascals * 1e6);
@@ -14,7 +10,7 @@ public sealed class Pressure : Measurement<Pressure> {
     public double ToKilopascals() => value / 1e3;
     public static Pressure FromHectopascals(double hectopascals) => new(hectopascals * 1e2);
     public double ToHectopascals() => value / 1e2;
-    public static Pressure FromPascals(double value) => new(value);
+    public static Pressure FromPascals(double pascals) => new(pascals);
     public double ToPascals() => value;
 
     // Bar units

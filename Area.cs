@@ -1,11 +1,7 @@
 namespace com.hafthor.Measurement;
 
-public sealed class Area : Measurement<Area> {
-
-    private Area(double value) : base(value) { }
-
-    protected override Area Create(double value) => new(value);
-    protected override string Symbol => "m²";
+[Measurement("m²")]
+public readonly partial struct Area {
 
     // SI units
     public static Area FromSquareKilometers(double squareKilometers) => new(squareKilometers * 1e6);
@@ -14,7 +10,7 @@ public sealed class Area : Measurement<Area> {
     public double ToHectares() => value / 1e4;
     public static Area FromAres(double ares) => new(ares * 1e2);
     public double ToAres() => value / 1e2;
-    public static Area FromSquareMeters(double value) => new(value);
+    public static Area FromSquareMeters(double squareMeters) => new(squareMeters);
     public double ToSquareMeters() => value;
     public static Area FromSquareCentimeters(double squareCentimeters) => new(squareCentimeters * 1e-4);
     public double ToSquareCentimeters() => value / 1e-4;

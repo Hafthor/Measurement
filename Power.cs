@@ -1,11 +1,7 @@
 namespace com.hafthor.Measurement;
 
-public sealed class Power : Measurement<Power> {
-
-    private Power(double value) : base(value) { }
-
-    protected override Power Create(double value) => new(value);
-    protected override string Symbol => "W";
+[Measurement("W")]
+public readonly partial struct Power {
 
     // SI units
     public static Power FromGigawatts(double gigawatts) => new(gigawatts * 1e9);
@@ -14,7 +10,7 @@ public sealed class Power : Measurement<Power> {
     public double ToMegawatts() => value / 1e6;
     public static Power FromKilowatts(double kilowatts) => new(kilowatts * 1e3);
     public double ToKilowatts() => value / 1e3;
-    public static Power FromWatts(double value) => new(value);
+    public static Power FromWatts(double watts) => new(watts);
     public double ToWatts() => value;
     public static Power FromMilliwatts(double milliwatts) => new(milliwatts * 1e-3);
     public double ToMilliwatts() => value / 1e-3;

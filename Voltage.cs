@@ -1,18 +1,14 @@
 namespace com.hafthor.Measurement;
 
-public sealed class Voltage : Measurement<Voltage> {
-
-    private Voltage(double value) : base(value) { }
-
-    protected override Voltage Create(double value) => new(value);
-    protected override string Symbol => "V";
+[Measurement("V")]
+public readonly partial struct Voltage {
 
     // SI units
     public static Voltage FromMegavolts(double megavolts) => new(megavolts * 1e6);
     public double ToMegavolts() => value / 1e6;
     public static Voltage FromKilovolts(double kilovolts) => new(kilovolts * 1e3);
     public double ToKilovolts() => value / 1e3;
-    public static Voltage FromVolts(double value) => new(value);
+    public static Voltage FromVolts(double volts) => new(volts);
     public double ToVolts() => value;
     public static Voltage FromMillivolts(double millivolts) => new(millivolts * 1e-3);
     public double ToMillivolts() => value / 1e-3;

@@ -1,14 +1,10 @@
 namespace com.hafthor.Measurement;
 
-public sealed class Permittivity : Measurement<Permittivity> {
-
-    private Permittivity(double value) : base(value) { }
-
-    protected override Permittivity Create(double value) => new(value);
-    protected override string Symbol => "F/m";
+[Measurement("F/m")]
+public readonly partial struct Permittivity {
 
     // Units
-    public static Permittivity FromFaradsPerMeter(double value) => new(value);
+    public static Permittivity FromFaradsPerMeter(double faradsPerMeter) => new(faradsPerMeter);
     public double ToFaradsPerMeter() => value;
 
     // Composite relationships

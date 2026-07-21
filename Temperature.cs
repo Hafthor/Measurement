@@ -1,14 +1,10 @@
 namespace com.hafthor.Measurement;
 
-public sealed class Temperature : Measurement<Temperature> {
-
-    private Temperature(double value) : base(value) { }
-
-    protected override Temperature Create(double value) => new(value);
-    protected override string Symbol => "K";
+[Measurement("K")]
+public readonly partial struct Temperature {
 
     // Absolute scales
-    public static Temperature FromKelvin(double value) => new(value);
+    public static Temperature FromKelvin(double kelvin) => new(kelvin);
     public double ToKelvin() => value;
     public static Temperature FromRankine(double rankine) => new(rankine * 5.0 / 9.0);
     public double ToRankine() => value * 9.0 / 5.0;

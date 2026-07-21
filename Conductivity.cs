@@ -1,14 +1,10 @@
 namespace com.hafthor.Measurement;
 
-public sealed class Conductivity : Measurement<Conductivity> {
-
-    private Conductivity(double value) : base(value) { }
-
-    protected override Conductivity Create(double value) => new(value);
-    protected override string Symbol => "S/m";
+[Measurement("S/m")]
+public readonly partial struct Conductivity {
 
     // Units
-    public static Conductivity FromSiemensPerMeter(double value) => new(value);
+    public static Conductivity FromSiemensPerMeter(double siemensPerMeter) => new(siemensPerMeter);
     public double ToSiemensPerMeter() => value;
     public static Conductivity FromSiemensPerCentimeter(double siemensPerCentimeter) => new(siemensPerCentimeter * (100));
     public double ToSiemensPerCentimeter() => value / (100);

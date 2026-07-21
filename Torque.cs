@@ -1,14 +1,10 @@
 namespace com.hafthor.Measurement;
 
-public sealed class Torque : Measurement<Torque> {
-
-    private Torque(double value) : base(value) { }
-
-    protected override Torque Create(double value) => new(value);
-    protected override string Symbol => "N·m";
+[Measurement("N·m")]
+public readonly partial struct Torque {
 
     // Units
-    public static Torque FromNewtonMeters(double value) => new(value);
+    public static Torque FromNewtonMeters(double newtonMeters) => new(newtonMeters);
     public double ToNewtonMeters() => value;
     public static Torque FromNewtonMillimeters(double newtonMillimeters) => new(newtonMillimeters * (1e-3));
     public double ToNewtonMillimeters() => value / (1e-3);

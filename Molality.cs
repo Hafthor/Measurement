@@ -1,14 +1,10 @@
 namespace com.hafthor.Measurement;
 
-public sealed class Molality : Measurement<Molality> {
-
-    private Molality(double value) : base(value) { }
-
-    protected override Molality Create(double value) => new(value);
-    protected override string Symbol => "mol/kg";
+[Measurement("mol/kg")]
+public readonly partial struct Molality {
 
     // Units
-    public static Molality FromMolesPerKilogram(double value) => new(value);
+    public static Molality FromMolesPerKilogram(double molesPerKilogram) => new(molesPerKilogram);
     public double ToMolesPerKilogram() => value;
     public static Molality FromMillimolesPerKilogram(double millimolesPerKilogram) => new(millimolesPerKilogram * (1e-3));
     public double ToMillimolesPerKilogram() => value / (1e-3);

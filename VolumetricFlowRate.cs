@@ -1,14 +1,10 @@
 namespace com.hafthor.Measurement;
 
-public sealed class VolumetricFlowRate : Measurement<VolumetricFlowRate> {
-
-    private VolumetricFlowRate(double value) : base(value) { }
-
-    protected override VolumetricFlowRate Create(double value) => new(value);
-    protected override string Symbol => "m³/s";
+[Measurement("m³/s")]
+public readonly partial struct VolumetricFlowRate {
 
     // Units
-    public static VolumetricFlowRate FromCubicMetersPerSecond(double value) => new(value);
+    public static VolumetricFlowRate FromCubicMetersPerSecond(double cubicMetersPerSecond) => new(cubicMetersPerSecond);
     public double ToCubicMetersPerSecond() => value;
     public static VolumetricFlowRate FromLitersPerSecond(double litersPerSecond) => new(litersPerSecond * (1e-3));
     public double ToLitersPerSecond() => value / (1e-3);

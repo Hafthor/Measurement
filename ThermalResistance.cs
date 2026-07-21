@@ -1,14 +1,10 @@
 namespace com.hafthor.Measurement;
 
-public sealed class ThermalResistance : Measurement<ThermalResistance> {
-
-    private ThermalResistance(double value) : base(value) { }
-
-    protected override ThermalResistance Create(double value) => new(value);
-    protected override string Symbol => "K/W";
+[Measurement("K/W")]
+public readonly partial struct ThermalResistance {
 
     // Units
-    public static ThermalResistance FromKelvinsPerWatt(double value) => new(value);
+    public static ThermalResistance FromKelvinsPerWatt(double kelvinsPerWatt) => new(kelvinsPerWatt);
     public double ToKelvinsPerWatt() => value;
 
     // Composite relationships

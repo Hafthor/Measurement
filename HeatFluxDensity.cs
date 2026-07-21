@@ -1,14 +1,10 @@
 namespace com.hafthor.Measurement;
 
-public sealed class HeatFluxDensity : Measurement<HeatFluxDensity> {
-
-    private HeatFluxDensity(double value) : base(value) { }
-
-    protected override HeatFluxDensity Create(double value) => new(value);
-    protected override string Symbol => "W/m²";
+[Measurement("W/m²")]
+public readonly partial struct HeatFluxDensity {
 
     // Units
-    public static HeatFluxDensity FromWattsPerSquareMeter(double value) => new(value);
+    public static HeatFluxDensity FromWattsPerSquareMeter(double wattsPerSquareMeter) => new(wattsPerSquareMeter);
     public double ToWattsPerSquareMeter() => value;
     public static HeatFluxDensity FromMilliwattsPerSquareMeter(double milliwattsPerSquareMeter) => new(milliwattsPerSquareMeter * (1e-3));
     public double ToMilliwattsPerSquareMeter() => value / (1e-3);

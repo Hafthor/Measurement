@@ -1,17 +1,13 @@
 namespace com.hafthor.Measurement;
 
-public sealed class Quantity : Measurement<Quantity> {
+[Measurement("mol")]
+public readonly partial struct Quantity {
     private const double Avogadro = 6.02214076e23;
-
-    private Quantity(double value) : base(value) { }
-
-    protected override Quantity Create(double value) => new(value);
-    protected override string Symbol => "mol";
 
     // SI units
     public static Quantity FromKilomoles(double kilomoles) => new(kilomoles * 1e3);
     public double ToKilomoles() => value / 1e3;
-    public static Quantity FromMoles(double value) => new(value);
+    public static Quantity FromMoles(double moles) => new(moles);
     public double ToMoles() => value;
     public static Quantity FromMillimoles(double millimoles) => new(millimoles * 1e-3);
     public double ToMillimoles() => value / 1e-3;

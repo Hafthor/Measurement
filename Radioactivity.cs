@@ -1,11 +1,7 @@
 namespace com.hafthor.Measurement;
 
-public sealed class Radioactivity : Measurement<Radioactivity> {
-
-    private Radioactivity(double value) : base(value) { }
-
-    protected override Radioactivity Create(double value) => new(value);
-    protected override string Symbol => "Bq";
+[Measurement("Bq")]
+public readonly partial struct Radioactivity {
 
     // SI units
     public static Radioactivity FromGigabecquerels(double gigabecquerels) => new(gigabecquerels * 1e9);
@@ -14,7 +10,7 @@ public sealed class Radioactivity : Measurement<Radioactivity> {
     public double ToMegabecquerels() => value / 1e6;
     public static Radioactivity FromKilobecquerels(double kilobecquerels) => new(kilobecquerels * 1e3);
     public double ToKilobecquerels() => value / 1e3;
-    public static Radioactivity FromBecquerels(double value) => new(value);
+    public static Radioactivity FromBecquerels(double becquerels) => new(becquerels);
     public double ToBecquerels() => value;
 
     // Legacy units

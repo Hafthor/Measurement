@@ -1,11 +1,7 @@
 namespace com.hafthor.Measurement;
 
-public sealed class Frequency : Measurement<Frequency> {
-
-    private Frequency(double value) : base(value) { }
-
-    protected override Frequency Create(double value) => new(value);
-    protected override string Symbol => "Hz";
+[Measurement("Hz")]
+public readonly partial struct Frequency {
 
     // SI units
     public static Frequency FromTerahertz(double terahertz) => new(terahertz * 1e12);
@@ -16,7 +12,7 @@ public sealed class Frequency : Measurement<Frequency> {
     public double ToMegahertz() => value / 1e6;
     public static Frequency FromKilohertz(double kilohertz) => new(kilohertz * 1e3);
     public double ToKilohertz() => value / 1e3;
-    public static Frequency FromHertz(double value) => new(value);
+    public static Frequency FromHertz(double hertz) => new(hertz);
     public double ToHertz() => value;
     public static Frequency FromMillihertz(double millihertz) => new(millihertz * 1e-3);
     public double ToMillihertz() => value / 1e-3;

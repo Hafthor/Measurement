@@ -1,11 +1,7 @@
 namespace com.hafthor.Measurement;
 
-public sealed class ElectricResistance : Measurement<ElectricResistance> {
-
-    private ElectricResistance(double value) : base(value) { }
-
-    protected override ElectricResistance Create(double value) => new(value);
-    protected override string Symbol => "Ω";
+[Measurement("Ω")]
+public readonly partial struct ElectricResistance {
 
     // SI units
     public static ElectricResistance FromGigaohms(double gigaohms) => new(gigaohms * 1e9);
@@ -14,7 +10,7 @@ public sealed class ElectricResistance : Measurement<ElectricResistance> {
     public double ToMegaohms() => value / 1e6;
     public static ElectricResistance FromKiloohms(double kiloohms) => new(kiloohms * 1e3);
     public double ToKiloohms() => value / 1e3;
-    public static ElectricResistance FromOhms(double value) => new(value);
+    public static ElectricResistance FromOhms(double ohms) => new(ohms);
     public double ToOhms() => value;
     public static ElectricResistance FromMilliohms(double milliohms) => new(milliohms * 1e-3);
     public double ToMilliohms() => value / 1e-3;

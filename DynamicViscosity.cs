@@ -1,14 +1,10 @@
 namespace com.hafthor.Measurement;
 
-public sealed class DynamicViscosity : Measurement<DynamicViscosity> {
-
-    private DynamicViscosity(double value) : base(value) { }
-
-    protected override DynamicViscosity Create(double value) => new(value);
-    protected override string Symbol => "Pa·s";
+[Measurement("Pa·s")]
+public readonly partial struct DynamicViscosity {
 
     // Units
-    public static DynamicViscosity FromPascalSeconds(double value) => new(value);
+    public static DynamicViscosity FromPascalSeconds(double pascalSeconds) => new(pascalSeconds);
     public double ToPascalSeconds() => value;
     public static DynamicViscosity FromMillipascalSeconds(double millipascalSeconds) => new(millipascalSeconds * (1e-3));
     public double ToMillipascalSeconds() => value / (1e-3);

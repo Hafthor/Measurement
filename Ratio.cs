@@ -1,11 +1,7 @@
 namespace com.hafthor.Measurement;
 
-public sealed class Ratio : Measurement<Ratio> {
-
-    private Ratio(double value) : base(value) { }
-
-    protected override Ratio Create(double value) => new(value);
-    protected override string Symbol => "";
+[Measurement("")]
+public readonly partial struct Ratio {
 
     // Units
     public static Ratio FromRatio(double ratio) => new(ratio);

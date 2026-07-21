@@ -1,14 +1,10 @@
 namespace com.hafthor.Measurement;
 
-public sealed class HeatCapacity : Measurement<HeatCapacity> {
-
-    private HeatCapacity(double value) : base(value) { }
-
-    protected override HeatCapacity Create(double value) => new(value);
-    protected override string Symbol => "J/K";
+[Measurement("J/K")]
+public readonly partial struct HeatCapacity {
 
     // Units
-    public static HeatCapacity FromJoulesPerKelvin(double value) => new(value);
+    public static HeatCapacity FromJoulesPerKelvin(double joulesPerKelvin) => new(joulesPerKelvin);
     public double ToJoulesPerKelvin() => value;
     public static HeatCapacity FromKilojoulesPerKelvin(double kilojoulesPerKelvin) => new(kilojoulesPerKelvin * (1e3));
     public double ToKilojoulesPerKelvin() => value / (1e3);

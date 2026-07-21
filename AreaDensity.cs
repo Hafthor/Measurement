@@ -1,14 +1,10 @@
 namespace com.hafthor.Measurement;
 
-public sealed class AreaDensity : Measurement<AreaDensity> {
-
-    private AreaDensity(double value) : base(value) { }
-
-    protected override AreaDensity Create(double value) => new(value);
-    protected override string Symbol => "kg/m²";
+[Measurement("kg/m²")]
+public readonly partial struct AreaDensity {
 
     // Units
-    public static AreaDensity FromKilogramsPerSquareMeter(double value) => new(value);
+    public static AreaDensity FromKilogramsPerSquareMeter(double kilogramsPerSquareMeter) => new(kilogramsPerSquareMeter);
     public double ToKilogramsPerSquareMeter() => value;
     public static AreaDensity FromGramsPerSquareMeter(double gramsPerSquareMeter) => new(gramsPerSquareMeter * (1e-3));
     public double ToGramsPerSquareMeter() => value / (1e-3);

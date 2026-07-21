@@ -1,14 +1,10 @@
 namespace com.hafthor.Measurement;
 
-public sealed class LinearDensity : Measurement<LinearDensity> {
-
-    private LinearDensity(double value) : base(value) { }
-
-    protected override LinearDensity Create(double value) => new(value);
-    protected override string Symbol => "kg/m";
+[Measurement("kg/m")]
+public readonly partial struct LinearDensity {
 
     // Units
-    public static LinearDensity FromKilogramsPerMeter(double value) => new(value);
+    public static LinearDensity FromKilogramsPerMeter(double kilogramsPerMeter) => new(kilogramsPerMeter);
     public double ToKilogramsPerMeter() => value;
     public static LinearDensity FromGramsPerMeter(double gramsPerMeter) => new(gramsPerMeter * (1e-3));
     public double ToGramsPerMeter() => value / (1e-3);

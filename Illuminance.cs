@@ -1,16 +1,12 @@
 namespace com.hafthor.Measurement;
 
-public sealed class Illuminance : Measurement<Illuminance> {
-
-    private Illuminance(double value) : base(value) { }
-
-    protected override Illuminance Create(double value) => new(value);
-    protected override string Symbol => "lx";
+[Measurement("lx")]
+public readonly partial struct Illuminance {
 
     // SI units
     public static Illuminance FromKilolux(double kilolux) => new(kilolux * 1e3);
     public double ToKilolux() => value / 1e3;
-    public static Illuminance FromLux(double value) => new(value);
+    public static Illuminance FromLux(double lux) => new(lux);
     public double ToLux() => value;
     public static Illuminance FromMillilux(double millilux) => new(millilux * 1e-3);
     public double ToMillilux() => value / 1e-3;

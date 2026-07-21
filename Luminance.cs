@@ -1,14 +1,10 @@
 namespace com.hafthor.Measurement;
 
-public sealed class Luminance : Measurement<Luminance> {
-
-    private Luminance(double value) : base(value) { }
-
-    protected override Luminance Create(double value) => new(value);
-    protected override string Symbol => "cd/m²";
+[Measurement("cd/m²")]
+public readonly partial struct Luminance {
 
     // Units
-    public static Luminance FromCandelasPerSquareMeter(double value) => new(value);
+    public static Luminance FromCandelasPerSquareMeter(double candelasPerSquareMeter) => new(candelasPerSquareMeter);
     public double ToCandelasPerSquareMeter() => value;
     public static Luminance FromNits(double nits) => new(nits);
     public double ToNits() => value;

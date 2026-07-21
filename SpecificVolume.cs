@@ -1,14 +1,10 @@
 namespace com.hafthor.Measurement;
 
-public sealed class SpecificVolume : Measurement<SpecificVolume> {
-
-    private SpecificVolume(double value) : base(value) { }
-
-    protected override SpecificVolume Create(double value) => new(value);
-    protected override string Symbol => "m³/kg";
+[Measurement("m³/kg")]
+public readonly partial struct SpecificVolume {
 
     // Units
-    public static SpecificVolume FromCubicMetersPerKilogram(double value) => new(value);
+    public static SpecificVolume FromCubicMetersPerKilogram(double cubicMetersPerKilogram) => new(cubicMetersPerKilogram);
     public double ToCubicMetersPerKilogram() => value;
     public static SpecificVolume FromLitersPerKilogram(double litersPerKilogram) => new(litersPerKilogram * (1e-3));
     public double ToLitersPerKilogram() => value / (1e-3);

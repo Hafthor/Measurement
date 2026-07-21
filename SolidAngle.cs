@@ -1,13 +1,9 @@
 namespace com.hafthor.Measurement;
 
-public sealed class SolidAngle : Measurement<SolidAngle> {
+[Measurement("sr")]
+public readonly partial struct SolidAngle {
 
-    private SolidAngle(double value) : base(value) { }
-
-    protected override SolidAngle Create(double value) => new(value);
-    protected override string Symbol => "sr";
-
-    public static SolidAngle FromSteradians(double value) => new(value);
+    public static SolidAngle FromSteradians(double steradians) => new(steradians);
     public double ToSteradians() => value;
     public static SolidAngle FromSpats(double spats) => new(spats * 4 * Math.PI);
     public double ToSpats() => value / (4 * Math.PI);

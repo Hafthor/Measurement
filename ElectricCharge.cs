@@ -1,16 +1,12 @@
 namespace com.hafthor.Measurement;
 
-public sealed class ElectricCharge : Measurement<ElectricCharge> {
-
-    private ElectricCharge(double value) : base(value) { }
-
-    protected override ElectricCharge Create(double value) => new(value);
-    protected override string Symbol => "C";
+[Measurement("C")]
+public readonly partial struct ElectricCharge {
 
     // SI units
     public static ElectricCharge FromKilocoulombs(double kilocoulombs) => new(kilocoulombs * 1e3);
     public double ToKilocoulombs() => value / 1e3;
-    public static ElectricCharge FromCoulombs(double value) => new(value);
+    public static ElectricCharge FromCoulombs(double coulombs) => new(coulombs);
     public double ToCoulombs() => value;
     public static ElectricCharge FromMillicoulombs(double millicoulombs) => new(millicoulombs * 1e-3);
     public double ToMillicoulombs() => value / 1e-3;

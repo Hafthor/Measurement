@@ -20,12 +20,20 @@
       <RepositoryUrl>https://github.com/Hafthor/Measurement</RepositoryUrl>
       <PackageProjectUrl>https://github.com/Hafthor/Measurement</PackageProjectUrl>
       <PackageTags>measurements;units;length;mass;temperature;SI;imperial</PackageTags>
-      <GenerateDocumentationFile>false</GenerateDocumentationFile>
+      <GenerateDocumentationFile>true</GenerateDocumentationFile>
       <NoWarn>$(NoWarn);CS1591</NoWarn>
     </PropertyGroup>
 
     <ItemGroup>
         <None Include="README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+    <!-- The source generator lives in a sub-project: exclude its sources from this compile
+         and reference it as an analyzer so it runs during our build. -->
+    <ItemGroup>
+        <Compile Remove="Measurement.Generators/**/*.cs" />
+        <ProjectReference Include="Measurement.Generators/Measurement.Generators.csproj"
+                          OutputItemType="Analyzer" ReferenceOutputAssembly="false" PrivateAssets="all" />
     </ItemGroup>
 
     <ItemGroup Condition="'$(IncludeTests)' != 'true'">

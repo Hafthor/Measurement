@@ -1,14 +1,10 @@
 namespace com.hafthor.Measurement;
 
-public sealed class MassFlowRate : Measurement<MassFlowRate> {
-
-    private MassFlowRate(double value) : base(value) { }
-
-    protected override MassFlowRate Create(double value) => new(value);
-    protected override string Symbol => "kg/s";
+[Measurement("kg/s")]
+public readonly partial struct MassFlowRate {
 
     // Units
-    public static MassFlowRate FromKilogramsPerSecond(double value) => new(value);
+    public static MassFlowRate FromKilogramsPerSecond(double kilogramsPerSecond) => new(kilogramsPerSecond);
     public double ToKilogramsPerSecond() => value;
     public static MassFlowRate FromGramsPerSecond(double gramsPerSecond) => new(gramsPerSecond * (1e-3));
     public double ToGramsPerSecond() => value / (1e-3);

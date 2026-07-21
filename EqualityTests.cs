@@ -34,4 +34,56 @@ public sealed class EqualityTests {
         Assert.HasCount(1, seen); // 10 N == 0.01 kN
         Assert.Contains(Force.FromNewtons(10), seen);
     }
+
+    [TestMethod]
+    public void NearlyEquals_AllowsUlpSlop() {
+        // 0.1 + 0.2 != 0.3 exactly, but they are one ULP apart
+        Length a = Length.FromMeters(0.1) + Length.FromMeters(0.2);
+        Length b = Length.FromMeters(0.3);
+        Assert.IsFalse(a.Equals(b));         // exact equality: not equal
+        Assert.IsTrue(a.NearlyEquals(b));     // within the default 4 ULPs
+        Assert.IsFalse(a.NearlyEquals(b, 0)); // zero slop → strict
+    }
+
+    [TestMethod]
+    public void NearlyEquals_RejectsGenuinelyDifferentValues() {
+        Assert.IsFalse(Length.FromMeters(1).NearlyEquals(Length.FromMeters(2)));
+        Assert.IsTrue(Length.FromMeters(5).NearlyEquals(Length.FromMeters(5)));
+    }
+
+    [TestMethod]
+    public void RelationalOperators() {
+        Assert.IsTrue(Length.FromMeters(1) < Length.FromMeters(2));
+        Assert.IsTrue(Length.FromKilometers(1) > Length.FromMeters(999));
+        Assert.IsTrue(Length.FromMeters(5) <= Length.FromMeters(5));
+        Assert.IsTrue(Length.FromMeters(5) >= Length.FromMeters(5));
+        Assert.IsFalse(Length.FromMeters(2) < Length.FromMeters(2));
+    }
+
+    [TestMethod]
+    public void EqualityOperators() {
+        Assert.IsTrue(Length.FromKilometers(1) == Length.FromMeters(1000)); // exact, unit-independent
+        Assert.IsTrue(Length.FromMeters(1) != Length.FromMeters(2));
+        Assert.IsFalse(Length.FromMeters(1) == Length.FromMeters(2));
+    }
+
+    [TestMethod]
+    public void SortableAndMinMax() {
+        var list = new List<Length> {
+            Length.FromMeters(3), Length.FromKilometers(1), Length.FromMeters(2),
+        };
+        list.Sort();
+        Assert.AreEqual(2.0, list[0].ToMeters());
+        Assert.AreEqual(3.0, list[1].ToMeters());
+        Assert.AreEqual(1000.0, list[2].ToMeters());
+        Assert.AreEqual(1000.0, list.Max().ToMeters());
+        Assert.AreEqual(2.0, list.Min().ToMeters());
+    }
+
+    [TestMethod]
+    public void CompareTo_IsTypeSafe() {
+        Assert.AreEqual(-1, Math.Sign(Length.FromMeters(1).CompareTo(Length.FromMeters(2))));
+        System.IComparable boxed = Length.FromMeters(1);
+        Assert.ThrowsExactly<ArgumentException>(() => boxed.CompareTo(Mass.FromKilograms(1)));
+    }
 }

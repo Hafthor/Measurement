@@ -1,14 +1,10 @@
 namespace com.hafthor.Measurement;
 
-public sealed class Speed : Measurement<Speed> {
-
-    private Speed(double value) : base(value) { }
-
-    protected override Speed Create(double value) => new(value);
-    protected override string Symbol => "m/s";
+[Measurement("m/s")]
+public readonly partial struct Speed {
 
     // SI units
-    public static Speed FromMetersPerSecond(double value) => new(value);
+    public static Speed FromMetersPerSecond(double metersPerSecond) => new(metersPerSecond);
     public double ToMetersPerSecond() => value;
     public static Speed FromKilometersPerHour(double kilometersPerHour) => new(kilometersPerHour / 3.6);
     public double ToKilometersPerHour() => value * 3.6;

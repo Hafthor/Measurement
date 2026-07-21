@@ -1,11 +1,7 @@
 namespace com.hafthor.Measurement;
 
-public sealed class Energy : Measurement<Energy> {
-
-    private Energy(double value) : base(value) { }
-
-    protected override Energy Create(double value) => new(value);
-    protected override string Symbol => "J";
+[Measurement("J")]
+public readonly partial struct Energy {
 
     // SI units
     public static Energy FromGigajoules(double gigajoules) => new(gigajoules * 1e9);
@@ -14,7 +10,7 @@ public sealed class Energy : Measurement<Energy> {
     public double ToMegajoules() => value / 1e6;
     public static Energy FromKilojoules(double kilojoules) => new(kilojoules * 1e3);
     public double ToKilojoules() => value / 1e3;
-    public static Energy FromJoules(double value) => new(value);
+    public static Energy FromJoules(double joules) => new(joules);
     public double ToJoules() => value;
     public static Energy FromMillijoules(double millijoules) => new(millijoules * 1e-3);
     public double ToMillijoules() => value / 1e-3;

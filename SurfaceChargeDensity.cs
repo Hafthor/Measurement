@@ -1,14 +1,10 @@
 namespace com.hafthor.Measurement;
 
-public sealed class SurfaceChargeDensity : Measurement<SurfaceChargeDensity> {
-
-    private SurfaceChargeDensity(double value) : base(value) { }
-
-    protected override SurfaceChargeDensity Create(double value) => new(value);
-    protected override string Symbol => "C/m²";
+[Measurement("C/m²")]
+public readonly partial struct SurfaceChargeDensity {
 
     // Units
-    public static SurfaceChargeDensity FromCoulombsPerSquareMeter(double value) => new(value);
+    public static SurfaceChargeDensity FromCoulombsPerSquareMeter(double coulombsPerSquareMeter) => new(coulombsPerSquareMeter);
     public double ToCoulombsPerSquareMeter() => value;
 
     // Composite relationships

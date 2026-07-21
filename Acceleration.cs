@@ -1,14 +1,10 @@
 namespace com.hafthor.Measurement;
 
-public sealed class Acceleration : Measurement<Acceleration> {
-
-    private Acceleration(double value) : base(value) { }
-
-    protected override Acceleration Create(double value) => new(value);
-    protected override string Symbol => "m/s²";
+[Measurement("m/s²")]
+public readonly partial struct Acceleration {
 
     // SI units
-    public static Acceleration FromMetersPerSecondSquared(double value) => new(value);
+    public static Acceleration FromMetersPerSecondSquared(double metersPerSecondSquared) => new(metersPerSecondSquared);
     public double ToMetersPerSecondSquared() => value;
     public static Acceleration FromKilometersPerHourPerSecond(double kilometersPerHourPerSecond) => new(kilometersPerHourPerSecond / 3.6);
     public double ToKilometersPerHourPerSecond() => value * 3.6;

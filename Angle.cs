@@ -1,13 +1,9 @@
 namespace com.hafthor.Measurement;
 
-public sealed class Angle : Measurement<Angle> {
+[Measurement("rad")]
+public readonly partial struct Angle {
 
-    private Angle(double value) : base(value) { }
-
-    protected override Angle Create(double value) => new(value);
-    protected override string Symbol => "rad";
-
-    public static Angle FromRadians(double value) => new(value);
+    public static Angle FromRadians(double radians) => new(radians);
     public double ToRadians() => value;
     public static Angle FromMilliradians(double milliradians) => new(milliradians * 1e-3);
     public double ToMilliradians() => value / 1e-3;

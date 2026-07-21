@@ -1,14 +1,10 @@
 namespace com.hafthor.Measurement;
 
-public sealed class ElectricFieldStrength : Measurement<ElectricFieldStrength> {
-
-    private ElectricFieldStrength(double value) : base(value) { }
-
-    protected override ElectricFieldStrength Create(double value) => new(value);
-    protected override string Symbol => "V/m";
+[Measurement("V/m")]
+public readonly partial struct ElectricFieldStrength {
 
     // Units
-    public static ElectricFieldStrength FromVoltsPerMeter(double value) => new(value);
+    public static ElectricFieldStrength FromVoltsPerMeter(double voltsPerMeter) => new(voltsPerMeter);
     public double ToVoltsPerMeter() => value;
     public static ElectricFieldStrength FromKilovoltsPerMeter(double kilovoltsPerMeter) => new(kilovoltsPerMeter * (1e3));
     public double ToKilovoltsPerMeter() => value / (1e3);

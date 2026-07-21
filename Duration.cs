@@ -1,14 +1,10 @@
 namespace com.hafthor.Measurement;
 
-public sealed class Duration : Measurement<Duration> {
-
-    private Duration(double value) : base(value) { }
-
-    protected override Duration Create(double value) => new(value);
-    protected override string Symbol => "s";
+[Measurement("s")]
+public readonly partial struct Duration {
 
     // SI units
-    public static Duration FromSeconds(double value) => new(value);
+    public static Duration FromSeconds(double seconds) => new(seconds);
     public double ToSeconds() => value;
     public static Duration FromMilliseconds(double milliseconds) => new(milliseconds * 1e-3);
     public double ToMilliseconds() => value / 1e-3;

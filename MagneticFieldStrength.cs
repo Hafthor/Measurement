@@ -1,14 +1,10 @@
 namespace com.hafthor.Measurement;
 
-public sealed class MagneticFieldStrength : Measurement<MagneticFieldStrength> {
-
-    private MagneticFieldStrength(double value) : base(value) { }
-
-    protected override MagneticFieldStrength Create(double value) => new(value);
-    protected override string Symbol => "A/m";
+[Measurement("A/m")]
+public readonly partial struct MagneticFieldStrength {
 
     // Units
-    public static MagneticFieldStrength FromAmperesPerMeter(double value) => new(value);
+    public static MagneticFieldStrength FromAmperesPerMeter(double amperesPerMeter) => new(amperesPerMeter);
     public double ToAmperesPerMeter() => value;
     public static MagneticFieldStrength FromOersteds(double oersteds) => new(oersteds * (79.57747154594767));
     public double ToOersteds() => value / (79.57747154594767);

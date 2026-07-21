@@ -1,14 +1,10 @@
 namespace com.hafthor.Measurement;
 
-public sealed class MolarHeatCapacity : Measurement<MolarHeatCapacity> {
-
-    private MolarHeatCapacity(double value) : base(value) { }
-
-    protected override MolarHeatCapacity Create(double value) => new(value);
-    protected override string Symbol => "J/(mol·K)";
+[Measurement("J/(mol·K)")]
+public readonly partial struct MolarHeatCapacity {
 
     // Units
-    public static MolarHeatCapacity FromJoulesPerMoleKelvin(double value) => new(value);
+    public static MolarHeatCapacity FromJoulesPerMoleKelvin(double joulesPerMoleKelvin) => new(joulesPerMoleKelvin);
     public double ToJoulesPerMoleKelvin() => value;
     public static MolarHeatCapacity FromCaloriesPerMoleKelvin(double caloriesPerMoleKelvin) => new(caloriesPerMoleKelvin * (4.184));
     public double ToCaloriesPerMoleKelvin() => value / (4.184);

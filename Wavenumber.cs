@@ -1,14 +1,10 @@
 namespace com.hafthor.Measurement;
 
-public sealed class Wavenumber : Measurement<Wavenumber> {
-
-    private Wavenumber(double value) : base(value) { }
-
-    protected override Wavenumber Create(double value) => new(value);
-    protected override string Symbol => "m⁻¹";
+[Measurement("m⁻¹")]
+public readonly partial struct Wavenumber {
 
     // Units
-    public static Wavenumber FromPerMeter(double value) => new(value);
+    public static Wavenumber FromPerMeter(double perMeter) => new(perMeter);
     public double ToPerMeter() => value;
     public static Wavenumber FromPerCentimeter(double perCentimeter) => new(perCentimeter * (100));
     public double ToPerCentimeter() => value / (100);

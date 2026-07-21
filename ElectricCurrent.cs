@@ -1,16 +1,12 @@
 namespace com.hafthor.Measurement;
 
-public sealed class ElectricCurrent : Measurement<ElectricCurrent> {
-
-    private ElectricCurrent(double value) : base(value) { }
-
-    protected override ElectricCurrent Create(double value) => new(value);
-    protected override string Symbol => "A";
+[Measurement("A")]
+public readonly partial struct ElectricCurrent {
 
     // SI units
     public static ElectricCurrent FromKiloamperes(double kiloamperes) => new(kiloamperes * 1e3);
     public double ToKiloamperes() => value / 1e3;
-    public static ElectricCurrent FromAmperes(double value) => new(value);
+    public static ElectricCurrent FromAmperes(double amperes) => new(amperes);
     public double ToAmperes() => value;
     public static ElectricCurrent FromMilliamperes(double milliamperes) => new(milliamperes * 1e-3);
     public double ToMilliamperes() => value / 1e-3;

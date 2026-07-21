@@ -1,16 +1,12 @@
 namespace com.hafthor.Measurement;
 
-public sealed class ElectricConductance : Measurement<ElectricConductance> {
-
-    private ElectricConductance(double value) : base(value) { }
-
-    protected override ElectricConductance Create(double value) => new(value);
-    protected override string Symbol => "S";
+[Measurement("S")]
+public readonly partial struct ElectricConductance {
 
     // SI units
     public static ElectricConductance FromKilosiemens(double kilosiemens) => new(kilosiemens * 1e3);
     public double ToKilosiemens() => value / 1e3;
-    public static ElectricConductance FromSiemens(double value) => new(value);
+    public static ElectricConductance FromSiemens(double siemens) => new(siemens);
     public double ToSiemens() => value;
     public static ElectricConductance FromMillisiemens(double millisiemens) => new(millisiemens * 1e-3);
     public double ToMillisiemens() => value / 1e-3;

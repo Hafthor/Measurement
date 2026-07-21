@@ -1,14 +1,10 @@
 namespace com.hafthor.Measurement;
 
-public sealed class SpecificHeatCapacity : Measurement<SpecificHeatCapacity> {
-
-    private SpecificHeatCapacity(double value) : base(value) { }
-
-    protected override SpecificHeatCapacity Create(double value) => new(value);
-    protected override string Symbol => "J/(kg·K)";
+[Measurement("J/(kg·K)")]
+public readonly partial struct SpecificHeatCapacity {
 
     // Units
-    public static SpecificHeatCapacity FromJoulesPerKilogramKelvin(double value) => new(value);
+    public static SpecificHeatCapacity FromJoulesPerKilogramKelvin(double joulesPerKilogramKelvin) => new(joulesPerKilogramKelvin);
     public double ToJoulesPerKilogramKelvin() => value;
     public static SpecificHeatCapacity FromKilojoulesPerKilogramKelvin(double kilojoulesPerKilogramKelvin) => new(kilojoulesPerKilogramKelvin * (1e3));
     public double ToKilojoulesPerKilogramKelvin() => value / (1e3);

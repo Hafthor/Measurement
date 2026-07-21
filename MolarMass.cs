@@ -1,14 +1,10 @@
 namespace com.hafthor.Measurement;
 
-public sealed class MolarMass : Measurement<MolarMass> {
-
-    private MolarMass(double value) : base(value) { }
-
-    protected override MolarMass Create(double value) => new(value);
-    protected override string Symbol => "kg/mol";
+[Measurement("kg/mol")]
+public readonly partial struct MolarMass {
 
     // Units
-    public static MolarMass FromKilogramsPerMole(double value) => new(value);
+    public static MolarMass FromKilogramsPerMole(double kilogramsPerMole) => new(kilogramsPerMole);
     public double ToKilogramsPerMole() => value;
     public static MolarMass FromGramsPerMole(double gramsPerMole) => new(gramsPerMole * (1e-3));
     public double ToGramsPerMole() => value / (1e-3);

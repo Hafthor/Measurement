@@ -1,14 +1,10 @@
 namespace com.hafthor.Measurement;
 
-public sealed class DoseRate : Measurement<DoseRate> {
-
-    private DoseRate(double value) : base(value) { }
-
-    protected override DoseRate Create(double value) => new(value);
-    protected override string Symbol => "Gy/s";
+[Measurement("Gy/s")]
+public readonly partial struct DoseRate {
 
     // Units
-    public static DoseRate FromGraysPerSecond(double value) => new(value);
+    public static DoseRate FromGraysPerSecond(double graysPerSecond) => new(graysPerSecond);
     public double ToGraysPerSecond() => value;
     public static DoseRate FromMilligraysPerSecond(double milligraysPerSecond) => new(milligraysPerSecond * (1e-3));
     public double ToMilligraysPerSecond() => value / (1e-3);

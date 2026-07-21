@@ -1,14 +1,10 @@
 namespace com.hafthor.Measurement;
 
-public sealed class EquivalentDose : Measurement<EquivalentDose> {
-
-    private EquivalentDose(double value) : base(value) { }
-
-    protected override EquivalentDose Create(double value) => new(value);
-    protected override string Symbol => "Sv";
+[Measurement("Sv")]
+public readonly partial struct EquivalentDose {
 
     // SI units
-    public static EquivalentDose FromSieverts(double value) => new(value);
+    public static EquivalentDose FromSieverts(double sieverts) => new(sieverts);
     public double ToSieverts() => value;
     public static EquivalentDose FromMillisieverts(double millisieverts) => new(millisieverts * 1e-3);
     public double ToMillisieverts() => value / 1e-3;

@@ -1,14 +1,10 @@
 namespace com.hafthor.Measurement;
 
-public sealed class CatalyticConcentration : Measurement<CatalyticConcentration> {
-
-    private CatalyticConcentration(double value) : base(value) { }
-
-    protected override CatalyticConcentration Create(double value) => new(value);
-    protected override string Symbol => "kat/m³";
+[Measurement("kat/m³")]
+public readonly partial struct CatalyticConcentration {
 
     // Units
-    public static CatalyticConcentration FromKatalsPerCubicMeter(double value) => new(value);
+    public static CatalyticConcentration FromKatalsPerCubicMeter(double katalsPerCubicMeter) => new(katalsPerCubicMeter);
     public double ToKatalsPerCubicMeter() => value;
     public static CatalyticConcentration FromKatalsPerLiter(double katalsPerLiter) => new(katalsPerLiter * (1000));
     public double ToKatalsPerLiter() => value / (1000);

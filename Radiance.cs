@@ -1,14 +1,10 @@
 namespace com.hafthor.Measurement;
 
-public sealed class Radiance : Measurement<Radiance> {
-
-    private Radiance(double value) : base(value) { }
-
-    protected override Radiance Create(double value) => new(value);
-    protected override string Symbol => "W/(m²·sr)";
+[Measurement("W/(m²·sr)")]
+public readonly partial struct Radiance {
 
     // Units
-    public static Radiance FromWattsPerSquareMeterSteradian(double value) => new(value);
+    public static Radiance FromWattsPerSquareMeterSteradian(double wattsPerSquareMeterSteradian) => new(wattsPerSquareMeterSteradian);
     public double ToWattsPerSquareMeterSteradian() => value;
 
 }

@@ -1,14 +1,10 @@
 namespace com.hafthor.Measurement;
 
-public sealed class Momentum : Measurement<Momentum> {
-
-    private Momentum(double value) : base(value) { }
-
-    protected override Momentum Create(double value) => new(value);
-    protected override string Symbol => "kg·m/s";
+[Measurement("kg·m/s")]
+public readonly partial struct Momentum {
 
     // Units
-    public static Momentum FromKilogramMetersPerSecond(double value) => new(value);
+    public static Momentum FromKilogramMetersPerSecond(double kilogramMetersPerSecond) => new(kilogramMetersPerSecond);
     public double ToKilogramMetersPerSecond() => value;
     public static Momentum FromNewtonSeconds(double newtonSeconds) => new(newtonSeconds);
     public double ToNewtonSeconds() => value;

@@ -1,14 +1,10 @@
 namespace com.hafthor.Measurement;
 
-public sealed class Density : Measurement<Density> {
-
-    private Density(double value) : base(value) { }
-
-    protected override Density Create(double value) => new(value);
-    protected override string Symbol => "kg/m³";
+[Measurement("kg/m³")]
+public readonly partial struct Density {
 
     // Units
-    public static Density FromKilogramsPerCubicMeter(double value) => new(value);
+    public static Density FromKilogramsPerCubicMeter(double kilogramsPerCubicMeter) => new(kilogramsPerCubicMeter);
     public double ToKilogramsPerCubicMeter() => value;
     public static Density FromGramsPerCubicCentimeter(double gramsPerCubicCentimeter) => new(gramsPerCubicCentimeter * (1000));
     public double ToGramsPerCubicCentimeter() => value / (1000);

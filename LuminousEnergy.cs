@@ -1,14 +1,10 @@
 namespace com.hafthor.Measurement;
 
-public sealed class LuminousEnergy : Measurement<LuminousEnergy> {
-
-    private LuminousEnergy(double value) : base(value) { }
-
-    protected override LuminousEnergy Create(double value) => new(value);
-    protected override string Symbol => "lm·s";
+[Measurement("lm·s")]
+public readonly partial struct LuminousEnergy {
 
     // Units
-    public static LuminousEnergy FromLumenSeconds(double value) => new(value);
+    public static LuminousEnergy FromLumenSeconds(double lumenSeconds) => new(lumenSeconds);
     public double ToLumenSeconds() => value;
     public static LuminousEnergy FromLumenHours(double lumenHours) => new(lumenHours * (3600));
     public double ToLumenHours() => value / (3600);

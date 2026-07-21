@@ -1,14 +1,10 @@
 namespace com.hafthor.Measurement;
 
-public sealed class AngularAcceleration : Measurement<AngularAcceleration> {
-
-    private AngularAcceleration(double value) : base(value) { }
-
-    protected override AngularAcceleration Create(double value) => new(value);
-    protected override string Symbol => "rad/s²";
+[Measurement("rad/s²")]
+public readonly partial struct AngularAcceleration {
 
     // Units
-    public static AngularAcceleration FromRadiansPerSecondSquared(double value) => new(value);
+    public static AngularAcceleration FromRadiansPerSecondSquared(double radiansPerSecondSquared) => new(radiansPerSecondSquared);
     public double ToRadiansPerSecondSquared() => value;
     public static AngularAcceleration FromDegreesPerSecondSquared(double degreesPerSecondSquared) => new(degreesPerSecondSquared * (Math.PI / 180));
     public double ToDegreesPerSecondSquared() => value / (Math.PI / 180);

@@ -1,14 +1,10 @@
 namespace com.hafthor.Measurement;
 
-public sealed class MagneticFlux : Measurement<MagneticFlux> {
-
-    private MagneticFlux(double value) : base(value) { }
-
-    protected override MagneticFlux Create(double value) => new(value);
-    protected override string Symbol => "Wb";
+[Measurement("Wb")]
+public readonly partial struct MagneticFlux {
 
     // SI units
-    public static MagneticFlux FromWebers(double value) => new(value);
+    public static MagneticFlux FromWebers(double webers) => new(webers);
     public double ToWebers() => value;
     public static MagneticFlux FromMilliwebers(double milliwebers) => new(milliwebers * 1e-3);
     public double ToMilliwebers() => value / 1e-3;

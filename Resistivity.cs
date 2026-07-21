@@ -1,14 +1,10 @@
 namespace com.hafthor.Measurement;
 
-public sealed class Resistivity : Measurement<Resistivity> {
-
-    private Resistivity(double value) : base(value) { }
-
-    protected override Resistivity Create(double value) => new(value);
-    protected override string Symbol => "Ω·m";
+[Measurement("Ω·m")]
+public readonly partial struct Resistivity {
 
     // Units
-    public static Resistivity FromOhmMeters(double value) => new(value);
+    public static Resistivity FromOhmMeters(double ohmMeters) => new(ohmMeters);
     public double ToOhmMeters() => value;
     public static Resistivity FromOhmCentimeters(double ohmCentimeters) => new(ohmCentimeters * (1e-2));
     public double ToOhmCentimeters() => value / (1e-2);

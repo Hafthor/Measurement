@@ -1,16 +1,12 @@
 namespace com.hafthor.Measurement;
 
-public sealed class AbsorbedDose : Measurement<AbsorbedDose> {
-
-    private AbsorbedDose(double value) : base(value) { }
-
-    protected override AbsorbedDose Create(double value) => new(value);
-    protected override string Symbol => "Gy";
+[Measurement("Gy")]
+public readonly partial struct AbsorbedDose {
 
     // SI units
     public static AbsorbedDose FromKilograys(double kilograys) => new(kilograys * 1e3);
     public double ToKilograys() => value / 1e3;
-    public static AbsorbedDose FromGrays(double value) => new(value);
+    public static AbsorbedDose FromGrays(double grays) => new(grays);
     public double ToGrays() => value;
     public static AbsorbedDose FromMilligrays(double milligrays) => new(milligrays * 1e-3);
     public double ToMilligrays() => value / 1e-3;

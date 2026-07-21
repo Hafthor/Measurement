@@ -1,14 +1,10 @@
 namespace com.hafthor.Measurement;
 
-public sealed class ThermalConductivity : Measurement<ThermalConductivity> {
-
-    private ThermalConductivity(double value) : base(value) { }
-
-    protected override ThermalConductivity Create(double value) => new(value);
-    protected override string Symbol => "W/(m·K)";
+[Measurement("W/(m·K)")]
+public readonly partial struct ThermalConductivity {
 
     // Units
-    public static ThermalConductivity FromWattsPerMeterKelvin(double value) => new(value);
+    public static ThermalConductivity FromWattsPerMeterKelvin(double wattsPerMeterKelvin) => new(wattsPerMeterKelvin);
     public double ToWattsPerMeterKelvin() => value;
     public static ThermalConductivity FromMilliwattsPerMeterKelvin(double milliwattsPerMeterKelvin) => new(milliwattsPerMeterKelvin * (1e-3));
     public double ToMilliwattsPerMeterKelvin() => value / (1e-3);

@@ -1,14 +1,10 @@
 namespace com.hafthor.Measurement;
 
-public sealed class Concentration : Measurement<Concentration> {
-
-    private Concentration(double value) : base(value) { }
-
-    protected override Concentration Create(double value) => new(value);
-    protected override string Symbol => "mol/m³";
+[Measurement("mol/m³")]
+public readonly partial struct Concentration {
 
     // Units
-    public static Concentration FromMolesPerCubicMeter(double value) => new(value);
+    public static Concentration FromMolesPerCubicMeter(double molesPerCubicMeter) => new(molesPerCubicMeter);
     public double ToMolesPerCubicMeter() => value;
     public static Concentration FromMolesPerLiter(double molesPerLiter) => new(molesPerLiter * (1000));
     public double ToMolesPerLiter() => value / (1000);

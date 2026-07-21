@@ -1,14 +1,10 @@
 namespace com.hafthor.Measurement;
 
-public sealed class MagneticFluxDensity : Measurement<MagneticFluxDensity> {
-
-    private MagneticFluxDensity(double value) : base(value) { }
-
-    protected override MagneticFluxDensity Create(double value) => new(value);
-    protected override string Symbol => "T";
+[Measurement("T")]
+public readonly partial struct MagneticFluxDensity {
 
     // SI units
-    public static MagneticFluxDensity FromTeslas(double value) => new(value);
+    public static MagneticFluxDensity FromTeslas(double teslas) => new(teslas);
     public double ToTeslas() => value;
     public static MagneticFluxDensity FromMilliteslas(double milliteslas) => new(milliteslas * 1e-3);
     public double ToMilliteslas() => value / 1e-3;

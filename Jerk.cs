@@ -1,14 +1,10 @@
 namespace com.hafthor.Measurement;
 
-public sealed class Jerk : Measurement<Jerk> {
-
-    private Jerk(double value) : base(value) { }
-
-    protected override Jerk Create(double value) => new(value);
-    protected override string Symbol => "m/s³";
+[Measurement("m/s³")]
+public readonly partial struct Jerk {
 
     // Units
-    public static Jerk FromMetersPerSecondCubed(double value) => new(value);
+    public static Jerk FromMetersPerSecondCubed(double metersPerSecondCubed) => new(metersPerSecondCubed);
     public double ToMetersPerSecondCubed() => value;
     public static Jerk FromFeetPerSecondCubed(double feetPerSecondCubed) => new(feetPerSecondCubed * (0.3048));
     public double ToFeetPerSecondCubed() => value / (0.3048);

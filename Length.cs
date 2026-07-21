@@ -1,16 +1,12 @@
 namespace com.hafthor.Measurement;
 
-public sealed class Length : Measurement<Length> {
-
-    private Length(double value) : base(value) { }
-
-    protected override Length Create(double value) => new(value);
-    protected override string Symbol => "m";
+[Measurement("m")]
+public readonly partial struct Length {
 
     // SI units
     public static Length FromKilometers(double kilometers) => new(kilometers * 1e3);
     public double ToKilometers() => value / 1e3;
-    public static Length FromMeters(double value) => new(value);
+    public static Length FromMeters(double meters) => new(meters);
     public double ToMeters() => value;
     public static Length FromCentimeters(double centimeters) => new(centimeters * 1e-2);
     public double ToCentimeters() => value / 1e-2;
