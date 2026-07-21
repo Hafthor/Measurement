@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <LangVersion>latest</LangVersion>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>disable</Nullable>
+        <RootNamespace>com.hafthor.Measurement</RootNamespace>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <NoWarn>$(NoWarn);CS1591</NoWarn>
+
+        <PackageId>Measurement</PackageId>
+        <Version>1.0.0</Version>
+        <Authors>Hafthor Stefansson</Authors>
+        <Description>A library of strongly-typed measurement classes.</Description>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <RepositoryUrl>https://github.com/Hafthor/Measurement</RepositoryUrl>
+        <PackageProjectUrl>https://github.com/Hafthor/Measurement</PackageProjectUrl>
+        <PackageTags>measurements;units;length;mass;temperature;SI;imperial</PackageTags>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="../README.md" Pack="true" PackagePath="\" />
+    </ItemGroup>
+
+    <!-- Source generator (analyzer): supplies each struct's operators/equality/etc. -->
+    <ItemGroup>
+        <ProjectReference Include="../Measurement.Generators/Measurement.Generators.csproj"
+                          OutputItemType="Analyzer" ReferenceOutputAssembly="false" PrivateAssets="all" />
+    </ItemGroup>
+
+</Project>
