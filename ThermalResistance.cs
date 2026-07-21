@@ -17,4 +17,6 @@ public class ThermalResistance {
     // Composite relationships
     public static Temperature operator *(ThermalResistance thermalResistance, Power power) => Temperature.FromKelvin(thermalResistance.ToKelvinsPerWatt() * power.ToWatts());
     public static Temperature operator *(Power power, ThermalResistance thermalResistance) => Temperature.FromKelvin(power.ToWatts() * thermalResistance.ToKelvinsPerWatt());
+
+    public override string ToString() => $"{kelvinsPerWatt} K/W";
 }

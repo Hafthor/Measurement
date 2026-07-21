@@ -39,4 +39,6 @@ public class Quantity {
     // Composite relationships (derived)
     public static Molality operator /(Quantity quantity, Mass mass) => Molality.FromMolesPerKilogram(quantity.ToMoles() / mass.ToKilograms());
     public static Concentration operator /(Quantity quantity, Volume volume) => Concentration.FromMolesPerCubicMeter(quantity.ToMoles() / volume.ToCubicMeters());
+
+    public override string ToString() => $"{moles} mol";
 }

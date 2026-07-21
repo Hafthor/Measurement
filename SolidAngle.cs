@@ -19,4 +19,6 @@ public class SolidAngle {
 
     // Composite relationships
     public static LuminousFlux operator *(SolidAngle solidAngle, LuminousIntensity intensity) => LuminousFlux.FromLumens(solidAngle.steradians * intensity.ToCandelas());
+
+    public override string ToString() => $"{steradians} sr";
 }

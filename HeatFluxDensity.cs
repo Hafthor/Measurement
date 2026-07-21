@@ -21,4 +21,6 @@ public class HeatFluxDensity {
     // Composite relationships
     public static Power operator *(HeatFluxDensity heatFluxDensity, Area area) => Power.FromWatts(heatFluxDensity.ToWattsPerSquareMeter() * area.ToSquareMeters());
     public static Power operator *(Area area, HeatFluxDensity heatFluxDensity) => Power.FromWatts(area.ToSquareMeters() * heatFluxDensity.ToWattsPerSquareMeter());
+
+    public override string ToString() => $"{wattsPerSquareMeter} W/m²";
 }

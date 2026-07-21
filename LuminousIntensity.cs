@@ -31,4 +31,6 @@ public class LuminousIntensity {
 
     // Composite relationships (derived)
     public static Luminance operator /(LuminousIntensity luminousIntensity, Area area) => Luminance.FromCandelasPerSquareMeter(luminousIntensity.ToCandelas() / area.ToSquareMeters());
+
+    public override string ToString() => $"{candelas} cd";
 }

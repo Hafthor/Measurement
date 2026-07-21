@@ -19,4 +19,6 @@ public class Exposure {
     // Composite relationships
     public static ElectricCharge operator *(Exposure exposure, Mass mass) => ElectricCharge.FromCoulombs(exposure.ToCoulombsPerKilogram() * mass.ToKilograms());
     public static ElectricCharge operator *(Mass mass, Exposure exposure) => ElectricCharge.FromCoulombs(mass.ToKilograms() * exposure.ToCoulombsPerKilogram());
+
+    public override string ToString() => $"{coulombsPerKilogram} C/kg";
 }

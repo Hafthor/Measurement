@@ -21,4 +21,6 @@ public class Jerk {
     // Composite relationships
     public static Acceleration operator *(Jerk jerk, Duration duration) => Acceleration.FromMetersPerSecondSquared(jerk.ToMetersPerSecondCubed() * duration.ToSeconds());
     public static Acceleration operator *(Duration duration, Jerk jerk) => Acceleration.FromMetersPerSecondSquared(duration.ToSeconds() * jerk.ToMetersPerSecondCubed());
+
+    public override string ToString() => $"{metersPerSecondCubed} m/s³";
 }

@@ -21,4 +21,6 @@ public class SpecificVolume {
     // Composite relationships
     public static Volume operator *(SpecificVolume specificVolume, Mass mass) => Volume.FromCubicMeters(specificVolume.ToCubicMetersPerKilogram() * mass.ToKilograms());
     public static Volume operator *(Mass mass, SpecificVolume specificVolume) => Volume.FromCubicMeters(mass.ToKilograms() * specificVolume.ToCubicMetersPerKilogram());
+
+    public override string ToString() => $"{cubicMetersPerKilogram} m³/kg";
 }

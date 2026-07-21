@@ -21,4 +21,6 @@ public class Conductivity {
     // Composite relationships
     public static ElectricConductance operator *(Conductivity conductivity, Length length) => ElectricConductance.FromSiemens(conductivity.ToSiemensPerMeter() * length.ToMeters());
     public static ElectricConductance operator *(Length length, Conductivity conductivity) => ElectricConductance.FromSiemens(length.ToMeters() * conductivity.ToSiemensPerMeter());
+
+    public override string ToString() => $"{siemensPerMeter} S/m";
 }

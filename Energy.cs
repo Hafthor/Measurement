@@ -64,4 +64,6 @@ public class Energy {
     public static Pressure operator /(Energy energy, Volume volume) => Pressure.FromPascals(energy.joules / volume.ToCubicMeters());
     public static HeatCapacity operator /(Energy energy, Temperature temperatureChange) => HeatCapacity.FromJoulesPerKelvin(energy.joules / temperatureChange.ToKelvin());
     public static Temperature operator /(Energy energy, HeatCapacity heatCapacity) => Temperature.FromKelvin(energy.joules / heatCapacity.ToJoulesPerKelvin());
+
+    public override string ToString() => $"{joules} J";
 }

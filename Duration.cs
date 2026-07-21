@@ -85,4 +85,6 @@ public class Duration {
 
     // Famous relations
     public static Momentum operator *(Duration duration, Force force) => Momentum.FromKilogramMetersPerSecond(duration.ToSeconds() * force.ToNewtons());
+
+    public override string ToString() => $"{seconds} s";
 }

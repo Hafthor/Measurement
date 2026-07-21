@@ -21,4 +21,6 @@ public class Torque {
     public double ToPoundFeet() => newtonMeters / (1.3558179483314004);
     public static Torque FromPoundInches(double poundInches) => new(poundInches * (0.11298482902762));
     public double ToPoundInches() => newtonMeters / (0.11298482902762);
+
+    public override string ToString() => $"{newtonMeters} N·m";
 }

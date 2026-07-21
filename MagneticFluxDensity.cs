@@ -28,4 +28,6 @@ public class MagneticFluxDensity {
 
     // Composite relationships
     public static MagneticFlux operator *(MagneticFluxDensity density, Area area) => MagneticFlux.FromWebers(density.teslas * area.ToSquareMeters());
+
+    public override string ToString() => $"{teslas} T";
 }

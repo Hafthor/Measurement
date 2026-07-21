@@ -44,4 +44,6 @@ public class Power {
     // Composite relationships (derived)
     public static HeatFluxDensity operator /(Power power, Area area) => HeatFluxDensity.FromWattsPerSquareMeter(power.ToWatts() / area.ToSquareMeters());
     public static RadiantIntensity operator /(Power power, SolidAngle solidAngle) => RadiantIntensity.FromWattsPerSteradian(power.ToWatts() / solidAngle.ToSteradians());
+
+    public override string ToString() => $"{watts} W";
 }

@@ -19,4 +19,6 @@ public class MolarMass {
     // Composite relationships
     public static Mass operator *(MolarMass molarMass, Quantity quantity) => Mass.FromKilograms(molarMass.ToKilogramsPerMole() * quantity.ToMoles());
     public static Mass operator *(Quantity quantity, MolarMass molarMass) => Mass.FromKilograms(quantity.ToMoles() * molarMass.ToKilogramsPerMole());
+
+    public override string ToString() => $"{kilogramsPerMole} kg/mol";
 }

@@ -17,4 +17,6 @@ public class ChargeDensity {
     // Composite relationships
     public static ElectricCharge operator *(ChargeDensity chargeDensity, Volume volume) => ElectricCharge.FromCoulombs(chargeDensity.ToCoulombsPerCubicMeter() * volume.ToCubicMeters());
     public static ElectricCharge operator *(Volume volume, ChargeDensity chargeDensity) => ElectricCharge.FromCoulombs(volume.ToCubicMeters() * chargeDensity.ToCoulombsPerCubicMeter());
+
+    public override string ToString() => $"{coulombsPerCubicMeter} C/m³";
 }

@@ -10,6 +10,8 @@ methods and `ToXxx` accessors for every supported unit.
   field holding the value in its **canonical SI unit** (e.g. `Length` stores metres).
 - Construction is via `public static T FromUnit(double value)` factory methods.
 - Read-out is via `public double ToUnit()` methods.
+- `ToString()` renders the canonical value with the standard SI unit symbol, e.g.
+  `Force.FromNewtons(6).ToString()` → `"6 N"`, `Speed.FromMetersPerSecond(10)` → `"10 m/s"`.
 - Composite measurements are defined in terms of the foundational ones and expose C#
   arithmetic operators relating them, so you can write e.g. `Speed speed = length / duration;`,
   `Force f = mass * acceleration;`, or `Energy e = force * length;` directly.
@@ -63,7 +65,8 @@ The dimensional SI base quantities. Everything else is derived from these.
 > **`Duration`** is preferred over `Time` to avoid clashing with `System.DateTime`/`TimeSpan`
 > semantics, to make clear it represents an *elapsed* quantity, and because we want it to
 > cover the full range from Planck time up to astronomical/cosmological scales
-> (nanoseconds → seconds → days → Julian years → millennia → Hubble time, etc.).
+> (nanoseconds → seconds → days → Julian years → millennia → Hubble time, etc.). Note that `Duration`
+> is **NOT** suited for exact calendaring operations (such as adding months or years).
 
 > **`Quantity`** models amount of substance and plain counts. Although the mole is really a
 > *count* of elementary entities, chemists carry it through equations like a unit (mol/L,

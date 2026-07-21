@@ -21,4 +21,6 @@ public class KinematicViscosity {
     // Composite relationships
     public static Area operator *(KinematicViscosity kinematicViscosity, Duration duration) => Area.FromSquareMeters(kinematicViscosity.ToSquareMetersPerSecond() * duration.ToSeconds());
     public static Area operator *(Duration duration, KinematicViscosity kinematicViscosity) => Area.FromSquareMeters(duration.ToSeconds() * kinematicViscosity.ToSquareMetersPerSecond());
+
+    public override string ToString() => $"{squareMetersPerSecond} m²/s";
 }

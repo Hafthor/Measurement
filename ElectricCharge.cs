@@ -52,4 +52,6 @@ public class ElectricCharge {
 
     // Famous relations
     public static Energy operator *(ElectricCharge charge, Voltage voltage) => Energy.FromJoules(charge.ToCoulombs() * voltage.ToVolts());
+
+    public override string ToString() => $"{coulombs} C";
 }

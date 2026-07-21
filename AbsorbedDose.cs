@@ -28,4 +28,6 @@ public class AbsorbedDose {
 
     // Composite relationships (derived)
     public static DoseRate operator /(AbsorbedDose absorbedDose, Duration duration) => DoseRate.FromGraysPerSecond(absorbedDose.ToGrays() / duration.ToSeconds());
+
+    public override string ToString() => $"{grays} Gy";
 }

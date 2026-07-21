@@ -50,4 +50,6 @@ public class Pressure {
 
     // Famous relations
     public static Energy operator *(Pressure pressure, Volume volume) => Energy.FromJoules(pressure.ToPascals() * volume.ToCubicMeters());
+
+    public override string ToString() => $"{pascals} Pa";
 }

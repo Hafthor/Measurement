@@ -29,4 +29,6 @@ public class Radioactivity {
     public double ToMicrocuries() => becquerels / 3.7e4;
     public static Radioactivity FromRutherfords(double rutherfords) => new(rutherfords * 1e6);
     public double ToRutherfords() => becquerels / 1e6;
+
+    public override string ToString() => $"{becquerels} Bq";
 }

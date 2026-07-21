@@ -27,4 +27,6 @@ public class Action {
     // Famous relations
     public static Length operator /(Action action, Momentum momentum) => Length.FromMeters(action.ToJouleSeconds() / momentum.ToKilogramMetersPerSecond());
     public static Momentum operator /(Action action, Length length) => Momentum.FromKilogramMetersPerSecond(action.ToJouleSeconds() / length.ToMeters());
+
+    public override string ToString() => $"{jouleSeconds} J·s";
 }

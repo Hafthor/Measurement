@@ -17,4 +17,6 @@ public class ThermalConductivity {
     public double ToMilliwattsPerMeterKelvin() => wattsPerMeterKelvin / (1e-3);
     public static ThermalConductivity FromBtuPerHourFootFahrenheit(double btuPerHourFootFahrenheit) => new(btuPerHourFootFahrenheit * (1.730734666));
     public double ToBtuPerHourFootFahrenheit() => wattsPerMeterKelvin / (1.730734666);
+
+    public override string ToString() => $"{wattsPerMeterKelvin} W/(m·K)";
 }

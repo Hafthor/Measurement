@@ -21,4 +21,6 @@ public class ElectricFieldStrength {
     // Composite relationships
     public static Voltage operator *(ElectricFieldStrength electricFieldStrength, Length length) => Voltage.FromVolts(electricFieldStrength.ToVoltsPerMeter() * length.ToMeters());
     public static Voltage operator *(Length length, ElectricFieldStrength electricFieldStrength) => Voltage.FromVolts(length.ToMeters() * electricFieldStrength.ToVoltsPerMeter());
+
+    public override string ToString() => $"{voltsPerMeter} V/m";
 }

@@ -25,4 +25,6 @@ public class VolumetricFlowRate {
     // Composite relationships
     public static Volume operator *(VolumetricFlowRate volumetricFlowRate, Duration duration) => Volume.FromCubicMeters(volumetricFlowRate.ToCubicMetersPerSecond() * duration.ToSeconds());
     public static Volume operator *(Duration duration, VolumetricFlowRate volumetricFlowRate) => Volume.FromCubicMeters(duration.ToSeconds() * volumetricFlowRate.ToCubicMetersPerSecond());
+
+    public override string ToString() => $"{cubicMetersPerSecond} m³/s";
 }

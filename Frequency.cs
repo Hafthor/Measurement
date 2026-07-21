@@ -34,4 +34,6 @@ public class Frequency {
 
     // Famous relations
     public static Speed operator *(Frequency frequency, Length length) => Speed.FromMetersPerSecond(frequency.ToHertz() * length.ToMeters());
+
+    public override string ToString() => $"{hertz} Hz";
 }

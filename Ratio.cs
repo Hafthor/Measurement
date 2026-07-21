@@ -25,4 +25,6 @@ public class Ratio {
     // Logarithmic (power) decibels
     public static Ratio FromDecibels(double decibels) => new(Math.Pow(10, decibels / 10));
     public double ToDecibels() => 10 * Math.Log10(value);
+
+    public override string ToString() => $"{value}";
 }

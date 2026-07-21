@@ -26,4 +26,6 @@ public class CatalyticActivity {
 
     // Composite relationships (derived)
     public static CatalyticConcentration operator /(CatalyticActivity catalyticActivity, Volume volume) => CatalyticConcentration.FromKatalsPerCubicMeter(catalyticActivity.ToKatals() / volume.ToCubicMeters());
+
+    public override string ToString() => $"{katals} kat";
 }

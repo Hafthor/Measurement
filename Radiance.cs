@@ -13,4 +13,6 @@ public class Radiance {
     // Units
     public static Radiance FromWattsPerSquareMeterSteradian(double wattsPerSquareMeterSteradian) => new(wattsPerSquareMeterSteradian);
     public double ToWattsPerSquareMeterSteradian() => wattsPerSquareMeterSteradian;
+
+    public override string ToString() => $"{wattsPerSquareMeterSteradian} W/(m²·sr)";
 }

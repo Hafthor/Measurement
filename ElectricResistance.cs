@@ -29,4 +29,6 @@ public class ElectricResistance {
 
     // Composite relationships (derived)
     public static Resistivity operator *(ElectricResistance electricResistance, Length length) => Resistivity.FromOhmMeters(electricResistance.ToOhms() * length.ToMeters());
+
+    public override string ToString() => $"{ohms} Ω";
 }

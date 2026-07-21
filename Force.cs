@@ -44,4 +44,6 @@ public class Force {
 
     // Famous relations
     public static Momentum operator *(Force force, Duration duration) => Momentum.FromKilogramMetersPerSecond(force.ToNewtons() * duration.ToSeconds());
+
+    public override string ToString() => $"{newtons} N";
 }

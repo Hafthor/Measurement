@@ -19,4 +19,6 @@ public class CurrentDensity {
     // Composite relationships
     public static ElectricCurrent operator *(CurrentDensity currentDensity, Area area) => ElectricCurrent.FromAmperes(currentDensity.ToAmperesPerSquareMeter() * area.ToSquareMeters());
     public static ElectricCurrent operator *(Area area, CurrentDensity currentDensity) => ElectricCurrent.FromAmperes(area.ToSquareMeters() * currentDensity.ToAmperesPerSquareMeter());
+
+    public override string ToString() => $"{amperesPerSquareMeter} A/m²";
 }

@@ -17,4 +17,6 @@ public class Permittivity {
     // Composite relationships
     public static Capacitance operator *(Permittivity permittivity, Length length) => Capacitance.FromFarads(permittivity.ToFaradsPerMeter() * length.ToMeters());
     public static Capacitance operator *(Length length, Permittivity permittivity) => Capacitance.FromFarads(length.ToMeters() * permittivity.ToFaradsPerMeter());
+
+    public override string ToString() => $"{faradsPerMeter} F/m";
 }

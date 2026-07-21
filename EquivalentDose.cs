@@ -23,4 +23,6 @@ public class EquivalentDose {
     public double ToRems() => sieverts / 1e-2;
     public static EquivalentDose FromMillirems(double millirems) => new(millirems * 1e-5);
     public double ToMillirems() => sieverts / 1e-5;
+
+    public override string ToString() => $"{sieverts} Sv";
 }

@@ -38,4 +38,6 @@ public class Temperature {
     public static Energy operator *(Temperature temperatureChange, HeatCapacity heatCapacity) => Energy.FromJoules(temperatureChange.kelvin * heatCapacity.ToJoulesPerKelvin());
     public static ThermalResistance operator /(Temperature temperatureChange, Power power) => ThermalResistance.FromKelvinsPerWatt(temperatureChange.kelvin / power.ToWatts());
     public static Power operator /(Temperature temperatureChange, ThermalResistance thermalResistance) => Power.FromWatts(temperatureChange.kelvin / thermalResistance.ToKelvinsPerWatt());
+
+    public override string ToString() => $"{kelvin} K";
 }

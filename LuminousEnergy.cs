@@ -21,4 +21,6 @@ public class LuminousEnergy {
     // Composite relationships
     public static LuminousFlux operator /(LuminousEnergy luminousEnergy, Duration duration) => LuminousFlux.FromLumens(luminousEnergy.ToLumenSeconds() / duration.ToSeconds());
     public static Duration operator /(LuminousEnergy luminousEnergy, LuminousFlux luminousFlux) => Duration.FromSeconds(luminousEnergy.ToLumenSeconds() / luminousFlux.ToLumens());
+
+    public override string ToString() => $"{lumenSeconds} lm·s";
 }

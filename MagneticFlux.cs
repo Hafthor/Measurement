@@ -26,4 +26,6 @@ public class MagneticFlux {
     public static Voltage operator /(MagneticFlux flux, Duration duration) => Voltage.FromVolts(flux.webers / duration.ToSeconds());
     public static Inductance operator /(MagneticFlux flux, ElectricCurrent current) => Inductance.FromHenries(flux.webers / current.ToAmperes());
     public static MagneticFluxDensity operator /(MagneticFlux flux, Area area) => MagneticFluxDensity.FromTeslas(flux.webers / area.ToSquareMeters());
+
+    public override string ToString() => $"{webers} Wb";
 }

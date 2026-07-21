@@ -19,4 +19,6 @@ public class MagneticFieldStrength {
     // Composite relationships
     public static ElectricCurrent operator *(MagneticFieldStrength magneticFieldStrength, Length length) => ElectricCurrent.FromAmperes(magneticFieldStrength.ToAmperesPerMeter() * length.ToMeters());
     public static ElectricCurrent operator *(Length length, MagneticFieldStrength magneticFieldStrength) => ElectricCurrent.FromAmperes(length.ToMeters() * magneticFieldStrength.ToAmperesPerMeter());
+
+    public override string ToString() => $"{amperesPerMeter} A/m";
 }

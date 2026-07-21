@@ -19,4 +19,6 @@ public class AreaDensity {
     // Composite relationships
     public static Mass operator *(AreaDensity areaDensity, Area area) => Mass.FromKilograms(areaDensity.ToKilogramsPerSquareMeter() * area.ToSquareMeters());
     public static Mass operator *(Area area, AreaDensity areaDensity) => Mass.FromKilograms(area.ToSquareMeters() * areaDensity.ToKilogramsPerSquareMeter());
+
+    public override string ToString() => $"{kilogramsPerSquareMeter} kg/m²";
 }

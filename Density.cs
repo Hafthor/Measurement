@@ -27,4 +27,6 @@ public class Density {
     // Composite relationships
     public static Mass operator *(Density density, Volume volume) => Mass.FromKilograms(density.ToKilogramsPerCubicMeter() * volume.ToCubicMeters());
     public static Mass operator *(Volume volume, Density density) => Mass.FromKilograms(volume.ToCubicMeters() * density.ToKilogramsPerCubicMeter());
+
+    public override string ToString() => $"{kilogramsPerCubicMeter} kg/m³";
 }

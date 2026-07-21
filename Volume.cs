@@ -66,4 +66,6 @@ public class Volume {
 
     // Famous relations
     public static Energy operator *(Volume volume, Pressure pressure) => Energy.FromJoules(volume.ToCubicMeters() * pressure.ToPascals());
+
+    public override string ToString() => $"{cubicMeters} m³";
 }

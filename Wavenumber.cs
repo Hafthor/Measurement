@@ -19,4 +19,6 @@ public class Wavenumber {
     // Reciprocal of wavelength
     public static Wavenumber FromWavelength(Length wavelength) => new(1 / wavelength.ToMeters());
     public Length ToWavelength() => Length.FromMeters(1 / perMeter);
+
+    public override string ToString() => $"{perMeter} m⁻¹";
 }

@@ -48,4 +48,6 @@ public class Area {
     // Composite relationships (derived)
     public static MomentOfInertia operator *(Area area, Mass mass) => MomentOfInertia.FromKilogramSquareMeters(area.ToSquareMeters() * mass.ToKilograms());
     public static KinematicViscosity operator /(Area area, Duration duration) => KinematicViscosity.FromSquareMetersPerSecond(area.ToSquareMeters() / duration.ToSeconds());
+
+    public override string ToString() => $"{squareMeters} m²";
 }

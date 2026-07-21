@@ -27,4 +27,6 @@ public class MassFlowRate {
     // Composite relationships
     public static Mass operator *(MassFlowRate massFlowRate, Duration duration) => Mass.FromKilograms(massFlowRate.ToKilogramsPerSecond() * duration.ToSeconds());
     public static Mass operator *(Duration duration, MassFlowRate massFlowRate) => Mass.FromKilograms(duration.ToSeconds() * massFlowRate.ToKilogramsPerSecond());
+
+    public override string ToString() => $"{kilogramsPerSecond} kg/s";
 }

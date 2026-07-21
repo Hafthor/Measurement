@@ -19,4 +19,6 @@ public class ReactionRate {
     // Composite relationships
     public static Concentration operator *(ReactionRate reactionRate, Duration duration) => Concentration.FromMolesPerCubicMeter(reactionRate.ToMolesPerCubicMeterSecond() * duration.ToSeconds());
     public static Concentration operator *(Duration duration, ReactionRate reactionRate) => Concentration.FromMolesPerCubicMeter(duration.ToSeconds() * reactionRate.ToMolesPerCubicMeterSecond());
+
+    public override string ToString() => $"{molesPerCubicMeterSecond} mol/(m³·s)";
 }

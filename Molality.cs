@@ -19,4 +19,6 @@ public class Molality {
     // Composite relationships
     public static Quantity operator *(Molality molality, Mass mass) => Quantity.FromMoles(molality.ToMolesPerKilogram() * mass.ToKilograms());
     public static Quantity operator *(Mass mass, Molality molality) => Quantity.FromMoles(mass.ToKilograms() * molality.ToMolesPerKilogram());
+
+    public override string ToString() => $"{molesPerKilogram} mol/kg";
 }

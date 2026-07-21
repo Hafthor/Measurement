@@ -21,4 +21,6 @@ public class AngularAcceleration {
     // Composite relationships
     public static AngularVelocity operator *(AngularAcceleration angularAcceleration, Duration duration) => AngularVelocity.FromRadiansPerSecond(angularAcceleration.ToRadiansPerSecondSquared() * duration.ToSeconds());
     public static AngularVelocity operator *(Duration duration, AngularAcceleration angularAcceleration) => AngularVelocity.FromRadiansPerSecond(duration.ToSeconds() * angularAcceleration.ToRadiansPerSecondSquared());
+
+    public override string ToString() => $"{radiansPerSecondSquared} rad/s²";
 }

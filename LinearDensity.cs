@@ -25,4 +25,6 @@ public class LinearDensity {
     // Composite relationships
     public static Mass operator *(LinearDensity linearDensity, Length length) => Mass.FromKilograms(linearDensity.ToKilogramsPerMeter() * length.ToMeters());
     public static Mass operator *(Length length, LinearDensity linearDensity) => Mass.FromKilograms(length.ToMeters() * linearDensity.ToKilogramsPerMeter());
+
+    public override string ToString() => $"{kilogramsPerMeter} kg/m";
 }

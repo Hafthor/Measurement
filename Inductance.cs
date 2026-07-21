@@ -31,4 +31,6 @@ public class Inductance {
 
     // Composite relationships (derived)
     public static Permeability operator /(Inductance inductance, Length length) => Permeability.FromHenriesPerMeter(inductance.ToHenries() / length.ToMeters());
+
+    public override string ToString() => $"{henries} H";
 }

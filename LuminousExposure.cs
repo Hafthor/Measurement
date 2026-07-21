@@ -19,4 +19,6 @@ public class LuminousExposure {
     // Composite relationships
     public static Illuminance operator /(LuminousExposure luminousExposure, Duration duration) => Illuminance.FromLux(luminousExposure.ToLuxSeconds() / duration.ToSeconds());
     public static Duration operator /(LuminousExposure luminousExposure, Illuminance illuminance) => Duration.FromSeconds(luminousExposure.ToLuxSeconds() / illuminance.ToLux());
+
+    public override string ToString() => $"{luxSeconds} lx·s";
 }

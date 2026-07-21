@@ -43,4 +43,6 @@ public class Speed {
     // Famous relations
     public static Frequency operator /(Speed speed, Length length) => Frequency.FromHertz(speed.ToMetersPerSecond() / length.ToMeters());
     public static Length operator /(Speed speed, Frequency frequency) => Length.FromMeters(speed.ToMetersPerSecond() / frequency.ToHertz());
+
+    public override string ToString() => $"{metersPerSecond} m/s";
 }

@@ -21,4 +21,6 @@ public class SurfaceTension {
     // Composite relationships
     public static Force operator *(SurfaceTension surfaceTension, Length length) => Force.FromNewtons(surfaceTension.ToNewtonsPerMeter() * length.ToMeters());
     public static Force operator *(Length length, SurfaceTension surfaceTension) => Force.FromNewtons(length.ToMeters() * surfaceTension.ToNewtonsPerMeter());
+
+    public override string ToString() => $"{newtonsPerMeter} N/m";
 }
