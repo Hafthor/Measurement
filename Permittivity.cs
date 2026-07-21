@@ -1,25 +1,18 @@
 namespace com.hafthor.Measurement;
 
-public class Permittivity {
-    private readonly double faradsPerMeter;
+public sealed class Permittivity : Measurement<Permittivity> {
 
-    private Permittivity(double faradsPerMeter) => this.faradsPerMeter = faradsPerMeter;
+    private Permittivity(double value) : base(value) { }
 
-    // Arithmetic
-    public static Permittivity operator +(Permittivity a, Permittivity b) => new(a.faradsPerMeter + b.faradsPerMeter);
-    public static Permittivity operator -(Permittivity a, Permittivity b) => new(a.faradsPerMeter - b.faradsPerMeter);
-    public static Permittivity operator -(Permittivity x) => new(-x.faradsPerMeter);
+    protected override Permittivity Create(double value) => new(value);
+    protected override string Symbol => "F/m";
 
     // Units
-    public static Permittivity FromFaradsPerMeter(double faradsPerMeter) => new(faradsPerMeter);
-    public double ToFaradsPerMeter() => faradsPerMeter;
+    public static Permittivity FromFaradsPerMeter(double value) => new(value);
+    public double ToFaradsPerMeter() => value;
 
     // Composite relationships
     public static Capacitance operator *(Permittivity permittivity, Length length) => Capacitance.FromFarads(permittivity.ToFaradsPerMeter() * length.ToMeters());
     public static Capacitance operator *(Length length, Permittivity permittivity) => Capacitance.FromFarads(length.ToMeters() * permittivity.ToFaradsPerMeter());
 
-    public override string ToString() => $"{faradsPerMeter} F/m";
-
-    public override bool Equals(object obj) => obj is Permittivity other && other.faradsPerMeter == faradsPerMeter;
-    public override int GetHashCode() => faradsPerMeter.GetHashCode();
 }

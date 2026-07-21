@@ -1,32 +1,25 @@
 namespace com.hafthor.Measurement;
 
-public class LuminousFlux {
-    private readonly double lumens;
+public sealed class LuminousFlux : Measurement<LuminousFlux> {
 
-    private LuminousFlux(double lumens) => this.lumens = lumens;
+    private LuminousFlux(double value) : base(value) { }
 
-    // Arithmetic
-    public static LuminousFlux operator +(LuminousFlux a, LuminousFlux b) => new(a.lumens + b.lumens);
-    public static LuminousFlux operator -(LuminousFlux a, LuminousFlux b) => new(a.lumens - b.lumens);
-    public static LuminousFlux operator -(LuminousFlux x) => new(-x.lumens);
+    protected override LuminousFlux Create(double value) => new(value);
+    protected override string Symbol => "lm";
 
     // SI units
     public static LuminousFlux FromKilolumens(double kilolumens) => new(kilolumens * 1e3);
-    public double ToKilolumens() => lumens / 1e3;
-    public static LuminousFlux FromLumens(double lumens) => new(lumens);
-    public double ToLumens() => lumens;
+    public double ToKilolumens() => value / 1e3;
+    public static LuminousFlux FromLumens(double value) => new(value);
+    public double ToLumens() => value;
     public static LuminousFlux FromMillilumens(double millilumens) => new(millilumens * 1e-3);
-    public double ToMillilumens() => lumens / 1e-3;
+    public double ToMillilumens() => value / 1e-3;
 
     // Composite relationships
-    public static LuminousIntensity operator /(LuminousFlux flux, SolidAngle solidAngle) => LuminousIntensity.FromCandelas(flux.lumens / solidAngle.ToSteradians());
-    public static Illuminance operator /(LuminousFlux flux, Area area) => Illuminance.FromLux(flux.lumens / area.ToSquareMeters());
+    public static LuminousIntensity operator /(LuminousFlux flux, SolidAngle solidAngle) => LuminousIntensity.FromCandelas(flux.value / solidAngle.ToSteradians());
+    public static Illuminance operator /(LuminousFlux flux, Area area) => Illuminance.FromLux(flux.value / area.ToSquareMeters());
 
     // Composite relationships (derived)
     public static LuminousEnergy operator *(LuminousFlux luminousFlux, Duration duration) => LuminousEnergy.FromLumenSeconds(luminousFlux.ToLumens() * duration.ToSeconds());
 
-    public override string ToString() => $"{lumens} lm";
-
-    public override bool Equals(object obj) => obj is LuminousFlux other && other.lumens == lumens;
-    public override int GetHashCode() => lumens.GetHashCode();
 }

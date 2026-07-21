@@ -6,8 +6,10 @@ methods and `ToXxx` accessors for every supported unit.
 
 ## Conventions
 
-- Each measurement is an immutable class backed by a single `private readonly double`
-  field holding the value in its **canonical SI unit** (e.g. `Length` stores metres).
+- Each measurement is an immutable, `sealed` class deriving from `Measurement<T>` (a generic
+  self-typed base) which holds the single canonical `double` value and centralises value
+  equality (`Equals`/`GetHashCode`), `ToString`, and the same-type `+`/`-`/negation operators.
+  Values are stored in the **canonical SI unit** (e.g. `Length` stores metres).
 - Construction is via `public static T FromUnit(double value)` factory methods.
 - Read-out is via `public double ToUnit()` methods.
 - `ToString()` renders the canonical value with the standard SI unit symbol, e.g.
@@ -19,6 +21,47 @@ methods and `ToXxx` accessors for every supported unit.
   (e.g. `Length total = a + b;`). This includes **`Temperature`**: its canonical unit is
   kelvin — an absolute (true-zero) scale — so the arithmetic is well-defined. Just note that
   a sum read back on an offset scale looks shifted (`0 °C + 0 °C` = 546.30 K = 273.15 °C).
+
+## Fluent SI prefixes
+
+Alongside the explicit `FromXxx`/`ToXxx` API, there is a fluent interface for SI prefixes so
+you never hand-write `FromKilo…`/`FromMilli…` per class. All 24 SI prefixes (`Quetta`…`Quecto`)
+are defined once and stack.
+
+**Construction** — the always-available, non-`double` entry point (no opt-in needed). Any
+unit works, SI or not, with optional stacked prefixes:
+
+```csharp
+Mass    m = Measure.Of(5).Kilo.Grams;      // 5 kg  (mass prefixes attach to the gram)
+Length  d = Measure.Of(3).Kilo.Meters;     // 3 km
+Length  y = Measure.Of(1).Miles;           // non-SI unit, fully fluent
+Energy  e = Measure.Of(2).Mega.Joules;     // 2 MJ
+Length  x = Measure.Of(1).Mega.Mega.Meters; // prefixes stack → 1e12 m
+```
+
+**Read-out** — any unit, optionally prefixed, returns a `double`:
+
+```csharp
+double lb = Measure.Of(5).Kilo.Grams.To.Pounds;   // 5 kg expressed in pounds
+double km = someLength.To.Kilo.Meters;            // metres → km
+double ms = duration.To.Milli.Seconds;            // seconds → ms
+double f  = temperature.To.Fahrenheit;            // non-SI reader
+```
+
+**Opt-in `double` sugar** — for `5.0.Kilo.Meters` directly on numbers, add the import. It is
+scoped to a separate namespace so it never pollutes `double` unless you ask for it:
+
+```csharp
+using com.hafthor.Measurement.Fluent;   // per file, or in a GlobalUsings.cs
+
+Mass m = 5.0.Kilo.Grams;                 // only compiles where this using is present
+```
+
+Every unit is available for both input and read-out. The only exceptions are unit names shared
+by two quantities — `JouleSeconds` (`Action`/`AngularMomentum`) and `RevolutionsPerMinute`
+(`Frequency`/`AngularVelocity`) — which are ambiguous as bare input, so use their explicit
+`FromJouleSeconds`/`FromRevolutionsPerMinute` factories there (read-out is unaffected).
+Requires C# 14 / .NET 10 (extension members).
 
 ## Worked relations
 

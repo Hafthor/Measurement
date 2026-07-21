@@ -1,29 +1,22 @@
 namespace com.hafthor.Measurement;
 
-public class KinematicViscosity {
-    private readonly double squareMetersPerSecond;
+public sealed class KinematicViscosity : Measurement<KinematicViscosity> {
 
-    private KinematicViscosity(double squareMetersPerSecond) => this.squareMetersPerSecond = squareMetersPerSecond;
+    private KinematicViscosity(double value) : base(value) { }
 
-    // Arithmetic
-    public static KinematicViscosity operator +(KinematicViscosity a, KinematicViscosity b) => new(a.squareMetersPerSecond + b.squareMetersPerSecond);
-    public static KinematicViscosity operator -(KinematicViscosity a, KinematicViscosity b) => new(a.squareMetersPerSecond - b.squareMetersPerSecond);
-    public static KinematicViscosity operator -(KinematicViscosity x) => new(-x.squareMetersPerSecond);
+    protected override KinematicViscosity Create(double value) => new(value);
+    protected override string Symbol => "m²/s";
 
     // Units
-    public static KinematicViscosity FromSquareMetersPerSecond(double squareMetersPerSecond) => new(squareMetersPerSecond);
-    public double ToSquareMetersPerSecond() => squareMetersPerSecond;
+    public static KinematicViscosity FromSquareMetersPerSecond(double value) => new(value);
+    public double ToSquareMetersPerSecond() => value;
     public static KinematicViscosity FromStokes(double stokes) => new(stokes * (1e-4));
-    public double ToStokes() => squareMetersPerSecond / (1e-4);
+    public double ToStokes() => value / (1e-4);
     public static KinematicViscosity FromCentistokes(double centistokes) => new(centistokes * (1e-6));
-    public double ToCentistokes() => squareMetersPerSecond / (1e-6);
+    public double ToCentistokes() => value / (1e-6);
 
     // Composite relationships
     public static Area operator *(KinematicViscosity kinematicViscosity, Duration duration) => Area.FromSquareMeters(kinematicViscosity.ToSquareMetersPerSecond() * duration.ToSeconds());
     public static Area operator *(Duration duration, KinematicViscosity kinematicViscosity) => Area.FromSquareMeters(duration.ToSeconds() * kinematicViscosity.ToSquareMetersPerSecond());
 
-    public override string ToString() => $"{squareMetersPerSecond} m²/s";
-
-    public override bool Equals(object obj) => obj is KinematicViscosity other && other.squareMetersPerSecond == squareMetersPerSecond;
-    public override int GetHashCode() => squareMetersPerSecond.GetHashCode();
 }

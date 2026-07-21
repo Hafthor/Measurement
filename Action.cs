@@ -1,22 +1,19 @@
 namespace com.hafthor.Measurement;
 
-public class Action {
-    private readonly double jouleSeconds;
+public sealed class Action : Measurement<Action> {
 
-    private Action(double jouleSeconds) => this.jouleSeconds = jouleSeconds;
+    private Action(double value) : base(value) { }
 
-    // Arithmetic
-    public static Action operator +(Action a, Action b) => new(a.jouleSeconds + b.jouleSeconds);
-    public static Action operator -(Action a, Action b) => new(a.jouleSeconds - b.jouleSeconds);
-    public static Action operator -(Action x) => new(-x.jouleSeconds);
+    protected override Action Create(double value) => new(value);
+    protected override string Symbol => "J·s";
 
     // Units
-    public static Action FromJouleSeconds(double jouleSeconds) => new(jouleSeconds);
-    public double ToJouleSeconds() => jouleSeconds;
+    public static Action FromJouleSeconds(double value) => new(value);
+    public double ToJouleSeconds() => value;
     public static Action FromErgSeconds(double ergSeconds) => new(ergSeconds * (1e-7));
-    public double ToErgSeconds() => jouleSeconds / (1e-7);
+    public double ToErgSeconds() => value / (1e-7);
     public static Action FromPlanckConstants(double planckConstants) => new(planckConstants * (6.62607015e-34));
-    public double ToPlanckConstants() => jouleSeconds / (6.62607015e-34);
+    public double ToPlanckConstants() => value / (6.62607015e-34);
 
     // Composite relationships
     public static Energy operator /(Action action, Duration duration) => Energy.FromJoules(action.ToJouleSeconds() / duration.ToSeconds());
@@ -28,8 +25,4 @@ public class Action {
     public static Length operator /(Action action, Momentum momentum) => Length.FromMeters(action.ToJouleSeconds() / momentum.ToKilogramMetersPerSecond());
     public static Momentum operator /(Action action, Length length) => Momentum.FromKilogramMetersPerSecond(action.ToJouleSeconds() / length.ToMeters());
 
-    public override string ToString() => $"{jouleSeconds} J·s";
-
-    public override bool Equals(object obj) => obj is Action other && other.jouleSeconds == jouleSeconds;
-    public override int GetHashCode() => jouleSeconds.GetHashCode();
 }

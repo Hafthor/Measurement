@@ -1,29 +1,22 @@
 namespace com.hafthor.Measurement;
 
-public class ElectricFieldStrength {
-    private readonly double voltsPerMeter;
+public sealed class ElectricFieldStrength : Measurement<ElectricFieldStrength> {
 
-    private ElectricFieldStrength(double voltsPerMeter) => this.voltsPerMeter = voltsPerMeter;
+    private ElectricFieldStrength(double value) : base(value) { }
 
-    // Arithmetic
-    public static ElectricFieldStrength operator +(ElectricFieldStrength a, ElectricFieldStrength b) => new(a.voltsPerMeter + b.voltsPerMeter);
-    public static ElectricFieldStrength operator -(ElectricFieldStrength a, ElectricFieldStrength b) => new(a.voltsPerMeter - b.voltsPerMeter);
-    public static ElectricFieldStrength operator -(ElectricFieldStrength x) => new(-x.voltsPerMeter);
+    protected override ElectricFieldStrength Create(double value) => new(value);
+    protected override string Symbol => "V/m";
 
     // Units
-    public static ElectricFieldStrength FromVoltsPerMeter(double voltsPerMeter) => new(voltsPerMeter);
-    public double ToVoltsPerMeter() => voltsPerMeter;
+    public static ElectricFieldStrength FromVoltsPerMeter(double value) => new(value);
+    public double ToVoltsPerMeter() => value;
     public static ElectricFieldStrength FromKilovoltsPerMeter(double kilovoltsPerMeter) => new(kilovoltsPerMeter * (1e3));
-    public double ToKilovoltsPerMeter() => voltsPerMeter / (1e3);
+    public double ToKilovoltsPerMeter() => value / (1e3);
     public static ElectricFieldStrength FromVoltsPerCentimeter(double voltsPerCentimeter) => new(voltsPerCentimeter * (100));
-    public double ToVoltsPerCentimeter() => voltsPerMeter / (100);
+    public double ToVoltsPerCentimeter() => value / (100);
 
     // Composite relationships
     public static Voltage operator *(ElectricFieldStrength electricFieldStrength, Length length) => Voltage.FromVolts(electricFieldStrength.ToVoltsPerMeter() * length.ToMeters());
     public static Voltage operator *(Length length, ElectricFieldStrength electricFieldStrength) => Voltage.FromVolts(length.ToMeters() * electricFieldStrength.ToVoltsPerMeter());
 
-    public override string ToString() => $"{voltsPerMeter} V/m";
-
-    public override bool Equals(object obj) => obj is ElectricFieldStrength other && other.voltsPerMeter == voltsPerMeter;
-    public override int GetHashCode() => voltsPerMeter.GetHashCode();
 }

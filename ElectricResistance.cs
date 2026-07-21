@@ -1,37 +1,30 @@
 namespace com.hafthor.Measurement;
 
-public class ElectricResistance {
-    private readonly double ohms;
+public sealed class ElectricResistance : Measurement<ElectricResistance> {
 
-    private ElectricResistance(double ohms) => this.ohms = ohms;
+    private ElectricResistance(double value) : base(value) { }
 
-    // Arithmetic
-    public static ElectricResistance operator +(ElectricResistance a, ElectricResistance b) => new(a.ohms + b.ohms);
-    public static ElectricResistance operator -(ElectricResistance a, ElectricResistance b) => new(a.ohms - b.ohms);
-    public static ElectricResistance operator -(ElectricResistance x) => new(-x.ohms);
+    protected override ElectricResistance Create(double value) => new(value);
+    protected override string Symbol => "Ω";
 
     // SI units
     public static ElectricResistance FromGigaohms(double gigaohms) => new(gigaohms * 1e9);
-    public double ToGigaohms() => ohms / 1e9;
+    public double ToGigaohms() => value / 1e9;
     public static ElectricResistance FromMegaohms(double megaohms) => new(megaohms * 1e6);
-    public double ToMegaohms() => ohms / 1e6;
+    public double ToMegaohms() => value / 1e6;
     public static ElectricResistance FromKiloohms(double kiloohms) => new(kiloohms * 1e3);
-    public double ToKiloohms() => ohms / 1e3;
-    public static ElectricResistance FromOhms(double ohms) => new(ohms);
-    public double ToOhms() => ohms;
+    public double ToKiloohms() => value / 1e3;
+    public static ElectricResistance FromOhms(double value) => new(value);
+    public double ToOhms() => value;
     public static ElectricResistance FromMilliohms(double milliohms) => new(milliohms * 1e-3);
-    public double ToMilliohms() => ohms / 1e-3;
+    public double ToMilliohms() => value / 1e-3;
     public static ElectricResistance FromMicroohms(double microohms) => new(microohms * 1e-6);
-    public double ToMicroohms() => ohms / 1e-6;
+    public double ToMicroohms() => value / 1e-6;
 
     // Composite relationships
-    public static Voltage operator *(ElectricResistance resistance, ElectricCurrent current) => Voltage.FromVolts(resistance.ohms * current.ToAmperes());
+    public static Voltage operator *(ElectricResistance resistance, ElectricCurrent current) => Voltage.FromVolts(resistance.value * current.ToAmperes());
 
     // Composite relationships (derived)
     public static Resistivity operator *(ElectricResistance electricResistance, Length length) => Resistivity.FromOhmMeters(electricResistance.ToOhms() * length.ToMeters());
 
-    public override string ToString() => $"{ohms} Ω";
-
-    public override bool Equals(object obj) => obj is ElectricResistance other && other.ohms == ohms;
-    public override int GetHashCode() => ohms.GetHashCode();
 }

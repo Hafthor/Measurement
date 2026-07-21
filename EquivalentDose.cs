@@ -1,31 +1,24 @@
 namespace com.hafthor.Measurement;
 
-public class EquivalentDose {
-    private readonly double sieverts;
+public sealed class EquivalentDose : Measurement<EquivalentDose> {
 
-    private EquivalentDose(double sieverts) => this.sieverts = sieverts;
+    private EquivalentDose(double value) : base(value) { }
 
-    // Arithmetic
-    public static EquivalentDose operator +(EquivalentDose a, EquivalentDose b) => new(a.sieverts + b.sieverts);
-    public static EquivalentDose operator -(EquivalentDose a, EquivalentDose b) => new(a.sieverts - b.sieverts);
-    public static EquivalentDose operator -(EquivalentDose x) => new(-x.sieverts);
+    protected override EquivalentDose Create(double value) => new(value);
+    protected override string Symbol => "Sv";
 
     // SI units
-    public static EquivalentDose FromSieverts(double sieverts) => new(sieverts);
-    public double ToSieverts() => sieverts;
+    public static EquivalentDose FromSieverts(double value) => new(value);
+    public double ToSieverts() => value;
     public static EquivalentDose FromMillisieverts(double millisieverts) => new(millisieverts * 1e-3);
-    public double ToMillisieverts() => sieverts / 1e-3;
+    public double ToMillisieverts() => value / 1e-3;
     public static EquivalentDose FromMicrosieverts(double microsieverts) => new(microsieverts * 1e-6);
-    public double ToMicrosieverts() => sieverts / 1e-6;
+    public double ToMicrosieverts() => value / 1e-6;
 
     // Legacy units
     public static EquivalentDose FromRems(double rems) => new(rems * 1e-2);
-    public double ToRems() => sieverts / 1e-2;
+    public double ToRems() => value / 1e-2;
     public static EquivalentDose FromMillirems(double millirems) => new(millirems * 1e-5);
-    public double ToMillirems() => sieverts / 1e-5;
+    public double ToMillirems() => value / 1e-5;
 
-    public override string ToString() => $"{sieverts} Sv";
-
-    public override bool Equals(object obj) => obj is EquivalentDose other && other.sieverts == sieverts;
-    public override int GetHashCode() => sieverts.GetHashCode();
 }

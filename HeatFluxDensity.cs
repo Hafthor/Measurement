@@ -1,29 +1,22 @@
 namespace com.hafthor.Measurement;
 
-public class HeatFluxDensity {
-    private readonly double wattsPerSquareMeter;
+public sealed class HeatFluxDensity : Measurement<HeatFluxDensity> {
 
-    private HeatFluxDensity(double wattsPerSquareMeter) => this.wattsPerSquareMeter = wattsPerSquareMeter;
+    private HeatFluxDensity(double value) : base(value) { }
 
-    // Arithmetic
-    public static HeatFluxDensity operator +(HeatFluxDensity a, HeatFluxDensity b) => new(a.wattsPerSquareMeter + b.wattsPerSquareMeter);
-    public static HeatFluxDensity operator -(HeatFluxDensity a, HeatFluxDensity b) => new(a.wattsPerSquareMeter - b.wattsPerSquareMeter);
-    public static HeatFluxDensity operator -(HeatFluxDensity x) => new(-x.wattsPerSquareMeter);
+    protected override HeatFluxDensity Create(double value) => new(value);
+    protected override string Symbol => "W/m²";
 
     // Units
-    public static HeatFluxDensity FromWattsPerSquareMeter(double wattsPerSquareMeter) => new(wattsPerSquareMeter);
-    public double ToWattsPerSquareMeter() => wattsPerSquareMeter;
+    public static HeatFluxDensity FromWattsPerSquareMeter(double value) => new(value);
+    public double ToWattsPerSquareMeter() => value;
     public static HeatFluxDensity FromMilliwattsPerSquareMeter(double milliwattsPerSquareMeter) => new(milliwattsPerSquareMeter * (1e-3));
-    public double ToMilliwattsPerSquareMeter() => wattsPerSquareMeter / (1e-3);
+    public double ToMilliwattsPerSquareMeter() => value / (1e-3);
     public static HeatFluxDensity FromWattsPerSquareCentimeter(double wattsPerSquareCentimeter) => new(wattsPerSquareCentimeter * (1e4));
-    public double ToWattsPerSquareCentimeter() => wattsPerSquareMeter / (1e4);
+    public double ToWattsPerSquareCentimeter() => value / (1e4);
 
     // Composite relationships
     public static Power operator *(HeatFluxDensity heatFluxDensity, Area area) => Power.FromWatts(heatFluxDensity.ToWattsPerSquareMeter() * area.ToSquareMeters());
     public static Power operator *(Area area, HeatFluxDensity heatFluxDensity) => Power.FromWatts(area.ToSquareMeters() * heatFluxDensity.ToWattsPerSquareMeter());
 
-    public override string ToString() => $"{wattsPerSquareMeter} W/m²";
-
-    public override bool Equals(object obj) => obj is HeatFluxDensity other && other.wattsPerSquareMeter == wattsPerSquareMeter;
-    public override int GetHashCode() => wattsPerSquareMeter.GetHashCode();
 }

@@ -1,39 +1,32 @@
 namespace com.hafthor.Measurement;
 
-public class Illuminance {
-    private readonly double lux;
+public sealed class Illuminance : Measurement<Illuminance> {
 
-    private Illuminance(double lux) => this.lux = lux;
+    private Illuminance(double value) : base(value) { }
 
-    // Arithmetic
-    public static Illuminance operator +(Illuminance a, Illuminance b) => new(a.lux + b.lux);
-    public static Illuminance operator -(Illuminance a, Illuminance b) => new(a.lux - b.lux);
-    public static Illuminance operator -(Illuminance x) => new(-x.lux);
+    protected override Illuminance Create(double value) => new(value);
+    protected override string Symbol => "lx";
 
     // SI units
     public static Illuminance FromKilolux(double kilolux) => new(kilolux * 1e3);
-    public double ToKilolux() => lux / 1e3;
-    public static Illuminance FromLux(double lux) => new(lux);
-    public double ToLux() => lux;
+    public double ToKilolux() => value / 1e3;
+    public static Illuminance FromLux(double value) => new(value);
+    public double ToLux() => value;
     public static Illuminance FromMillilux(double millilux) => new(millilux * 1e-3);
-    public double ToMillilux() => lux / 1e-3;
+    public double ToMillilux() => value / 1e-3;
 
     // CGS units
     public static Illuminance FromPhots(double phots) => new(phots * 1e4);
-    public double ToPhots() => lux / 1e4;
+    public double ToPhots() => value / 1e4;
 
     // Imperial / US units
     public static Illuminance FromFootcandles(double footcandles) => new(footcandles * 10.763910416709722);
-    public double ToFootcandles() => lux / 10.763910416709722;
+    public double ToFootcandles() => value / 10.763910416709722;
 
     // Composite relationships
-    public static LuminousFlux operator *(Illuminance illuminance, Area area) => LuminousFlux.FromLumens(illuminance.lux * area.ToSquareMeters());
+    public static LuminousFlux operator *(Illuminance illuminance, Area area) => LuminousFlux.FromLumens(illuminance.value * area.ToSquareMeters());
 
     // Composite relationships (derived)
     public static LuminousExposure operator *(Illuminance illuminance, Duration duration) => LuminousExposure.FromLuxSeconds(illuminance.ToLux() * duration.ToSeconds());
 
-    public override string ToString() => $"{lux} lx";
-
-    public override bool Equals(object obj) => obj is Illuminance other && other.lux == lux;
-    public override int GetHashCode() => lux.GetHashCode();
 }

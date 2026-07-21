@@ -1,20 +1,17 @@
 namespace com.hafthor.Measurement;
 
-public class Momentum {
-    private readonly double kilogramMetersPerSecond;
+public sealed class Momentum : Measurement<Momentum> {
 
-    private Momentum(double kilogramMetersPerSecond) => this.kilogramMetersPerSecond = kilogramMetersPerSecond;
+    private Momentum(double value) : base(value) { }
 
-    // Arithmetic
-    public static Momentum operator +(Momentum a, Momentum b) => new(a.kilogramMetersPerSecond + b.kilogramMetersPerSecond);
-    public static Momentum operator -(Momentum a, Momentum b) => new(a.kilogramMetersPerSecond - b.kilogramMetersPerSecond);
-    public static Momentum operator -(Momentum x) => new(-x.kilogramMetersPerSecond);
+    protected override Momentum Create(double value) => new(value);
+    protected override string Symbol => "kg·m/s";
 
     // Units
-    public static Momentum FromKilogramMetersPerSecond(double kilogramMetersPerSecond) => new(kilogramMetersPerSecond);
-    public double ToKilogramMetersPerSecond() => kilogramMetersPerSecond;
+    public static Momentum FromKilogramMetersPerSecond(double value) => new(value);
+    public double ToKilogramMetersPerSecond() => value;
     public static Momentum FromNewtonSeconds(double newtonSeconds) => new(newtonSeconds);
-    public double ToNewtonSeconds() => kilogramMetersPerSecond;
+    public double ToNewtonSeconds() => value;
 
     // Composite relationships
     public static Mass operator /(Momentum momentum, Speed speed) => Mass.FromKilograms(momentum.ToKilogramMetersPerSecond() / speed.ToMetersPerSecond());
@@ -25,8 +22,4 @@ public class Momentum {
     // Famous relations
     public static Force operator /(Momentum momentum, Duration duration) => Force.FromNewtons(momentum.ToKilogramMetersPerSecond() / duration.ToSeconds());
 
-    public override string ToString() => $"{kilogramMetersPerSecond} kg·m/s";
-
-    public override bool Equals(object obj) => obj is Momentum other && other.kilogramMetersPerSecond == kilogramMetersPerSecond;
-    public override int GetHashCode() => kilogramMetersPerSecond.GetHashCode();
 }

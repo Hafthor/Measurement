@@ -1,14 +1,11 @@
 namespace com.hafthor.Measurement;
 
-public class Ratio {
-    private readonly double value;
+public sealed class Ratio : Measurement<Ratio> {
 
-    private Ratio(double value) => this.value = value;
+    private Ratio(double value) : base(value) { }
 
-    // Arithmetic
-    public static Ratio operator +(Ratio a, Ratio b) => new(a.value + b.value);
-    public static Ratio operator -(Ratio a, Ratio b) => new(a.value - b.value);
-    public static Ratio operator -(Ratio x) => new(-x.value);
+    protected override Ratio Create(double value) => new(value);
+    protected override string Symbol => "";
 
     // Units
     public static Ratio FromRatio(double ratio) => new(ratio);
@@ -26,8 +23,4 @@ public class Ratio {
     public static Ratio FromDecibels(double decibels) => new(Math.Pow(10, decibels / 10));
     public double ToDecibels() => 10 * Math.Log10(value);
 
-    public override string ToString() => $"{value}";
-
-    public override bool Equals(object obj) => obj is Ratio other && other.value == value;
-    public override int GetHashCode() => value.GetHashCode();
 }

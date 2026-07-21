@@ -1,48 +1,45 @@
 namespace com.hafthor.Measurement;
 
-public class ElectricCharge {
-    private readonly double coulombs;
+public sealed class ElectricCharge : Measurement<ElectricCharge> {
 
-    private ElectricCharge(double coulombs) => this.coulombs = coulombs;
+    private ElectricCharge(double value) : base(value) { }
 
-    // Arithmetic
-    public static ElectricCharge operator +(ElectricCharge a, ElectricCharge b) => new(a.coulombs + b.coulombs);
-    public static ElectricCharge operator -(ElectricCharge a, ElectricCharge b) => new(a.coulombs - b.coulombs);
-    public static ElectricCharge operator -(ElectricCharge x) => new(-x.coulombs);
+    protected override ElectricCharge Create(double value) => new(value);
+    protected override string Symbol => "C";
 
     // SI units
     public static ElectricCharge FromKilocoulombs(double kilocoulombs) => new(kilocoulombs * 1e3);
-    public double ToKilocoulombs() => coulombs / 1e3;
-    public static ElectricCharge FromCoulombs(double coulombs) => new(coulombs);
-    public double ToCoulombs() => coulombs;
+    public double ToKilocoulombs() => value / 1e3;
+    public static ElectricCharge FromCoulombs(double value) => new(value);
+    public double ToCoulombs() => value;
     public static ElectricCharge FromMillicoulombs(double millicoulombs) => new(millicoulombs * 1e-3);
-    public double ToMillicoulombs() => coulombs / 1e-3;
+    public double ToMillicoulombs() => value / 1e-3;
     public static ElectricCharge FromMicrocoulombs(double microcoulombs) => new(microcoulombs * 1e-6);
-    public double ToMicrocoulombs() => coulombs / 1e-6;
+    public double ToMicrocoulombs() => value / 1e-6;
     public static ElectricCharge FromNanocoulombs(double nanocoulombs) => new(nanocoulombs * 1e-9);
-    public double ToNanocoulombs() => coulombs / 1e-9;
+    public double ToNanocoulombs() => value / 1e-9;
 
     // Battery-capacity units
     public static ElectricCharge FromAmpereHours(double ampereHours) => new(ampereHours * 3600);
-    public double ToAmpereHours() => coulombs / 3600;
+    public double ToAmpereHours() => value / 3600;
     public static ElectricCharge FromMilliampereHours(double milliampereHours) => new(milliampereHours * 3.6);
-    public double ToMilliampereHours() => coulombs / 3.6;
+    public double ToMilliampereHours() => value / 3.6;
 
     // Physical & CGS units
     public static ElectricCharge FromFaradays(double faradays) => new(faradays * 96485.33212);
-    public double ToFaradays() => coulombs / 96485.33212;
+    public double ToFaradays() => value / 96485.33212;
     public static ElectricCharge FromElementaryCharges(double elementaryCharges) => new(elementaryCharges * 1.602176634e-19);
-    public double ToElementaryCharges() => coulombs / 1.602176634e-19;
+    public double ToElementaryCharges() => value / 1.602176634e-19;
     public static ElectricCharge FromAbcoulombs(double abcoulombs) => new(abcoulombs * 10);
-    public double ToAbcoulombs() => coulombs / 10;
+    public double ToAbcoulombs() => value / 10;
     public static ElectricCharge FromStatcoulombs(double statcoulombs) => new(statcoulombs * 3.335641e-10);
-    public double ToStatcoulombs() => coulombs / 3.335641e-10;
+    public double ToStatcoulombs() => value / 3.335641e-10;
 
     // Composite relationships
-    public static ElectricCurrent operator /(ElectricCharge charge, Duration duration) => ElectricCurrent.FromAmperes(charge.coulombs / duration.ToSeconds());
-    public static Duration operator /(ElectricCharge charge, ElectricCurrent current) => Duration.FromSeconds(charge.coulombs / current.ToAmperes());
-    public static Capacitance operator /(ElectricCharge charge, Voltage voltage) => Capacitance.FromFarads(charge.coulombs / voltage.ToVolts());
-    public static Voltage operator /(ElectricCharge charge, Capacitance capacitance) => Voltage.FromVolts(charge.coulombs / capacitance.ToFarads());
+    public static ElectricCurrent operator /(ElectricCharge charge, Duration duration) => ElectricCurrent.FromAmperes(charge.value / duration.ToSeconds());
+    public static Duration operator /(ElectricCharge charge, ElectricCurrent current) => Duration.FromSeconds(charge.value / current.ToAmperes());
+    public static Capacitance operator /(ElectricCharge charge, Voltage voltage) => Capacitance.FromFarads(charge.value / voltage.ToVolts());
+    public static Voltage operator /(ElectricCharge charge, Capacitance capacitance) => Voltage.FromVolts(charge.value / capacitance.ToFarads());
 
     // Composite relationships (derived)
     public static ChargeDensity operator /(ElectricCharge electricCharge, Volume volume) => ChargeDensity.FromCoulombsPerCubicMeter(electricCharge.ToCoulombs() / volume.ToCubicMeters());
@@ -53,8 +50,4 @@ public class ElectricCharge {
     // Famous relations
     public static Energy operator *(ElectricCharge charge, Voltage voltage) => Energy.FromJoules(charge.ToCoulombs() * voltage.ToVolts());
 
-    public override string ToString() => $"{coulombs} C";
-
-    public override bool Equals(object obj) => obj is ElectricCharge other && other.coulombs == coulombs;
-    public override int GetHashCode() => coulombs.GetHashCode();
 }

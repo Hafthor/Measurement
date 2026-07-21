@@ -1,27 +1,20 @@
 namespace com.hafthor.Measurement;
 
-public class AreaDensity {
-    private readonly double kilogramsPerSquareMeter;
+public sealed class AreaDensity : Measurement<AreaDensity> {
 
-    private AreaDensity(double kilogramsPerSquareMeter) => this.kilogramsPerSquareMeter = kilogramsPerSquareMeter;
+    private AreaDensity(double value) : base(value) { }
 
-    // Arithmetic
-    public static AreaDensity operator +(AreaDensity a, AreaDensity b) => new(a.kilogramsPerSquareMeter + b.kilogramsPerSquareMeter);
-    public static AreaDensity operator -(AreaDensity a, AreaDensity b) => new(a.kilogramsPerSquareMeter - b.kilogramsPerSquareMeter);
-    public static AreaDensity operator -(AreaDensity x) => new(-x.kilogramsPerSquareMeter);
+    protected override AreaDensity Create(double value) => new(value);
+    protected override string Symbol => "kg/m²";
 
     // Units
-    public static AreaDensity FromKilogramsPerSquareMeter(double kilogramsPerSquareMeter) => new(kilogramsPerSquareMeter);
-    public double ToKilogramsPerSquareMeter() => kilogramsPerSquareMeter;
+    public static AreaDensity FromKilogramsPerSquareMeter(double value) => new(value);
+    public double ToKilogramsPerSquareMeter() => value;
     public static AreaDensity FromGramsPerSquareMeter(double gramsPerSquareMeter) => new(gramsPerSquareMeter * (1e-3));
-    public double ToGramsPerSquareMeter() => kilogramsPerSquareMeter / (1e-3);
+    public double ToGramsPerSquareMeter() => value / (1e-3);
 
     // Composite relationships
     public static Mass operator *(AreaDensity areaDensity, Area area) => Mass.FromKilograms(areaDensity.ToKilogramsPerSquareMeter() * area.ToSquareMeters());
     public static Mass operator *(Area area, AreaDensity areaDensity) => Mass.FromKilograms(area.ToSquareMeters() * areaDensity.ToKilogramsPerSquareMeter());
 
-    public override string ToString() => $"{kilogramsPerSquareMeter} kg/m²";
-
-    public override bool Equals(object obj) => obj is AreaDensity other && other.kilogramsPerSquareMeter == kilogramsPerSquareMeter;
-    public override int GetHashCode() => kilogramsPerSquareMeter.GetHashCode();
 }

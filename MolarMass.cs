@@ -1,27 +1,20 @@
 namespace com.hafthor.Measurement;
 
-public class MolarMass {
-    private readonly double kilogramsPerMole;
+public sealed class MolarMass : Measurement<MolarMass> {
 
-    private MolarMass(double kilogramsPerMole) => this.kilogramsPerMole = kilogramsPerMole;
+    private MolarMass(double value) : base(value) { }
 
-    // Arithmetic
-    public static MolarMass operator +(MolarMass a, MolarMass b) => new(a.kilogramsPerMole + b.kilogramsPerMole);
-    public static MolarMass operator -(MolarMass a, MolarMass b) => new(a.kilogramsPerMole - b.kilogramsPerMole);
-    public static MolarMass operator -(MolarMass x) => new(-x.kilogramsPerMole);
+    protected override MolarMass Create(double value) => new(value);
+    protected override string Symbol => "kg/mol";
 
     // Units
-    public static MolarMass FromKilogramsPerMole(double kilogramsPerMole) => new(kilogramsPerMole);
-    public double ToKilogramsPerMole() => kilogramsPerMole;
+    public static MolarMass FromKilogramsPerMole(double value) => new(value);
+    public double ToKilogramsPerMole() => value;
     public static MolarMass FromGramsPerMole(double gramsPerMole) => new(gramsPerMole * (1e-3));
-    public double ToGramsPerMole() => kilogramsPerMole / (1e-3);
+    public double ToGramsPerMole() => value / (1e-3);
 
     // Composite relationships
     public static Mass operator *(MolarMass molarMass, Quantity quantity) => Mass.FromKilograms(molarMass.ToKilogramsPerMole() * quantity.ToMoles());
     public static Mass operator *(Quantity quantity, MolarMass molarMass) => Mass.FromKilograms(quantity.ToMoles() * molarMass.ToKilogramsPerMole());
 
-    public override string ToString() => $"{kilogramsPerMole} kg/mol";
-
-    public override bool Equals(object obj) => obj is MolarMass other && other.kilogramsPerMole == kilogramsPerMole;
-    public override int GetHashCode() => kilogramsPerMole.GetHashCode();
 }

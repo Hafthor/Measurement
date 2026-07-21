@@ -1,27 +1,20 @@
 namespace com.hafthor.Measurement;
 
-public class MolarHeatCapacity {
-    private readonly double joulesPerMoleKelvin;
+public sealed class MolarHeatCapacity : Measurement<MolarHeatCapacity> {
 
-    private MolarHeatCapacity(double joulesPerMoleKelvin) => this.joulesPerMoleKelvin = joulesPerMoleKelvin;
+    private MolarHeatCapacity(double value) : base(value) { }
 
-    // Arithmetic
-    public static MolarHeatCapacity operator +(MolarHeatCapacity a, MolarHeatCapacity b) => new(a.joulesPerMoleKelvin + b.joulesPerMoleKelvin);
-    public static MolarHeatCapacity operator -(MolarHeatCapacity a, MolarHeatCapacity b) => new(a.joulesPerMoleKelvin - b.joulesPerMoleKelvin);
-    public static MolarHeatCapacity operator -(MolarHeatCapacity x) => new(-x.joulesPerMoleKelvin);
+    protected override MolarHeatCapacity Create(double value) => new(value);
+    protected override string Symbol => "J/(mol·K)";
 
     // Units
-    public static MolarHeatCapacity FromJoulesPerMoleKelvin(double joulesPerMoleKelvin) => new(joulesPerMoleKelvin);
-    public double ToJoulesPerMoleKelvin() => joulesPerMoleKelvin;
+    public static MolarHeatCapacity FromJoulesPerMoleKelvin(double value) => new(value);
+    public double ToJoulesPerMoleKelvin() => value;
     public static MolarHeatCapacity FromCaloriesPerMoleKelvin(double caloriesPerMoleKelvin) => new(caloriesPerMoleKelvin * (4.184));
-    public double ToCaloriesPerMoleKelvin() => joulesPerMoleKelvin / (4.184);
+    public double ToCaloriesPerMoleKelvin() => value / (4.184);
 
     // Composite relationships
     public static HeatCapacity operator *(MolarHeatCapacity molarHeatCapacity, Quantity quantity) => HeatCapacity.FromJoulesPerKelvin(molarHeatCapacity.ToJoulesPerMoleKelvin() * quantity.ToMoles());
     public static HeatCapacity operator *(Quantity quantity, MolarHeatCapacity molarHeatCapacity) => HeatCapacity.FromJoulesPerKelvin(quantity.ToMoles() * molarHeatCapacity.ToJoulesPerMoleKelvin());
 
-    public override string ToString() => $"{joulesPerMoleKelvin} J/(mol·K)";
-
-    public override bool Equals(object obj) => obj is MolarHeatCapacity other && other.joulesPerMoleKelvin == joulesPerMoleKelvin;
-    public override int GetHashCode() => joulesPerMoleKelvin.GetHashCode();
 }

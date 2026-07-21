@@ -1,25 +1,18 @@
 namespace com.hafthor.Measurement;
 
-public class Permeability {
-    private readonly double henriesPerMeter;
+public sealed class Permeability : Measurement<Permeability> {
 
-    private Permeability(double henriesPerMeter) => this.henriesPerMeter = henriesPerMeter;
+    private Permeability(double value) : base(value) { }
 
-    // Arithmetic
-    public static Permeability operator +(Permeability a, Permeability b) => new(a.henriesPerMeter + b.henriesPerMeter);
-    public static Permeability operator -(Permeability a, Permeability b) => new(a.henriesPerMeter - b.henriesPerMeter);
-    public static Permeability operator -(Permeability x) => new(-x.henriesPerMeter);
+    protected override Permeability Create(double value) => new(value);
+    protected override string Symbol => "H/m";
 
     // Units
-    public static Permeability FromHenriesPerMeter(double henriesPerMeter) => new(henriesPerMeter);
-    public double ToHenriesPerMeter() => henriesPerMeter;
+    public static Permeability FromHenriesPerMeter(double value) => new(value);
+    public double ToHenriesPerMeter() => value;
 
     // Composite relationships
     public static Inductance operator *(Permeability permeability, Length length) => Inductance.FromHenries(permeability.ToHenriesPerMeter() * length.ToMeters());
     public static Inductance operator *(Length length, Permeability permeability) => Inductance.FromHenries(length.ToMeters() * permeability.ToHenriesPerMeter());
 
-    public override string ToString() => $"{henriesPerMeter} H/m";
-
-    public override bool Equals(object obj) => obj is Permeability other && other.henriesPerMeter == henriesPerMeter;
-    public override int GetHashCode() => henriesPerMeter.GetHashCode();
 }

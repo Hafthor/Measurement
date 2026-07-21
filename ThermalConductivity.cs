@@ -1,25 +1,18 @@
 namespace com.hafthor.Measurement;
 
-public class ThermalConductivity {
-    private readonly double wattsPerMeterKelvin;
+public sealed class ThermalConductivity : Measurement<ThermalConductivity> {
 
-    private ThermalConductivity(double wattsPerMeterKelvin) => this.wattsPerMeterKelvin = wattsPerMeterKelvin;
+    private ThermalConductivity(double value) : base(value) { }
 
-    // Arithmetic
-    public static ThermalConductivity operator +(ThermalConductivity a, ThermalConductivity b) => new(a.wattsPerMeterKelvin + b.wattsPerMeterKelvin);
-    public static ThermalConductivity operator -(ThermalConductivity a, ThermalConductivity b) => new(a.wattsPerMeterKelvin - b.wattsPerMeterKelvin);
-    public static ThermalConductivity operator -(ThermalConductivity x) => new(-x.wattsPerMeterKelvin);
+    protected override ThermalConductivity Create(double value) => new(value);
+    protected override string Symbol => "W/(m·K)";
 
     // Units
-    public static ThermalConductivity FromWattsPerMeterKelvin(double wattsPerMeterKelvin) => new(wattsPerMeterKelvin);
-    public double ToWattsPerMeterKelvin() => wattsPerMeterKelvin;
+    public static ThermalConductivity FromWattsPerMeterKelvin(double value) => new(value);
+    public double ToWattsPerMeterKelvin() => value;
     public static ThermalConductivity FromMilliwattsPerMeterKelvin(double milliwattsPerMeterKelvin) => new(milliwattsPerMeterKelvin * (1e-3));
-    public double ToMilliwattsPerMeterKelvin() => wattsPerMeterKelvin / (1e-3);
+    public double ToMilliwattsPerMeterKelvin() => value / (1e-3);
     public static ThermalConductivity FromBtuPerHourFootFahrenheit(double btuPerHourFootFahrenheit) => new(btuPerHourFootFahrenheit * (1.730734666));
-    public double ToBtuPerHourFootFahrenheit() => wattsPerMeterKelvin / (1.730734666);
+    public double ToBtuPerHourFootFahrenheit() => value / (1.730734666);
 
-    public override string ToString() => $"{wattsPerMeterKelvin} W/(m·K)";
-
-    public override bool Equals(object obj) => obj is ThermalConductivity other && other.wattsPerMeterKelvin == wattsPerMeterKelvin;
-    public override int GetHashCode() => wattsPerMeterKelvin.GetHashCode();
 }

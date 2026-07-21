@@ -1,25 +1,18 @@
 namespace com.hafthor.Measurement;
 
-public class ChargeDensity {
-    private readonly double coulombsPerCubicMeter;
+public sealed class ChargeDensity : Measurement<ChargeDensity> {
 
-    private ChargeDensity(double coulombsPerCubicMeter) => this.coulombsPerCubicMeter = coulombsPerCubicMeter;
+    private ChargeDensity(double value) : base(value) { }
 
-    // Arithmetic
-    public static ChargeDensity operator +(ChargeDensity a, ChargeDensity b) => new(a.coulombsPerCubicMeter + b.coulombsPerCubicMeter);
-    public static ChargeDensity operator -(ChargeDensity a, ChargeDensity b) => new(a.coulombsPerCubicMeter - b.coulombsPerCubicMeter);
-    public static ChargeDensity operator -(ChargeDensity x) => new(-x.coulombsPerCubicMeter);
+    protected override ChargeDensity Create(double value) => new(value);
+    protected override string Symbol => "C/m³";
 
     // Units
-    public static ChargeDensity FromCoulombsPerCubicMeter(double coulombsPerCubicMeter) => new(coulombsPerCubicMeter);
-    public double ToCoulombsPerCubicMeter() => coulombsPerCubicMeter;
+    public static ChargeDensity FromCoulombsPerCubicMeter(double value) => new(value);
+    public double ToCoulombsPerCubicMeter() => value;
 
     // Composite relationships
     public static ElectricCharge operator *(ChargeDensity chargeDensity, Volume volume) => ElectricCharge.FromCoulombs(chargeDensity.ToCoulombsPerCubicMeter() * volume.ToCubicMeters());
     public static ElectricCharge operator *(Volume volume, ChargeDensity chargeDensity) => ElectricCharge.FromCoulombs(volume.ToCubicMeters() * chargeDensity.ToCoulombsPerCubicMeter());
 
-    public override string ToString() => $"{coulombsPerCubicMeter} C/m³";
-
-    public override bool Equals(object obj) => obj is ChargeDensity other && other.coulombsPerCubicMeter == coulombsPerCubicMeter;
-    public override int GetHashCode() => coulombsPerCubicMeter.GetHashCode();
 }

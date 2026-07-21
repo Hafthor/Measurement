@@ -1,39 +1,32 @@
 namespace com.hafthor.Measurement;
 
-public class LuminousIntensity {
-    private readonly double candelas;
+public sealed class LuminousIntensity : Measurement<LuminousIntensity> {
 
-    private LuminousIntensity(double candelas) => this.candelas = candelas;
+    private LuminousIntensity(double value) : base(value) { }
 
-    // Arithmetic
-    public static LuminousIntensity operator +(LuminousIntensity a, LuminousIntensity b) => new(a.candelas + b.candelas);
-    public static LuminousIntensity operator -(LuminousIntensity a, LuminousIntensity b) => new(a.candelas - b.candelas);
-    public static LuminousIntensity operator -(LuminousIntensity x) => new(-x.candelas);
+    protected override LuminousIntensity Create(double value) => new(value);
+    protected override string Symbol => "cd";
 
     // SI units
     public static LuminousIntensity FromKilocandelas(double kilocandelas) => new(kilocandelas * 1e3);
-    public double ToKilocandelas() => candelas / 1e3;
-    public static LuminousIntensity FromCandelas(double candelas) => new(candelas);
-    public double ToCandelas() => candelas;
+    public double ToKilocandelas() => value / 1e3;
+    public static LuminousIntensity FromCandelas(double value) => new(value);
+    public double ToCandelas() => value;
     public static LuminousIntensity FromMillicandelas(double millicandelas) => new(millicandelas * 1e-3);
-    public double ToMillicandelas() => candelas / 1e-3;
+    public double ToMillicandelas() => value / 1e-3;
 
     // Historical units
     public static LuminousIntensity FromCandlepower(double candlepower) => new(candlepower * 0.981);
-    public double ToCandlepower() => candelas / 0.981;
+    public double ToCandlepower() => value / 0.981;
     public static LuminousIntensity FromHefnerkerze(double hefnerkerze) => new(hefnerkerze * 0.903);
-    public double ToHefnerkerze() => candelas / 0.903;
+    public double ToHefnerkerze() => value / 0.903;
     public static LuminousIntensity FromCarcels(double carcels) => new(carcels * 9.74);
-    public double ToCarcels() => candelas / 9.74;
+    public double ToCarcels() => value / 9.74;
 
     // Composite relationships
-    public static LuminousFlux operator *(LuminousIntensity intensity, SolidAngle solidAngle) => LuminousFlux.FromLumens(intensity.candelas * solidAngle.ToSteradians());
+    public static LuminousFlux operator *(LuminousIntensity intensity, SolidAngle solidAngle) => LuminousFlux.FromLumens(intensity.value * solidAngle.ToSteradians());
 
     // Composite relationships (derived)
     public static Luminance operator /(LuminousIntensity luminousIntensity, Area area) => Luminance.FromCandelasPerSquareMeter(luminousIntensity.ToCandelas() / area.ToSquareMeters());
 
-    public override string ToString() => $"{candelas} cd";
-
-    public override bool Equals(object obj) => obj is LuminousIntensity other && other.candelas == candelas;
-    public override int GetHashCode() => candelas.GetHashCode();
 }

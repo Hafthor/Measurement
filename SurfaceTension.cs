@@ -1,29 +1,22 @@
 namespace com.hafthor.Measurement;
 
-public class SurfaceTension {
-    private readonly double newtonsPerMeter;
+public sealed class SurfaceTension : Measurement<SurfaceTension> {
 
-    private SurfaceTension(double newtonsPerMeter) => this.newtonsPerMeter = newtonsPerMeter;
+    private SurfaceTension(double value) : base(value) { }
 
-    // Arithmetic
-    public static SurfaceTension operator +(SurfaceTension a, SurfaceTension b) => new(a.newtonsPerMeter + b.newtonsPerMeter);
-    public static SurfaceTension operator -(SurfaceTension a, SurfaceTension b) => new(a.newtonsPerMeter - b.newtonsPerMeter);
-    public static SurfaceTension operator -(SurfaceTension x) => new(-x.newtonsPerMeter);
+    protected override SurfaceTension Create(double value) => new(value);
+    protected override string Symbol => "N/m";
 
     // Units
-    public static SurfaceTension FromNewtonsPerMeter(double newtonsPerMeter) => new(newtonsPerMeter);
-    public double ToNewtonsPerMeter() => newtonsPerMeter;
+    public static SurfaceTension FromNewtonsPerMeter(double value) => new(value);
+    public double ToNewtonsPerMeter() => value;
     public static SurfaceTension FromMillinewtonsPerMeter(double millinewtonsPerMeter) => new(millinewtonsPerMeter * (1e-3));
-    public double ToMillinewtonsPerMeter() => newtonsPerMeter / (1e-3);
+    public double ToMillinewtonsPerMeter() => value / (1e-3);
     public static SurfaceTension FromDynesPerCentimeter(double dynesPerCentimeter) => new(dynesPerCentimeter * (1e-3));
-    public double ToDynesPerCentimeter() => newtonsPerMeter / (1e-3);
+    public double ToDynesPerCentimeter() => value / (1e-3);
 
     // Composite relationships
     public static Force operator *(SurfaceTension surfaceTension, Length length) => Force.FromNewtons(surfaceTension.ToNewtonsPerMeter() * length.ToMeters());
     public static Force operator *(Length length, SurfaceTension surfaceTension) => Force.FromNewtons(length.ToMeters() * surfaceTension.ToNewtonsPerMeter());
 
-    public override string ToString() => $"{newtonsPerMeter} N/m";
-
-    public override bool Equals(object obj) => obj is SurfaceTension other && other.newtonsPerMeter == newtonsPerMeter;
-    public override int GetHashCode() => newtonsPerMeter.GetHashCode();
 }

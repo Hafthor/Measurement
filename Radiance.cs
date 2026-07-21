@@ -1,21 +1,14 @@
 namespace com.hafthor.Measurement;
 
-public class Radiance {
-    private readonly double wattsPerSquareMeterSteradian;
+public sealed class Radiance : Measurement<Radiance> {
 
-    private Radiance(double wattsPerSquareMeterSteradian) => this.wattsPerSquareMeterSteradian = wattsPerSquareMeterSteradian;
+    private Radiance(double value) : base(value) { }
 
-    // Arithmetic
-    public static Radiance operator +(Radiance a, Radiance b) => new(a.wattsPerSquareMeterSteradian + b.wattsPerSquareMeterSteradian);
-    public static Radiance operator -(Radiance a, Radiance b) => new(a.wattsPerSquareMeterSteradian - b.wattsPerSquareMeterSteradian);
-    public static Radiance operator -(Radiance x) => new(-x.wattsPerSquareMeterSteradian);
+    protected override Radiance Create(double value) => new(value);
+    protected override string Symbol => "W/(m²·sr)";
 
     // Units
-    public static Radiance FromWattsPerSquareMeterSteradian(double wattsPerSquareMeterSteradian) => new(wattsPerSquareMeterSteradian);
-    public double ToWattsPerSquareMeterSteradian() => wattsPerSquareMeterSteradian;
+    public static Radiance FromWattsPerSquareMeterSteradian(double value) => new(value);
+    public double ToWattsPerSquareMeterSteradian() => value;
 
-    public override string ToString() => $"{wattsPerSquareMeterSteradian} W/(m²·sr)";
-
-    public override bool Equals(object obj) => obj is Radiance other && other.wattsPerSquareMeterSteradian == wattsPerSquareMeterSteradian;
-    public override int GetHashCode() => wattsPerSquareMeterSteradian.GetHashCode();
 }

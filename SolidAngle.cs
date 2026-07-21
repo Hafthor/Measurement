@@ -1,27 +1,20 @@
 namespace com.hafthor.Measurement;
 
-public class SolidAngle {
-    private readonly double steradians;
+public sealed class SolidAngle : Measurement<SolidAngle> {
 
-    private SolidAngle(double steradians) => this.steradians = steradians;
+    private SolidAngle(double value) : base(value) { }
 
-    // Arithmetic
-    public static SolidAngle operator +(SolidAngle a, SolidAngle b) => new(a.steradians + b.steradians);
-    public static SolidAngle operator -(SolidAngle a, SolidAngle b) => new(a.steradians - b.steradians);
-    public static SolidAngle operator -(SolidAngle x) => new(-x.steradians);
+    protected override SolidAngle Create(double value) => new(value);
+    protected override string Symbol => "sr";
 
-    public static SolidAngle FromSteradians(double steradians) => new(steradians);
-    public double ToSteradians() => steradians;
+    public static SolidAngle FromSteradians(double value) => new(value);
+    public double ToSteradians() => value;
     public static SolidAngle FromSpats(double spats) => new(spats * 4 * Math.PI);
-    public double ToSpats() => steradians / (4 * Math.PI);
+    public double ToSpats() => value / (4 * Math.PI);
     public static SolidAngle FromSquareDegrees(double squareDegrees) => new(squareDegrees * Math.PI * Math.PI / 32400);
-    public double ToSquareDegrees() => steradians * 32400 / (Math.PI * Math.PI);
+    public double ToSquareDegrees() => value * 32400 / (Math.PI * Math.PI);
 
     // Composite relationships
-    public static LuminousFlux operator *(SolidAngle solidAngle, LuminousIntensity intensity) => LuminousFlux.FromLumens(solidAngle.steradians * intensity.ToCandelas());
+    public static LuminousFlux operator *(SolidAngle solidAngle, LuminousIntensity intensity) => LuminousFlux.FromLumens(solidAngle.value * intensity.ToCandelas());
 
-    public override string ToString() => $"{steradians} sr";
-
-    public override bool Equals(object obj) => obj is SolidAngle other && other.steradians == steradians;
-    public override int GetHashCode() => steradians.GetHashCode();
 }
