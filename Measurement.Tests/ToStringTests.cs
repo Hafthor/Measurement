@@ -5,7 +5,7 @@ public sealed class ToStringTests {
     [TestMethod]
     public void RendersValueWithCanonicalSymbol() {
         Assert.AreEqual("5 m", Length.FromMeters(5).ToString());
-        Assert.AreEqual("2 kg", Mass.FromKilograms(2).ToString());
+        Assert.AreEqual("2000 g", Mass.FromKilograms(2).ToString());
         Assert.AreEqual("300 K", Temperature.FromKelvin(300).ToString());
         Assert.AreEqual("6 N", Force.FromNewtons(6).ToString());
         Assert.AreEqual("100 J", Energy.FromJoules(100).ToString());

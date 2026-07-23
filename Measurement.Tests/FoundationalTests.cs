@@ -22,11 +22,11 @@ public sealed class FoundationalTests {
 
     [TestMethod]
     public void Mass_BaseConversions() {
-        Assert.AreEqual(0.45359237, Mass.FromPounds(1).ToKilograms());
-        Assert.AreEqual(1000.0, Mass.FromTonnes(1).ToKilograms());
-        Assert.AreEqual(0.028349523125, Mass.FromOunces(1).ToKilograms());
-        Assert.AreEqual(6.35029318, Mass.FromStones(1).ToKilograms());
-        Assert.AreEqual(1.66053906660e-27, Mass.FromDaltons(1).ToKilograms());
+        Assert.AreEqual(453.59237, Mass.FromPounds(1).ToGrams());
+        Assert.AreEqual(1_000_000.0, Mass.FromTonnes(1).ToGrams());
+        Assert.AreEqual(28.349523125, Mass.FromOunces(1).ToGrams());
+        Assert.AreEqual(6350.29318, Mass.FromStones(1).ToGrams());
+        Assert.AreEqual(1.66053906660e-24, Mass.FromDaltons(1).ToGrams());
     }
 
     [TestMethod]

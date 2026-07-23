@@ -27,6 +27,16 @@ public sealed class SiPrefixTests {
     }
 
     [TestMethod]
+    public void PrefixChainEqualsExplicitPrefixedFactory() {
+        // The decade ladder is expressed via the prefix chain, not a combined hook; the result
+        // matches the explicit FromKilometers/FromMilligrams-style factory exactly.
+        Assert.AreEqual(Length.FromKilometers(3).ToMeters(), (3.0.Kilo.Meters).ToMeters());
+        Assert.AreEqual(Mass.FromMilligrams(250).ToKilograms(), (250.0.Milli.Grams).ToKilograms());
+        // read-out likewise composes through the chain
+        Assert.AreEqual(Length.FromMeters(5000).ToKilometers(), Length.FromMeters(5000).To.Kilo.Meters);
+    }
+
+    [TestMethod]
     public void FluentReadOut() {
         var m = Mass.FromKilograms(2);            // 2 kg
         Assert.AreEqual(2000.0, m.To.Grams);      // 2000 g

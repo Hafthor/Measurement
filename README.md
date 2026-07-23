@@ -39,18 +39,20 @@ Alongside the explicit `FromXxx`/`ToXxx` API, there is a fluent interface for SI
 you never hand-write `FromKilo…`/`FromMilli…` per class. All 24 SI prefixes (`Quetta`…`Quecto`)
 are defined once and stack.
 
-**Construction** — the always-available, non-`double` entry point (no opt-in needed). Any
-unit works, SI or not, with optional stacked prefixes:
+**Construction** — the always-available, non-`double` entry point (no opt-in needed). Each
+class exposes a direct hook for its **base SI unit** and its **non-SI units**; the SI-prefixed
+decades (kilo, milli, …) are expressed through the prefix chain rather than as separate
+`Kilometers`/`Milligrams` members, and prefixes stack:
 
 ```csharp
 Mass    m = Measure.Of(5).Kilo.Grams;      // 5 kg  (mass prefixes attach to the gram)
-Length  d = Measure.Of(3).Kilo.Meters;     // 3 km
-Length  y = Measure.Of(1).Miles;           // non-SI unit, fully fluent
+Length  d = Measure.Of(3).Kilo.Meters;     // 3 km  (not .Kilometers — use the chain)
+Length  y = Measure.Of(1).Miles;           // non-SI unit → direct hook
 Energy  e = Measure.Of(2).Mega.Joules;     // 2 MJ
 Length  x = Measure.Of(1).Mega.Mega.Meters; // prefixes stack → 1e12 m
 ```
 
-**Read-out** — any unit, optionally prefixed, returns a `double`:
+**Read-out** — base/non-SI unit, optionally prefixed, returns a `double`:
 
 ```csharp
 double lb = Measure.Of(5).Kilo.Grams.To.Pounds;   // 5 kg expressed in pounds
@@ -68,10 +70,12 @@ using com.hafthor.Measurement.Fluent;   // per file, or in a GlobalUsings.cs
 Mass m = 5.0.Kilo.Grams;                 // only compiles where this using is present
 ```
 
-Every unit is available for both input and read-out. The only exceptions are unit names shared
-by two quantities — `JouleSeconds` (`Action`/`AngularMomentum`) and `RevolutionsPerMinute`
-(`Frequency`/`AngularVelocity`) — which are ambiguous as bare input, so use their explicit
+Direct unit hooks cover each class's base SI unit and its non-SI units for both input and
+read-out; SI-prefixed decades come from the prefix chain. Two unit names shared by two
+quantities — `JouleSeconds` (`Action`/`AngularMomentum`) and `RevolutionsPerMinute`
+(`Frequency`/`AngularVelocity`) — are ambiguous as bare input, so use their explicit
 `FromJouleSeconds`/`FromRevolutionsPerMinute` factories there (read-out is unaffected).
+The explicit `FromKilometers`/`ToMilligrams`-style methods remain on every type regardless.
 Requires C# 14 / .NET 10 (extension members).
 
 ## Worked relations

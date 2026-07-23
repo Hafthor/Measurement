@@ -68,15 +68,11 @@ public static class Measure {
     public static Prefixed Of(double value) => new(value);
 }
 
-// Measurement-side fluent members (extend the measurement types / builders, never double).
+// Measurement-side fluent members. Only the base SI unit and non-SI units get a direct hook;
+// SI prefixes are expressed through the prefix chain (e.g. Measure.Of(1).Kilo.Grams).
 public static class Units {
     extension(Prefixed p) {
-        public Length Kilometers => Length.FromKilometers(p.Value);
         public Length Meters => Length.FromMeters(p.Value);
-        public Length Centimeters => Length.FromCentimeters(p.Value);
-        public Length Millimeters => Length.FromMillimeters(p.Value);
-        public Length Micrometers => Length.FromMicrometers(p.Value);
-        public Length Nanometers => Length.FromNanometers(p.Value);
         public Length Angstroms => Length.FromAngstroms(p.Value);
         public Length Leagues => Length.FromLeagues(p.Value);
         public Length NauticalMiles => Length.FromNauticalMiles(p.Value);
@@ -94,11 +90,7 @@ public static class Units {
         public Length AstronomicalUnits => Length.FromAstronomicalUnits(p.Value);
         public Length PlanckLengths => Length.FromPlanckLengths(p.Value);
         public Mass Tonnes => Mass.FromTonnes(p.Value);
-        public Mass Kilograms => Mass.FromKilograms(p.Value);
         public Mass Grams => Mass.FromGrams(p.Value);
-        public Mass Milligrams => Mass.FromMilligrams(p.Value);
-        public Mass Micrograms => Mass.FromMicrograms(p.Value);
-        public Mass Nanograms => Mass.FromNanograms(p.Value);
         public Mass LongTons => Mass.FromLongTons(p.Value);
         public Mass ShortTons => Mass.FromShortTons(p.Value);
         public Mass Stones => Mass.FromStones(p.Value);
@@ -120,11 +112,6 @@ public static class Units {
         public Mass EarthMasses => Mass.FromEarthMasses(p.Value);
         public Mass LunarMasses => Mass.FromLunarMasses(p.Value);
         public Duration Seconds => Duration.FromSeconds(p.Value);
-        public Duration Milliseconds => Duration.FromMilliseconds(p.Value);
-        public Duration Microseconds => Duration.FromMicroseconds(p.Value);
-        public Duration Nanoseconds => Duration.FromNanoseconds(p.Value);
-        public Duration Picoseconds => Duration.FromPicoseconds(p.Value);
-        public Duration Femtoseconds => Duration.FromFemtoseconds(p.Value);
         public Duration Minutes => Duration.FromMinutes(p.Value);
         public Duration Hours => Duration.FromHours(p.Value);
         public Duration Days => Duration.FromDays(p.Value);
@@ -142,12 +129,7 @@ public static class Units {
         public Duration Gigaannums => Duration.FromGigaannums(p.Value);
         public Duration HubbleTimes => Duration.FromHubbleTimes(p.Value);
         public Duration PlanckTimes => Duration.FromPlanckTimes(p.Value);
-        public ElectricCurrent Kiloamperes => ElectricCurrent.FromKiloamperes(p.Value);
         public ElectricCurrent Amperes => ElectricCurrent.FromAmperes(p.Value);
-        public ElectricCurrent Milliamperes => ElectricCurrent.FromMilliamperes(p.Value);
-        public ElectricCurrent Microamperes => ElectricCurrent.FromMicroamperes(p.Value);
-        public ElectricCurrent Nanoamperes => ElectricCurrent.FromNanoamperes(p.Value);
-        public ElectricCurrent Picoamperes => ElectricCurrent.FromPicoamperes(p.Value);
         public ElectricCurrent Abamperes => ElectricCurrent.FromAbamperes(p.Value);
         public ElectricCurrent Statamperes => ElectricCurrent.FromStatamperes(p.Value);
         public Temperature Kelvin => Temperature.FromKelvin(p.Value);
@@ -158,19 +140,13 @@ public static class Units {
         public Temperature Delisle => Temperature.FromDelisle(p.Value);
         public Temperature Newton => Temperature.FromNewton(p.Value);
         public Temperature Romer => Temperature.FromRomer(p.Value);
-        public Quantity Kilomoles => Quantity.FromKilomoles(p.Value);
         public Quantity Moles => Quantity.FromMoles(p.Value);
-        public Quantity Millimoles => Quantity.FromMillimoles(p.Value);
-        public Quantity Micromoles => Quantity.FromMicromoles(p.Value);
-        public Quantity Nanomoles => Quantity.FromNanomoles(p.Value);
         public Quantity Count => Quantity.FromCount(p.Value);
         public Quantity Pairs => Quantity.FromPairs(p.Value);
         public Quantity Dozens => Quantity.FromDozens(p.Value);
         public Quantity Scores => Quantity.FromScores(p.Value);
         public Quantity Gross => Quantity.FromGross(p.Value);
-        public LuminousIntensity Kilocandelas => LuminousIntensity.FromKilocandelas(p.Value);
         public LuminousIntensity Candelas => LuminousIntensity.FromCandelas(p.Value);
-        public LuminousIntensity Millicandelas => LuminousIntensity.FromMillicandelas(p.Value);
         public LuminousIntensity Candlepower => LuminousIntensity.FromCandlepower(p.Value);
         public LuminousIntensity Hefnerkerze => LuminousIntensity.FromHefnerkerze(p.Value);
         public LuminousIntensity Carcels => LuminousIntensity.FromCarcels(p.Value);
@@ -218,7 +194,6 @@ public static class Units {
         public Acceleration StandardGravity => Acceleration.FromStandardGravity(p.Value);
         public Acceleration Gals => Acceleration.FromGals(p.Value);
         public Angle Radians => Angle.FromRadians(p.Value);
-        public Angle Milliradians => Angle.FromMilliradians(p.Value);
         public Angle Turns => Angle.FromTurns(p.Value);
         public Angle Degrees => Angle.FromDegrees(p.Value);
         public Angle Gradians => Angle.FromGradians(p.Value);
@@ -227,24 +202,13 @@ public static class Units {
         public SolidAngle Steradians => SolidAngle.FromSteradians(p.Value);
         public SolidAngle Spats => SolidAngle.FromSpats(p.Value);
         public SolidAngle SquareDegrees => SolidAngle.FromSquareDegrees(p.Value);
-        public Frequency Terahertz => Frequency.FromTerahertz(p.Value);
-        public Frequency Gigahertz => Frequency.FromGigahertz(p.Value);
-        public Frequency Megahertz => Frequency.FromMegahertz(p.Value);
-        public Frequency Kilohertz => Frequency.FromKilohertz(p.Value);
         public Frequency Hertz => Frequency.FromHertz(p.Value);
-        public Frequency Millihertz => Frequency.FromMillihertz(p.Value);
-        public Force Meganewtons => Force.FromMeganewtons(p.Value);
-        public Force Kilonewtons => Force.FromKilonewtons(p.Value);
         public Force Newtons => Force.FromNewtons(p.Value);
-        public Force Millinewtons => Force.FromMillinewtons(p.Value);
         public Force Dynes => Force.FromDynes(p.Value);
         public Force KilogramsForce => Force.FromKilogramsForce(p.Value);
         public Force PoundsForce => Force.FromPoundsForce(p.Value);
         public Force OuncesForce => Force.FromOuncesForce(p.Value);
         public Force Poundals => Force.FromPoundals(p.Value);
-        public Pressure Megapascals => Pressure.FromMegapascals(p.Value);
-        public Pressure Kilopascals => Pressure.FromKilopascals(p.Value);
-        public Pressure Hectopascals => Pressure.FromHectopascals(p.Value);
         public Pressure Pascals => Pressure.FromPascals(p.Value);
         public Pressure Bars => Pressure.FromBars(p.Value);
         public Pressure Millibars => Pressure.FromMillibars(p.Value);
@@ -254,11 +218,7 @@ public static class Units {
         public Pressure InchesOfMercury => Pressure.FromInchesOfMercury(p.Value);
         public Pressure InchesOfWater => Pressure.FromInchesOfWater(p.Value);
         public Pressure PoundsPerSquareInch => Pressure.FromPoundsPerSquareInch(p.Value);
-        public Energy Gigajoules => Energy.FromGigajoules(p.Value);
-        public Energy Megajoules => Energy.FromMegajoules(p.Value);
-        public Energy Kilojoules => Energy.FromKilojoules(p.Value);
         public Energy Joules => Energy.FromJoules(p.Value);
-        public Energy Millijoules => Energy.FromMillijoules(p.Value);
         public Energy Ergs => Energy.FromErgs(p.Value);
         public Energy Kilocalories => Energy.FromKilocalories(p.Value);
         public Energy Calories => Energy.FromCalories(p.Value);
@@ -268,98 +228,51 @@ public static class Units {
         public Energy BritishThermalUnits => Energy.FromBritishThermalUnits(p.Value);
         public Energy FootPounds => Energy.FromFootPounds(p.Value);
         public Energy TonsOfTnt => Energy.FromTonsOfTnt(p.Value);
-        public Power Gigawatts => Power.FromGigawatts(p.Value);
-        public Power Megawatts => Power.FromMegawatts(p.Value);
-        public Power Kilowatts => Power.FromKilowatts(p.Value);
         public Power Watts => Power.FromWatts(p.Value);
-        public Power Milliwatts => Power.FromMilliwatts(p.Value);
         public Power Horsepower => Power.FromHorsepower(p.Value);
         public Power MetricHorsepower => Power.FromMetricHorsepower(p.Value);
         public Power BritishThermalUnitsPerHour => Power.FromBritishThermalUnitsPerHour(p.Value);
         public Power FootPoundsPerSecond => Power.FromFootPoundsPerSecond(p.Value);
-        public ElectricCharge Kilocoulombs => ElectricCharge.FromKilocoulombs(p.Value);
         public ElectricCharge Coulombs => ElectricCharge.FromCoulombs(p.Value);
-        public ElectricCharge Millicoulombs => ElectricCharge.FromMillicoulombs(p.Value);
-        public ElectricCharge Microcoulombs => ElectricCharge.FromMicrocoulombs(p.Value);
-        public ElectricCharge Nanocoulombs => ElectricCharge.FromNanocoulombs(p.Value);
         public ElectricCharge AmpereHours => ElectricCharge.FromAmpereHours(p.Value);
         public ElectricCharge MilliampereHours => ElectricCharge.FromMilliampereHours(p.Value);
         public ElectricCharge Faradays => ElectricCharge.FromFaradays(p.Value);
         public ElectricCharge ElementaryCharges => ElectricCharge.FromElementaryCharges(p.Value);
         public ElectricCharge Abcoulombs => ElectricCharge.FromAbcoulombs(p.Value);
         public ElectricCharge Statcoulombs => ElectricCharge.FromStatcoulombs(p.Value);
-        public Voltage Megavolts => Voltage.FromMegavolts(p.Value);
-        public Voltage Kilovolts => Voltage.FromKilovolts(p.Value);
         public Voltage Volts => Voltage.FromVolts(p.Value);
-        public Voltage Millivolts => Voltage.FromMillivolts(p.Value);
-        public Voltage Microvolts => Voltage.FromMicrovolts(p.Value);
         public Voltage Abvolts => Voltage.FromAbvolts(p.Value);
         public Voltage Statvolts => Voltage.FromStatvolts(p.Value);
         public Capacitance Farads => Capacitance.FromFarads(p.Value);
-        public Capacitance Millifarads => Capacitance.FromMillifarads(p.Value);
-        public Capacitance Microfarads => Capacitance.FromMicrofarads(p.Value);
-        public Capacitance Nanofarads => Capacitance.FromNanofarads(p.Value);
-        public Capacitance Picofarads => Capacitance.FromPicofarads(p.Value);
         public Capacitance Abfarads => Capacitance.FromAbfarads(p.Value);
         public Capacitance Statfarads => Capacitance.FromStatfarads(p.Value);
-        public ElectricResistance Gigaohms => ElectricResistance.FromGigaohms(p.Value);
-        public ElectricResistance Megaohms => ElectricResistance.FromMegaohms(p.Value);
-        public ElectricResistance Kiloohms => ElectricResistance.FromKiloohms(p.Value);
         public ElectricResistance Ohms => ElectricResistance.FromOhms(p.Value);
-        public ElectricResistance Milliohms => ElectricResistance.FromMilliohms(p.Value);
-        public ElectricResistance Microohms => ElectricResistance.FromMicroohms(p.Value);
-        public ElectricConductance Kilosiemens => ElectricConductance.FromKilosiemens(p.Value);
         public ElectricConductance Siemens => ElectricConductance.FromSiemens(p.Value);
-        public ElectricConductance Millisiemens => ElectricConductance.FromMillisiemens(p.Value);
-        public ElectricConductance Microsiemens => ElectricConductance.FromMicrosiemens(p.Value);
         public ElectricConductance Mhos => ElectricConductance.FromMhos(p.Value);
         public MagneticFlux Webers => MagneticFlux.FromWebers(p.Value);
-        public MagneticFlux Milliwebers => MagneticFlux.FromMilliwebers(p.Value);
-        public MagneticFlux Microwebers => MagneticFlux.FromMicrowebers(p.Value);
         public MagneticFlux Maxwells => MagneticFlux.FromMaxwells(p.Value);
         public MagneticFluxDensity Teslas => MagneticFluxDensity.FromTeslas(p.Value);
-        public MagneticFluxDensity Milliteslas => MagneticFluxDensity.FromMilliteslas(p.Value);
-        public MagneticFluxDensity Microteslas => MagneticFluxDensity.FromMicroteslas(p.Value);
-        public MagneticFluxDensity Nanoteslas => MagneticFluxDensity.FromNanoteslas(p.Value);
         public MagneticFluxDensity Gauss => MagneticFluxDensity.FromGauss(p.Value);
         public MagneticFluxDensity Milligauss => MagneticFluxDensity.FromMilligauss(p.Value);
         public Inductance Henries => Inductance.FromHenries(p.Value);
-        public Inductance Millihenries => Inductance.FromMillihenries(p.Value);
-        public Inductance Microhenries => Inductance.FromMicrohenries(p.Value);
-        public Inductance Nanohenries => Inductance.FromNanohenries(p.Value);
         public Inductance Abhenries => Inductance.FromAbhenries(p.Value);
         public Inductance Stathenries => Inductance.FromStathenries(p.Value);
-        public LuminousFlux Kilolumens => LuminousFlux.FromKilolumens(p.Value);
         public LuminousFlux Lumens => LuminousFlux.FromLumens(p.Value);
-        public LuminousFlux Millilumens => LuminousFlux.FromMillilumens(p.Value);
-        public Illuminance Kilolux => Illuminance.FromKilolux(p.Value);
         public Illuminance Lux => Illuminance.FromLux(p.Value);
-        public Illuminance Millilux => Illuminance.FromMillilux(p.Value);
         public Illuminance Phots => Illuminance.FromPhots(p.Value);
         public Illuminance Footcandles => Illuminance.FromFootcandles(p.Value);
-        public Radioactivity Gigabecquerels => Radioactivity.FromGigabecquerels(p.Value);
-        public Radioactivity Megabecquerels => Radioactivity.FromMegabecquerels(p.Value);
-        public Radioactivity Kilobecquerels => Radioactivity.FromKilobecquerels(p.Value);
         public Radioactivity Becquerels => Radioactivity.FromBecquerels(p.Value);
         public Radioactivity Curies => Radioactivity.FromCuries(p.Value);
         public Radioactivity Millicuries => Radioactivity.FromMillicuries(p.Value);
         public Radioactivity Microcuries => Radioactivity.FromMicrocuries(p.Value);
         public Radioactivity Rutherfords => Radioactivity.FromRutherfords(p.Value);
-        public AbsorbedDose Kilograys => AbsorbedDose.FromKilograys(p.Value);
         public AbsorbedDose Grays => AbsorbedDose.FromGrays(p.Value);
-        public AbsorbedDose Milligrays => AbsorbedDose.FromMilligrays(p.Value);
-        public AbsorbedDose Micrograys => AbsorbedDose.FromMicrograys(p.Value);
         public AbsorbedDose Rads => AbsorbedDose.FromRads(p.Value);
         public AbsorbedDose Millirads => AbsorbedDose.FromMillirads(p.Value);
         public EquivalentDose Sieverts => EquivalentDose.FromSieverts(p.Value);
-        public EquivalentDose Millisieverts => EquivalentDose.FromMillisieverts(p.Value);
-        public EquivalentDose Microsieverts => EquivalentDose.FromMicrosieverts(p.Value);
         public EquivalentDose Rems => EquivalentDose.FromRems(p.Value);
         public EquivalentDose Millirems => EquivalentDose.FromMillirems(p.Value);
         public CatalyticActivity Katals => CatalyticActivity.FromKatals(p.Value);
-        public CatalyticActivity Millikatals => CatalyticActivity.FromMillikatals(p.Value);
-        public CatalyticActivity Microkatals => CatalyticActivity.FromMicrokatals(p.Value);
-        public CatalyticActivity Nanokatals => CatalyticActivity.FromNanokatals(p.Value);
         public CatalyticActivity EnzymeUnits => CatalyticActivity.FromEnzymeUnits(p.Value);
         public Jerk MetersPerSecondCubed => Jerk.FromMetersPerSecondCubed(p.Value);
         public Jerk FeetPerSecondCubed => Jerk.FromFeetPerSecondCubed(p.Value);
@@ -400,7 +313,6 @@ public static class Units {
         public MassFlowRate PoundsPerHour => MassFlowRate.FromPoundsPerHour(p.Value);
         public MassFlowRate TonnesPerHour => MassFlowRate.FromTonnesPerHour(p.Value);
         public Molality MolesPerKilogram => Molality.FromMolesPerKilogram(p.Value);
-        public Molality MillimolesPerKilogram => Molality.FromMillimolesPerKilogram(p.Value);
         public MolarMass KilogramsPerMole => MolarMass.FromKilogramsPerMole(p.Value);
         public MolarMass GramsPerMole => MolarMass.FromGramsPerMole(p.Value);
         public Momentum KilogramMetersPerSecond => Momentum.FromKilogramMetersPerSecond(p.Value);
@@ -417,10 +329,8 @@ public static class Units {
         public Torque PoundFeet => Torque.FromPoundFeet(p.Value);
         public Torque PoundInches => Torque.FromPoundInches(p.Value);
         public SurfaceTension NewtonsPerMeter => SurfaceTension.FromNewtonsPerMeter(p.Value);
-        public SurfaceTension MillinewtonsPerMeter => SurfaceTension.FromMillinewtonsPerMeter(p.Value);
         public SurfaceTension DynesPerCentimeter => SurfaceTension.FromDynesPerCentimeter(p.Value);
         public DynamicViscosity PascalSeconds => DynamicViscosity.FromPascalSeconds(p.Value);
-        public DynamicViscosity MillipascalSeconds => DynamicViscosity.FromMillipascalSeconds(p.Value);
         public DynamicViscosity Poise => DynamicViscosity.FromPoise(p.Value);
         public DynamicViscosity Centipoise => DynamicViscosity.FromCentipoise(p.Value);
         public KinematicViscosity SquareMetersPerSecond => KinematicViscosity.FromSquareMetersPerSecond(p.Value);
@@ -429,22 +339,17 @@ public static class Units {
         public Action ErgSeconds => Action.FromErgSeconds(p.Value);
         public Action PlanckConstants => Action.FromPlanckConstants(p.Value);
         public HeatCapacity JoulesPerKelvin => HeatCapacity.FromJoulesPerKelvin(p.Value);
-        public HeatCapacity KilojoulesPerKelvin => HeatCapacity.FromKilojoulesPerKelvin(p.Value);
         public HeatCapacity CaloriesPerKelvin => HeatCapacity.FromCaloriesPerKelvin(p.Value);
         public SpecificHeatCapacity JoulesPerKilogramKelvin => SpecificHeatCapacity.FromJoulesPerKilogramKelvin(p.Value);
-        public SpecificHeatCapacity KilojoulesPerKilogramKelvin => SpecificHeatCapacity.FromKilojoulesPerKilogramKelvin(p.Value);
         public SpecificHeatCapacity CaloriesPerGramKelvin => SpecificHeatCapacity.FromCaloriesPerGramKelvin(p.Value);
         public MolarHeatCapacity JoulesPerMoleKelvin => MolarHeatCapacity.FromJoulesPerMoleKelvin(p.Value);
         public MolarHeatCapacity CaloriesPerMoleKelvin => MolarHeatCapacity.FromCaloriesPerMoleKelvin(p.Value);
         public ThermalConductivity WattsPerMeterKelvin => ThermalConductivity.FromWattsPerMeterKelvin(p.Value);
-        public ThermalConductivity MilliwattsPerMeterKelvin => ThermalConductivity.FromMilliwattsPerMeterKelvin(p.Value);
         public ThermalConductivity BtuPerHourFootFahrenheit => ThermalConductivity.FromBtuPerHourFootFahrenheit(p.Value);
         public ThermalResistance KelvinsPerWatt => ThermalResistance.FromKelvinsPerWatt(p.Value);
         public HeatFluxDensity WattsPerSquareMeter => HeatFluxDensity.FromWattsPerSquareMeter(p.Value);
-        public HeatFluxDensity MilliwattsPerSquareMeter => HeatFluxDensity.FromMilliwattsPerSquareMeter(p.Value);
         public HeatFluxDensity WattsPerSquareCentimeter => HeatFluxDensity.FromWattsPerSquareCentimeter(p.Value);
         public ElectricFieldStrength VoltsPerMeter => ElectricFieldStrength.FromVoltsPerMeter(p.Value);
-        public ElectricFieldStrength KilovoltsPerMeter => ElectricFieldStrength.FromKilovoltsPerMeter(p.Value);
         public ElectricFieldStrength VoltsPerCentimeter => ElectricFieldStrength.FromVoltsPerCentimeter(p.Value);
         public ChargeDensity CoulombsPerCubicMeter => ChargeDensity.FromCoulombsPerCubicMeter(p.Value);
         public SurfaceChargeDensity CoulombsPerSquareMeter => SurfaceChargeDensity.FromCoulombsPerSquareMeter(p.Value);
@@ -476,7 +381,6 @@ public static class Units {
         public Exposure CoulombsPerKilogram => Exposure.FromCoulombsPerKilogram(p.Value);
         public Exposure Roentgens => Exposure.FromRoentgens(p.Value);
         public DoseRate GraysPerSecond => DoseRate.FromGraysPerSecond(p.Value);
-        public DoseRate MilligraysPerSecond => DoseRate.FromMilligraysPerSecond(p.Value);
         public DoseRate GraysPerHour => DoseRate.FromGraysPerHour(p.Value);
         public Concentration MolesPerCubicMeter => Concentration.FromMolesPerCubicMeter(p.Value);
         public Concentration MolesPerLiter => Concentration.FromMolesPerLiter(p.Value);
@@ -575,12 +479,7 @@ public static class Units {
     extension(Ratio x) { public Reader<Ratio> To => new(x, 1.0); }
 
     extension(Reader<Length> r) {
-        public double Kilometers => r.Value.ToKilometers() / r.Factor;
         public double Meters => r.Value.ToMeters() / r.Factor;
-        public double Centimeters => r.Value.ToCentimeters() / r.Factor;
-        public double Millimeters => r.Value.ToMillimeters() / r.Factor;
-        public double Micrometers => r.Value.ToMicrometers() / r.Factor;
-        public double Nanometers => r.Value.ToNanometers() / r.Factor;
         public double Angstroms => r.Value.ToAngstroms() / r.Factor;
         public double Leagues => r.Value.ToLeagues() / r.Factor;
         public double NauticalMiles => r.Value.ToNauticalMiles() / r.Factor;
@@ -600,11 +499,7 @@ public static class Units {
     }
     extension(Reader<Mass> r) {
         public double Tonnes => r.Value.ToTonnes() / r.Factor;
-        public double Kilograms => r.Value.ToKilograms() / r.Factor;
         public double Grams => r.Value.ToGrams() / r.Factor;
-        public double Milligrams => r.Value.ToMilligrams() / r.Factor;
-        public double Micrograms => r.Value.ToMicrograms() / r.Factor;
-        public double Nanograms => r.Value.ToNanograms() / r.Factor;
         public double LongTons => r.Value.ToLongTons() / r.Factor;
         public double ShortTons => r.Value.ToShortTons() / r.Factor;
         public double Stones => r.Value.ToStones() / r.Factor;
@@ -628,11 +523,6 @@ public static class Units {
     }
     extension(Reader<Duration> r) {
         public double Seconds => r.Value.ToSeconds() / r.Factor;
-        public double Milliseconds => r.Value.ToMilliseconds() / r.Factor;
-        public double Microseconds => r.Value.ToMicroseconds() / r.Factor;
-        public double Nanoseconds => r.Value.ToNanoseconds() / r.Factor;
-        public double Picoseconds => r.Value.ToPicoseconds() / r.Factor;
-        public double Femtoseconds => r.Value.ToFemtoseconds() / r.Factor;
         public double Minutes => r.Value.ToMinutes() / r.Factor;
         public double Hours => r.Value.ToHours() / r.Factor;
         public double Days => r.Value.ToDays() / r.Factor;
@@ -652,12 +542,7 @@ public static class Units {
         public double PlanckTimes => r.Value.ToPlanckTimes() / r.Factor;
     }
     extension(Reader<ElectricCurrent> r) {
-        public double Kiloamperes => r.Value.ToKiloamperes() / r.Factor;
         public double Amperes => r.Value.ToAmperes() / r.Factor;
-        public double Milliamperes => r.Value.ToMilliamperes() / r.Factor;
-        public double Microamperes => r.Value.ToMicroamperes() / r.Factor;
-        public double Nanoamperes => r.Value.ToNanoamperes() / r.Factor;
-        public double Picoamperes => r.Value.ToPicoamperes() / r.Factor;
         public double Abamperes => r.Value.ToAbamperes() / r.Factor;
         public double Statamperes => r.Value.ToStatamperes() / r.Factor;
     }
@@ -672,11 +557,7 @@ public static class Units {
         public double Romer => r.Value.ToRomer() / r.Factor;
     }
     extension(Reader<Quantity> r) {
-        public double Kilomoles => r.Value.ToKilomoles() / r.Factor;
         public double Moles => r.Value.ToMoles() / r.Factor;
-        public double Millimoles => r.Value.ToMillimoles() / r.Factor;
-        public double Micromoles => r.Value.ToMicromoles() / r.Factor;
-        public double Nanomoles => r.Value.ToNanomoles() / r.Factor;
         public double Count => r.Value.ToCount() / r.Factor;
         public double Pairs => r.Value.ToPairs() / r.Factor;
         public double Dozens => r.Value.ToDozens() / r.Factor;
@@ -684,9 +565,7 @@ public static class Units {
         public double Gross => r.Value.ToGross() / r.Factor;
     }
     extension(Reader<LuminousIntensity> r) {
-        public double Kilocandelas => r.Value.ToKilocandelas() / r.Factor;
         public double Candelas => r.Value.ToCandelas() / r.Factor;
-        public double Millicandelas => r.Value.ToMillicandelas() / r.Factor;
         public double Candlepower => r.Value.ToCandlepower() / r.Factor;
         public double Hefnerkerze => r.Value.ToHefnerkerze() / r.Factor;
         public double Carcels => r.Value.ToCarcels() / r.Factor;
@@ -744,7 +623,6 @@ public static class Units {
     }
     extension(Reader<Angle> r) {
         public double Radians => r.Value.ToRadians() / r.Factor;
-        public double Milliradians => r.Value.ToMilliradians() / r.Factor;
         public double Turns => r.Value.ToTurns() / r.Factor;
         public double Degrees => r.Value.ToDegrees() / r.Factor;
         public double Gradians => r.Value.ToGradians() / r.Factor;
@@ -757,19 +635,11 @@ public static class Units {
         public double SquareDegrees => r.Value.ToSquareDegrees() / r.Factor;
     }
     extension(Reader<Frequency> r) {
-        public double Terahertz => r.Value.ToTerahertz() / r.Factor;
-        public double Gigahertz => r.Value.ToGigahertz() / r.Factor;
-        public double Megahertz => r.Value.ToMegahertz() / r.Factor;
-        public double Kilohertz => r.Value.ToKilohertz() / r.Factor;
         public double Hertz => r.Value.ToHertz() / r.Factor;
-        public double Millihertz => r.Value.ToMillihertz() / r.Factor;
         public double RevolutionsPerMinute => r.Value.ToRevolutionsPerMinute() / r.Factor;
     }
     extension(Reader<Force> r) {
-        public double Meganewtons => r.Value.ToMeganewtons() / r.Factor;
-        public double Kilonewtons => r.Value.ToKilonewtons() / r.Factor;
         public double Newtons => r.Value.ToNewtons() / r.Factor;
-        public double Millinewtons => r.Value.ToMillinewtons() / r.Factor;
         public double Dynes => r.Value.ToDynes() / r.Factor;
         public double KilogramsForce => r.Value.ToKilogramsForce() / r.Factor;
         public double PoundsForce => r.Value.ToPoundsForce() / r.Factor;
@@ -777,9 +647,6 @@ public static class Units {
         public double Poundals => r.Value.ToPoundals() / r.Factor;
     }
     extension(Reader<Pressure> r) {
-        public double Megapascals => r.Value.ToMegapascals() / r.Factor;
-        public double Kilopascals => r.Value.ToKilopascals() / r.Factor;
-        public double Hectopascals => r.Value.ToHectopascals() / r.Factor;
         public double Pascals => r.Value.ToPascals() / r.Factor;
         public double Bars => r.Value.ToBars() / r.Factor;
         public double Millibars => r.Value.ToMillibars() / r.Factor;
@@ -791,11 +658,7 @@ public static class Units {
         public double PoundsPerSquareInch => r.Value.ToPoundsPerSquareInch() / r.Factor;
     }
     extension(Reader<Energy> r) {
-        public double Gigajoules => r.Value.ToGigajoules() / r.Factor;
-        public double Megajoules => r.Value.ToMegajoules() / r.Factor;
-        public double Kilojoules => r.Value.ToKilojoules() / r.Factor;
         public double Joules => r.Value.ToJoules() / r.Factor;
-        public double Millijoules => r.Value.ToMillijoules() / r.Factor;
         public double Ergs => r.Value.ToErgs() / r.Factor;
         public double Kilocalories => r.Value.ToKilocalories() / r.Factor;
         public double Calories => r.Value.ToCalories() / r.Factor;
@@ -807,22 +670,14 @@ public static class Units {
         public double TonsOfTnt => r.Value.ToTonsOfTnt() / r.Factor;
     }
     extension(Reader<Power> r) {
-        public double Gigawatts => r.Value.ToGigawatts() / r.Factor;
-        public double Megawatts => r.Value.ToMegawatts() / r.Factor;
-        public double Kilowatts => r.Value.ToKilowatts() / r.Factor;
         public double Watts => r.Value.ToWatts() / r.Factor;
-        public double Milliwatts => r.Value.ToMilliwatts() / r.Factor;
         public double Horsepower => r.Value.ToHorsepower() / r.Factor;
         public double MetricHorsepower => r.Value.ToMetricHorsepower() / r.Factor;
         public double BritishThermalUnitsPerHour => r.Value.ToBritishThermalUnitsPerHour() / r.Factor;
         public double FootPoundsPerSecond => r.Value.ToFootPoundsPerSecond() / r.Factor;
     }
     extension(Reader<ElectricCharge> r) {
-        public double Kilocoulombs => r.Value.ToKilocoulombs() / r.Factor;
         public double Coulombs => r.Value.ToCoulombs() / r.Factor;
-        public double Millicoulombs => r.Value.ToMillicoulombs() / r.Factor;
-        public double Microcoulombs => r.Value.ToMicrocoulombs() / r.Factor;
-        public double Nanocoulombs => r.Value.ToNanocoulombs() / r.Factor;
         public double AmpereHours => r.Value.ToAmpereHours() / r.Factor;
         public double MilliampereHours => r.Value.ToMilliampereHours() / r.Factor;
         public double Faradays => r.Value.ToFaradays() / r.Factor;
@@ -831,76 +686,45 @@ public static class Units {
         public double Statcoulombs => r.Value.ToStatcoulombs() / r.Factor;
     }
     extension(Reader<Voltage> r) {
-        public double Megavolts => r.Value.ToMegavolts() / r.Factor;
-        public double Kilovolts => r.Value.ToKilovolts() / r.Factor;
         public double Volts => r.Value.ToVolts() / r.Factor;
-        public double Millivolts => r.Value.ToMillivolts() / r.Factor;
-        public double Microvolts => r.Value.ToMicrovolts() / r.Factor;
         public double Abvolts => r.Value.ToAbvolts() / r.Factor;
         public double Statvolts => r.Value.ToStatvolts() / r.Factor;
     }
     extension(Reader<Capacitance> r) {
         public double Farads => r.Value.ToFarads() / r.Factor;
-        public double Millifarads => r.Value.ToMillifarads() / r.Factor;
-        public double Microfarads => r.Value.ToMicrofarads() / r.Factor;
-        public double Nanofarads => r.Value.ToNanofarads() / r.Factor;
-        public double Picofarads => r.Value.ToPicofarads() / r.Factor;
         public double Abfarads => r.Value.ToAbfarads() / r.Factor;
         public double Statfarads => r.Value.ToStatfarads() / r.Factor;
     }
     extension(Reader<ElectricResistance> r) {
-        public double Gigaohms => r.Value.ToGigaohms() / r.Factor;
-        public double Megaohms => r.Value.ToMegaohms() / r.Factor;
-        public double Kiloohms => r.Value.ToKiloohms() / r.Factor;
         public double Ohms => r.Value.ToOhms() / r.Factor;
-        public double Milliohms => r.Value.ToMilliohms() / r.Factor;
-        public double Microohms => r.Value.ToMicroohms() / r.Factor;
     }
     extension(Reader<ElectricConductance> r) {
-        public double Kilosiemens => r.Value.ToKilosiemens() / r.Factor;
         public double Siemens => r.Value.ToSiemens() / r.Factor;
-        public double Millisiemens => r.Value.ToMillisiemens() / r.Factor;
-        public double Microsiemens => r.Value.ToMicrosiemens() / r.Factor;
         public double Mhos => r.Value.ToMhos() / r.Factor;
     }
     extension(Reader<MagneticFlux> r) {
         public double Webers => r.Value.ToWebers() / r.Factor;
-        public double Milliwebers => r.Value.ToMilliwebers() / r.Factor;
-        public double Microwebers => r.Value.ToMicrowebers() / r.Factor;
         public double Maxwells => r.Value.ToMaxwells() / r.Factor;
     }
     extension(Reader<MagneticFluxDensity> r) {
         public double Teslas => r.Value.ToTeslas() / r.Factor;
-        public double Milliteslas => r.Value.ToMilliteslas() / r.Factor;
-        public double Microteslas => r.Value.ToMicroteslas() / r.Factor;
-        public double Nanoteslas => r.Value.ToNanoteslas() / r.Factor;
         public double Gauss => r.Value.ToGauss() / r.Factor;
         public double Milligauss => r.Value.ToMilligauss() / r.Factor;
     }
     extension(Reader<Inductance> r) {
         public double Henries => r.Value.ToHenries() / r.Factor;
-        public double Millihenries => r.Value.ToMillihenries() / r.Factor;
-        public double Microhenries => r.Value.ToMicrohenries() / r.Factor;
-        public double Nanohenries => r.Value.ToNanohenries() / r.Factor;
         public double Abhenries => r.Value.ToAbhenries() / r.Factor;
         public double Stathenries => r.Value.ToStathenries() / r.Factor;
     }
     extension(Reader<LuminousFlux> r) {
-        public double Kilolumens => r.Value.ToKilolumens() / r.Factor;
         public double Lumens => r.Value.ToLumens() / r.Factor;
-        public double Millilumens => r.Value.ToMillilumens() / r.Factor;
     }
     extension(Reader<Illuminance> r) {
-        public double Kilolux => r.Value.ToKilolux() / r.Factor;
         public double Lux => r.Value.ToLux() / r.Factor;
-        public double Millilux => r.Value.ToMillilux() / r.Factor;
         public double Phots => r.Value.ToPhots() / r.Factor;
         public double Footcandles => r.Value.ToFootcandles() / r.Factor;
     }
     extension(Reader<Radioactivity> r) {
-        public double Gigabecquerels => r.Value.ToGigabecquerels() / r.Factor;
-        public double Megabecquerels => r.Value.ToMegabecquerels() / r.Factor;
-        public double Kilobecquerels => r.Value.ToKilobecquerels() / r.Factor;
         public double Becquerels => r.Value.ToBecquerels() / r.Factor;
         public double Curies => r.Value.ToCuries() / r.Factor;
         public double Millicuries => r.Value.ToMillicuries() / r.Factor;
@@ -908,25 +732,17 @@ public static class Units {
         public double Rutherfords => r.Value.ToRutherfords() / r.Factor;
     }
     extension(Reader<AbsorbedDose> r) {
-        public double Kilograys => r.Value.ToKilograys() / r.Factor;
         public double Grays => r.Value.ToGrays() / r.Factor;
-        public double Milligrays => r.Value.ToMilligrays() / r.Factor;
-        public double Micrograys => r.Value.ToMicrograys() / r.Factor;
         public double Rads => r.Value.ToRads() / r.Factor;
         public double Millirads => r.Value.ToMillirads() / r.Factor;
     }
     extension(Reader<EquivalentDose> r) {
         public double Sieverts => r.Value.ToSieverts() / r.Factor;
-        public double Millisieverts => r.Value.ToMillisieverts() / r.Factor;
-        public double Microsieverts => r.Value.ToMicrosieverts() / r.Factor;
         public double Rems => r.Value.ToRems() / r.Factor;
         public double Millirems => r.Value.ToMillirems() / r.Factor;
     }
     extension(Reader<CatalyticActivity> r) {
         public double Katals => r.Value.ToKatals() / r.Factor;
-        public double Millikatals => r.Value.ToMillikatals() / r.Factor;
-        public double Microkatals => r.Value.ToMicrokatals() / r.Factor;
-        public double Nanokatals => r.Value.ToNanokatals() / r.Factor;
         public double EnzymeUnits => r.Value.ToEnzymeUnits() / r.Factor;
     }
     extension(Reader<Jerk> r) {
@@ -990,7 +806,6 @@ public static class Units {
     }
     extension(Reader<Molality> r) {
         public double MolesPerKilogram => r.Value.ToMolesPerKilogram() / r.Factor;
-        public double MillimolesPerKilogram => r.Value.ToMillimolesPerKilogram() / r.Factor;
     }
     extension(Reader<MolarMass> r) {
         public double KilogramsPerMole => r.Value.ToKilogramsPerMole() / r.Factor;
@@ -1020,12 +835,10 @@ public static class Units {
     }
     extension(Reader<SurfaceTension> r) {
         public double NewtonsPerMeter => r.Value.ToNewtonsPerMeter() / r.Factor;
-        public double MillinewtonsPerMeter => r.Value.ToMillinewtonsPerMeter() / r.Factor;
         public double DynesPerCentimeter => r.Value.ToDynesPerCentimeter() / r.Factor;
     }
     extension(Reader<DynamicViscosity> r) {
         public double PascalSeconds => r.Value.ToPascalSeconds() / r.Factor;
-        public double MillipascalSeconds => r.Value.ToMillipascalSeconds() / r.Factor;
         public double Poise => r.Value.ToPoise() / r.Factor;
         public double Centipoise => r.Value.ToCentipoise() / r.Factor;
     }
@@ -1041,12 +854,10 @@ public static class Units {
     }
     extension(Reader<HeatCapacity> r) {
         public double JoulesPerKelvin => r.Value.ToJoulesPerKelvin() / r.Factor;
-        public double KilojoulesPerKelvin => r.Value.ToKilojoulesPerKelvin() / r.Factor;
         public double CaloriesPerKelvin => r.Value.ToCaloriesPerKelvin() / r.Factor;
     }
     extension(Reader<SpecificHeatCapacity> r) {
         public double JoulesPerKilogramKelvin => r.Value.ToJoulesPerKilogramKelvin() / r.Factor;
-        public double KilojoulesPerKilogramKelvin => r.Value.ToKilojoulesPerKilogramKelvin() / r.Factor;
         public double CaloriesPerGramKelvin => r.Value.ToCaloriesPerGramKelvin() / r.Factor;
     }
     extension(Reader<MolarHeatCapacity> r) {
@@ -1055,7 +866,6 @@ public static class Units {
     }
     extension(Reader<ThermalConductivity> r) {
         public double WattsPerMeterKelvin => r.Value.ToWattsPerMeterKelvin() / r.Factor;
-        public double MilliwattsPerMeterKelvin => r.Value.ToMilliwattsPerMeterKelvin() / r.Factor;
         public double BtuPerHourFootFahrenheit => r.Value.ToBtuPerHourFootFahrenheit() / r.Factor;
     }
     extension(Reader<ThermalResistance> r) {
@@ -1063,12 +873,10 @@ public static class Units {
     }
     extension(Reader<HeatFluxDensity> r) {
         public double WattsPerSquareMeter => r.Value.ToWattsPerSquareMeter() / r.Factor;
-        public double MilliwattsPerSquareMeter => r.Value.ToMilliwattsPerSquareMeter() / r.Factor;
         public double WattsPerSquareCentimeter => r.Value.ToWattsPerSquareCentimeter() / r.Factor;
     }
     extension(Reader<ElectricFieldStrength> r) {
         public double VoltsPerMeter => r.Value.ToVoltsPerMeter() / r.Factor;
-        public double KilovoltsPerMeter => r.Value.ToKilovoltsPerMeter() / r.Factor;
         public double VoltsPerCentimeter => r.Value.ToVoltsPerCentimeter() / r.Factor;
     }
     extension(Reader<ChargeDensity> r) {
@@ -1132,7 +940,6 @@ public static class Units {
     }
     extension(Reader<DoseRate> r) {
         public double GraysPerSecond => r.Value.ToGraysPerSecond() / r.Factor;
-        public double MilligraysPerSecond => r.Value.ToMilligraysPerSecond() / r.Factor;
         public double GraysPerHour => r.Value.ToGraysPerHour() / r.Factor;
     }
     extension(Reader<Concentration> r) {
