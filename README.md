@@ -113,12 +113,19 @@ The dimensional SI base quantities. Everything else is derived from these.
 | Class | Quantity | SI unit | Symbol |
 |-------|----------|---------|--------|
 | `Length` | length | metre | m |
-| `Mass` | mass | kilogram | kg |
+| `Mass` | mass | gram | g |
 | `Duration` | time | second | s |
 | `ElectricCurrent` | electric current | ampere | A |
 | `Temperature` | thermodynamic temperature | kelvin | K |
 | `Quantity` | amount of substance / count | mole | mol |
 | `LuminousIntensity` | luminous intensity | candela | cd |
+
+> **`Mass`** is stored canonically in **grams**, not the official SI base unit (the
+> kilogram). Anchoring on the gram keeps whole-gram values exact in IEEE-754 and makes
+> `FromGrams`/`ToGrams` an identity round-trip; kilogram values still round-trip exactly
+> when whole (2 kg ⇄ 2000 g), and only fractional-kilogram factors pick up the usual
+> floating-point slop. `From/To` methods for kilograms, tonnes, pounds, etc. are all still
+> provided, and `ToString()` renders in grams (e.g. `Mass.FromKilograms(2)` → `"2000 g"`).
 
 > **`Duration`** is preferred over `Time` to avoid clashing with `System.DateTime`/`TimeSpan`
 > semantics, to make clear it represents an *elapsed* quantity, and because we want it to
