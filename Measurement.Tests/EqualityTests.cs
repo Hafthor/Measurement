@@ -47,6 +47,21 @@ public sealed class EqualityTests {
     }
 
     [TestMethod]
+    public void NearlyEquals_HandlesExponentBoundary() {
+        // 1.0 and the representable value just below it span an exponent boundary (the mantissa
+        // rolls over) yet are exactly 1 ULP apart — the bit-trick must count that as 1.
+        Length one = Length.FromCanonical(1.0);
+        Length below1 = Length.FromCanonical(Math.BitDecrement(1.0));
+        Length below2 = Length.FromCanonical(Math.BitDecrement(Math.BitDecrement(1.0)));
+        Assert.IsTrue(below1.NearlyEquals(one, 1));
+        Assert.IsFalse(below1.NearlyEquals(one, 0));
+        Assert.IsFalse(below2.NearlyEquals(one, 1));
+        Assert.IsTrue(below2.NearlyEquals(one, 2));
+        // opposite signs straddling zero are never nearly-equal
+        Assert.IsFalse(Length.FromCanonical(double.Epsilon).NearlyEquals(Length.FromCanonical(-double.Epsilon)));
+    }
+
+    [TestMethod]
     public void NearlyEquals_RejectsGenuinelyDifferentValues() {
         Assert.IsFalse(Length.FromMeters(1).NearlyEquals(Length.FromMeters(2)));
         Assert.IsTrue(Length.FromMeters(5).NearlyEquals(Length.FromMeters(5)));
