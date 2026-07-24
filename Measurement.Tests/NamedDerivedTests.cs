@@ -37,7 +37,7 @@ public sealed class NamedDerivedTests {
     [TestMethod]
     public void Charge_BaseConversions() {
         Assert.AreEqual(3600.0, ElectricCharge.FromAmpereHours(1).ToCoulombs());
-        Assert.AreEqual(1.602176634e-19, ElectricCharge.FromElementaryCharges(1).ToCoulombs());
+        Assert.AreEqual(1.602176634e-10, ElectricCharge.FromElementaryCharges(1).ToNanocoulombs());
         Assert.AreEqual(96485.33212, ElectricCharge.FromFaradays(1).ToCoulombs());
     }
 

@@ -71,12 +71,15 @@ Mass m = 5.0.Kilo.Grams;                 // only compiles where this using is pr
 ```
 
 Direct unit hooks cover each class's base SI unit and its non-SI units for both input and
-read-out; SI-prefixed decades come from the prefix chain. Two unit names shared by two
-quantities — `JouleSeconds` (`Action`/`AngularMomentum`) and `RevolutionsPerMinute`
-(`Frequency`/`AngularVelocity`) — are ambiguous as bare input, so use their explicit
-`FromJouleSeconds`/`FromRevolutionsPerMinute` factories there (read-out is unaffected).
-The explicit `FromKilometers`/`ToMilligrams`-style methods remain on every type regardless.
-Requires C# 14 / .NET 10 (extension members).
+read-out; SI-prefixed decades come from the prefix chain. Squared/cubed metric units whose
+factor can't be reproduced by a single chained prefix — `SquareKilometers`,
+`SquareCentimeters`, `SquareMillimeters`, `CubicCentimeters`, `CubicMillimeters` — keep their
+own bare hooks (e.g. 1 cm² = 1e-4 m², not the 1e-2 a lone `Centi` would give). Two unit names
+shared by two quantities — `JouleSeconds` (`Action`/`AngularMomentum`) and
+`RevolutionsPerMinute` (`Frequency`/`AngularVelocity`) — are ambiguous as bare input, so use
+their explicit `FromJouleSeconds`/`FromRevolutionsPerMinute` factories there (read-out is
+unaffected). The explicit `FromKilometers`/`ToMilligrams`-style methods remain on every type
+regardless. Requires C# 14 / .NET 10 (extension members).
 
 ## Worked relations
 
@@ -117,15 +120,47 @@ The dimensional SI base quantities. Everything else is derived from these.
 | `Duration` | time | second | s |
 | `ElectricCurrent` | electric current | ampere | A |
 | `Temperature` | thermodynamic temperature | kelvin | K |
-| `Quantity` | amount of substance / count | mole | mol |
+| `Quantity` | amount of substance / count | count | — |
 | `LuminousIntensity` | luminous intensity | candela | cd |
 
-> **`Mass`** is stored canonically in **grams**, not the official SI base unit (the
-> kilogram). Anchoring on the gram keeps whole-gram values exact in IEEE-754 and makes
-> `FromGrams`/`ToGrams` an identity round-trip; kilogram values still round-trip exactly
-> when whole (2 kg ⇄ 2000 g), and only fractional-kilogram factors pick up the usual
-> floating-point slop. `From/To` methods for kilograms, tonnes, pounds, etc. are all still
-> provided, and `ToString()` renders in grams (e.g. `Mass.FromKilograms(2)` → `"2000 g"`).
+> **`Mass`** is stored canonically in **micrograms** (not the official SI base unit, the
+> kilogram). A `double` represents every integer exactly up to 2⁵³ ≈ 9.0×10¹⁵, so anchoring
+> on the microgram keeps microgram/milligram/gram-scale values — and any finer decimal that
+> is a whole number of micrograms, e.g. `0.1 mg` = `100 µg` — exact in IEEE-754, at the cost
+> of losing *integer* exactness above ~9,000 t (relative precision, ~15–16 digits, is
+> unchanged). See **Storage anchoring & precision** below.
+
+### Storage anchoring & precision
+
+Most quantities store their canonical value in their SI unit. A handful whose practitioners
+routinely work *below* the SI unit are anchored on a finer unit instead, so common small-scale
+decimals become exact integer counts of the anchor (e.g. `0.1 µF` = `100 pF`, exact). Because a
+`double` is integer-exact only up to 2⁵³ ≈ 9.0×10¹⁵, each anchor also sets the ceiling above
+which *integer* exactness is lost (relative precision, ~15–16 digits, is never affected).
+`ToString()` always renders the value in its **fundamental SI unit** (via the generator's
+`DisplayFactor`), so storage is an internal precision detail — the sole exception is `Mass`,
+which prints grams rather than the SI kilogram:
+
+| Type | stored unit | `ToString()` unit | exact-integer ceiling |
+|------|-------------|-------------------|-----------------------|
+| `Length` | nanometre (nm) | metre (m) | ~9.0×10⁶ m (AU/ly become approximate) |
+| `Mass` | microgram (µg) | gram (g) | ~9,000 t |
+| `Volume` | microlitre (µL) | cubic metre (m³) | ~9,000 m³ |
+| `ElectricCurrent` | microampere (µA) | ampere (A) | ~9.0×10⁹ A |
+| `Voltage` | microvolt (µV) | volt (V) | ~9.0×10⁹ V |
+| `Quantity` | count (entities) | — (bare number) | 2⁵³ ≈ 9.0×10¹⁵ entities |
+| `Ratio` | parts-per-trillion (ppt) | — (bare ratio) | ~9.0×10³ (ratio) |
+| `Capacitance` | picofarad (pF) | farad (F) | ~9,000 F |
+| `Inductance` | nanohenry (nH) | henry (H) | ~9.0×10⁶ H |
+| `ElectricCharge` | nanocoulomb (nC) | coulomb (C) | ~9.0×10⁶ C |
+| `ElectricConductance` | nanosiemens (nS) | siemens (S) | ~9.0×10⁶ S |
+| `MagneticFlux` | nanoweber (nWb) | weber (Wb) | ~9.0×10⁶ Wb |
+| `MagneticFluxDensity` | nanotesla (nT) | tesla (T) | ~9.0×10⁶ T |
+
+All other types store (and display) their SI unit. `Duration` and `Temperature` are deliberately
+left on seconds / kelvin. Every `From*`/`To*` method is provided regardless of the anchor, and
+cross-type operators read through the `To*` accessors so results are unaffected.
+
 
 > **`Duration`** is preferred over `Time` to avoid clashing with `System.DateTime`/`TimeSpan`
 > semantics, to make clear it represents an *elapsed* quantity, and because we want it to
@@ -135,9 +170,11 @@ The dimensional SI base quantities. Everything else is derived from these.
 
 > **`Quantity`** models amount of substance and plain counts. Although the mole is really a
 > *count* of elementary entities, chemists carry it through equations like a unit (mol/L,
-> g/mol, …), so it earns its own dimensioned type. The canonical unit is the mole; raw
-> counts, dozens, gross, etc. relate to it via Avogadro's number (kept as an inline factor
-> in the class). E.g. `Quantity.FromMoles(n)`, `Quantity.FromCount(n)`.
+> g/mol, …), so it earns its own dimensioned type. The canonical unit is the **raw count**, so
+> integer counts (and whole pairs, dozens, gross) are exact; moles are carried as
+> count ÷ Avogadro's number and are the approximate side (the two can't both be exact). Because
+> it is fundamentally a dimensionless count, `ToString()` prints the **bare number** (no
+> symbol). E.g. `Quantity.FromMoles(n)`, `Quantity.FromCount(n)`.
 
 > **Temperature** is a single `Temperature` class (kelvin canonical); Celsius, Fahrenheit,
 > Rankine, etc. are exposed as `From/To` methods on it rather than as separate classes.

@@ -81,8 +81,7 @@ public static class DoubleSugar {
         public Duration Decades => Duration.FromDecades(value);
         public Duration Centuries => Duration.FromCenturies(value);
         public Duration Millennia => Duration.FromMillennia(value);
-        public Duration Megaannums => Duration.FromMegaannums(value);
-        public Duration Gigaannums => Duration.FromGigaannums(value);
+        public Duration Annums => Duration.FromAnnums(value);
         public Duration HubbleTimes => Duration.FromHubbleTimes(value);
         public Duration PlanckTimes => Duration.FromPlanckTimes(value);
         public ElectricCurrent Amperes => ElectricCurrent.FromAmperes(value);
@@ -121,10 +120,7 @@ public static class DoubleSugar {
         public Volume CubicMeters => Volume.FromCubicMeters(value);
         public Volume CubicCentimeters => Volume.FromCubicCentimeters(value);
         public Volume CubicMillimeters => Volume.FromCubicMillimeters(value);
-        public Volume Kiloliters => Volume.FromKiloliters(value);
         public Volume Liters => Volume.FromLiters(value);
-        public Volume Milliliters => Volume.FromMilliliters(value);
-        public Volume Microliters => Volume.FromMicroliters(value);
         public Volume Gallons => Volume.FromGallons(value);
         public Volume Quarts => Volume.FromQuarts(value);
         public Volume Pints => Volume.FromPints(value);
@@ -351,6 +347,7 @@ public static class DoubleSugar {
         public Ratio PerMille => Ratio.FromPerMille(value);
         public Ratio PartsPerMillion => Ratio.FromPartsPerMillion(value);
         public Ratio PartsPerBillion => Ratio.FromPartsPerBillion(value);
+        public Ratio PartsPerTrillion => Ratio.FromPartsPerTrillion(value);
         public Ratio Decibels => Ratio.FromDecibels(value);
     }
 }

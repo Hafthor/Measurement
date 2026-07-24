@@ -125,8 +125,7 @@ public static class Units {
         public Duration Decades => Duration.FromDecades(p.Value);
         public Duration Centuries => Duration.FromCenturies(p.Value);
         public Duration Millennia => Duration.FromMillennia(p.Value);
-        public Duration Megaannums => Duration.FromMegaannums(p.Value);
-        public Duration Gigaannums => Duration.FromGigaannums(p.Value);
+        public Duration Annums => Duration.FromAnnums(p.Value);
         public Duration HubbleTimes => Duration.FromHubbleTimes(p.Value);
         public Duration PlanckTimes => Duration.FromPlanckTimes(p.Value);
         public ElectricCurrent Amperes => ElectricCurrent.FromAmperes(p.Value);
@@ -165,10 +164,7 @@ public static class Units {
         public Volume CubicMeters => Volume.FromCubicMeters(p.Value);
         public Volume CubicCentimeters => Volume.FromCubicCentimeters(p.Value);
         public Volume CubicMillimeters => Volume.FromCubicMillimeters(p.Value);
-        public Volume Kiloliters => Volume.FromKiloliters(p.Value);
         public Volume Liters => Volume.FromLiters(p.Value);
-        public Volume Milliliters => Volume.FromMilliliters(p.Value);
-        public Volume Microliters => Volume.FromMicroliters(p.Value);
         public Volume Gallons => Volume.FromGallons(p.Value);
         public Volume Quarts => Volume.FromQuarts(p.Value);
         public Volume Pints => Volume.FromPints(p.Value);
@@ -395,6 +391,7 @@ public static class Units {
         public Ratio PerMille => Ratio.FromPerMille(p.Value);
         public Ratio PartsPerMillion => Ratio.FromPartsPerMillion(p.Value);
         public Ratio PartsPerBillion => Ratio.FromPartsPerBillion(p.Value);
+        public Ratio PartsPerTrillion => Ratio.FromPartsPerTrillion(p.Value);
         public Ratio Decibels => Ratio.FromDecibels(p.Value);
     }
 
@@ -536,8 +533,7 @@ public static class Units {
         public double Decades => r.Value.ToDecades() / r.Factor;
         public double Centuries => r.Value.ToCenturies() / r.Factor;
         public double Millennia => r.Value.ToMillennia() / r.Factor;
-        public double Megaannums => r.Value.ToMegaannums() / r.Factor;
-        public double Gigaannums => r.Value.ToGigaannums() / r.Factor;
+        public double Annums => r.Value.ToAnnums() / r.Factor;
         public double HubbleTimes => r.Value.ToHubbleTimes() / r.Factor;
         public double PlanckTimes => r.Value.ToPlanckTimes() / r.Factor;
     }
@@ -588,10 +584,7 @@ public static class Units {
         public double CubicMeters => r.Value.ToCubicMeters() / r.Factor;
         public double CubicCentimeters => r.Value.ToCubicCentimeters() / r.Factor;
         public double CubicMillimeters => r.Value.ToCubicMillimeters() / r.Factor;
-        public double Kiloliters => r.Value.ToKiloliters() / r.Factor;
         public double Liters => r.Value.ToLiters() / r.Factor;
-        public double Milliliters => r.Value.ToMilliliters() / r.Factor;
-        public double Microliters => r.Value.ToMicroliters() / r.Factor;
         public double Gallons => r.Value.ToGallons() / r.Factor;
         public double Quarts => r.Value.ToQuarts() / r.Factor;
         public double Pints => r.Value.ToPints() / r.Factor;
@@ -962,6 +955,7 @@ public static class Units {
         public double PerMille => r.Value.ToPerMille() / r.Factor;
         public double PartsPerMillion => r.Value.ToPartsPerMillion() / r.Factor;
         public double PartsPerBillion => r.Value.ToPartsPerBillion() / r.Factor;
+        public double PartsPerTrillion => r.Value.ToPartsPerTrillion() / r.Factor;
         public double Decibels => r.Value.ToDecibels() / r.Factor;
     }
 }

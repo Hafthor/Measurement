@@ -46,6 +46,8 @@ public readonly partial struct Duration {
     public double ToCenturies() => value / 3155760000;
     public static Duration FromMillennia(double millennia) => new(millennia * 31557600000);
     public double ToMillennia() => value / 31557600000;
+    public static Duration FromAnnums(double annums) => new(annums * 31557600);
+    public double ToAnnums() => value / 31557600;
     public static Duration FromMegaannums(double megaannums) => new(megaannums * 31557600000000);
     public double ToMegaannums() => value / 31557600000000;
     public static Duration FromGigaannums(double gigaannums) => new(gigaannums * 31557600000000000);

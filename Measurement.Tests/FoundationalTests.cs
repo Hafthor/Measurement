@@ -11,7 +11,7 @@ public sealed class FoundationalTests {
         Assert.AreEqual(0.0254, Length.FromInches(1).ToMeters());
         Assert.AreEqual(1000.0, Length.FromKilometers(1).ToMeters());
         Assert.AreEqual(9_460_730_472_580_800.0, Length.FromLightYears(1).ToMeters());
-        Assert.AreEqual(1.616255e-35, Length.FromPlanckLengths(1).ToMeters());
+        Assert.AreEqual(1.616255e-26, Length.FromPlanckLengths(1).ToNanometers());
     }
 
     [TestMethod]
@@ -27,6 +27,24 @@ public sealed class FoundationalTests {
         Assert.AreEqual(28.349523125, Mass.FromOunces(1).ToGrams());
         Assert.AreEqual(6350.29318, Mass.FromStones(1).ToGrams());
         Assert.AreEqual(1.66053906660e-24, Mass.FromDaltons(1).ToGrams());
+    }
+
+    [TestMethod]
+    public void MicroAnchor_MakesSubScaleValuesExact() {
+        // Stored canonically as micrograms / microlitres, so decimals that would be inexact
+        // against a gram / cubic-metre anchor become exact integer counts of the anchor unit.
+        Assert.AreEqual(100.0, Mass.FromMilligrams(0.1).ToMicrograms());
+        Assert.AreEqual(1.0, Mass.FromMicrograms(1).ToMicrograms());
+        Assert.AreEqual(500.0, Mass.FromGrams(0.0005).ToMicrograms());
+        Assert.AreEqual(100.0, Volume.FromMilliliters(0.1).ToMicroliters());
+        Assert.AreEqual(1.0, Volume.FromMicroliters(1).ToMicroliters());
+        Assert.AreEqual(250.0, Volume.FromLiters(0.00025).ToMicroliters());
+        Assert.AreEqual(100.0, Length.FromMicrometers(0.1).ToNanometers());
+        Assert.AreEqual(100.0, Capacitance.FromNanofarads(0.1).ToPicofarads());
+        Assert.AreEqual(100.0, ElectricCurrent.FromMilliamperes(0.1).ToMicroamperes());
+        Assert.AreEqual(100.0, MagneticFlux.FromMicrowebers(0.1).ToNanowebers());
+        Assert.AreEqual(1.0, Ratio.FromPartsPerMillion(1).ToPartsPerMillion());
+        Assert.AreEqual(250.0, Ratio.FromPercent(0.025).ToPartsPerMillion());
     }
 
     [TestMethod]
@@ -47,10 +65,16 @@ public sealed class FoundationalTests {
 
     [TestMethod]
     public void Quantity_BaseConversions() {
-        Assert.AreEqual(1000.0, Quantity.FromKilomoles(1).ToMoles());
-        Assert.AreEqual(1e-3, Quantity.FromMillimoles(1).ToMoles());
+        // Count is the canonical unit: integer counts, pairs, dozens, gross are exact
+        Assert.AreEqual(1000.0, Quantity.FromCount(1000).ToCount());
+        Assert.AreEqual(6.0, Quantity.FromPairs(3).ToCount());
+        Assert.AreEqual(12.0, Quantity.FromDozens(1).ToCount());
+        Assert.AreEqual(144.0, Quantity.FromGross(1).ToCount());
         Assert.AreEqual(6.02214076e23, Quantity.FromMoles(1).ToCount());
         Assert.AreEqual(1.0, Quantity.FromCount(6.02214076e23).ToMoles());
+        // Moles are carried as count / Avogadro, so mole round-trips are approximate
+        Assert.AreEqual(1000.0, Quantity.FromKilomoles(1).ToMoles(), 1e-9);
+        Assert.AreEqual(1e-3, Quantity.FromMillimoles(1).ToMoles(), 1e-15);
     }
 
     [TestMethod]

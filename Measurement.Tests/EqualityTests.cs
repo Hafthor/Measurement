@@ -37,9 +37,10 @@ public sealed class EqualityTests {
 
     [TestMethod]
     public void NearlyEquals_AllowsUlpSlop() {
-        // 0.1 + 0.2 != 0.3 exactly, but they are one ULP apart
-        Length a = Length.FromMeters(0.1) + Length.FromMeters(0.2);
-        Length b = Length.FromMeters(0.3);
+        // 0.1 + 0.2 != 0.3 exactly, but they are one ULP apart (sub-nanometre, so below the
+        // exact-integer anchor scale where the rounding would otherwise vanish)
+        Length a = Length.FromNanometers(0.1) + Length.FromNanometers(0.2);
+        Length b = Length.FromNanometers(0.3);
         Assert.IsFalse(a.Equals(b));         // exact equality: not equal
         Assert.IsTrue(a.NearlyEquals(b));     // within the default 4 ULPs
         Assert.IsFalse(a.NearlyEquals(b, 0)); // zero slop → strict
