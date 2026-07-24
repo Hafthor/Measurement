@@ -15,4 +15,7 @@ public readonly partial struct Resistivity {
     public static ElectricResistance operator /(Resistivity resistivity, Length length) => ElectricResistance.FromOhms(resistivity.ToOhmMeters() / length.ToMeters());
     public static Length operator /(Resistivity resistivity, ElectricResistance electricResistance) => Length.FromMeters(resistivity.ToOhmMeters() / electricResistance.ToOhms());
 
+    // Reciprocal quantity (conductivity σ = 1/ρ)
+    public Conductivity ToConductivity() => Conductivity.FromSiemensPerMeter(1.0 / ToOhmMeters());
+
 }

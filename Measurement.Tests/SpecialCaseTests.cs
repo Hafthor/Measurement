@@ -18,6 +18,21 @@ public sealed class SpecialCaseTests {
     }
 
     [TestMethod]
+    public void ResistanceConductance_AreReciprocal() {
+        Assert.AreEqual(0.25, ElectricResistance.FromOhms(4).ToElectricConductance().ToSiemens());
+        Assert.AreEqual(4.0, ElectricConductance.FromSiemens(0.25).ToElectricResistance().ToOhms());
+        // round-trips back to itself
+        Assert.AreEqual(50.0, ElectricResistance.FromOhms(50).ToElectricConductance().ToElectricResistance().ToOhms(), 1e-9);
+    }
+
+    [TestMethod]
+    public void ResistivityConductivity_AreReciprocal() {
+        Assert.AreEqual(0.25, Resistivity.FromOhmMeters(4).ToConductivity().ToSiemensPerMeter());
+        Assert.AreEqual(4.0, Conductivity.FromSiemensPerMeter(0.25).ToResistivity().ToOhmMeters());
+        Assert.AreEqual(50.0, Resistivity.FromOhmMeters(50).ToConductivity().ToResistivity().ToOhmMeters(), 1e-9);
+    }
+
+    [TestMethod]
     public void Concentration_MolarUnit() {
         Assert.AreEqual(1000.0, Concentration.FromMolesPerLiter(1).ToMolesPerCubicMeter());
         Assert.AreEqual(1.0, Concentration.FromMolesPerCubicMeter(1000).ToMolesPerLiter());

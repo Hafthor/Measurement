@@ -23,4 +23,7 @@ public readonly partial struct ElectricResistance {
     // Composite relationships (derived)
     public static Resistivity operator *(ElectricResistance electricResistance, Length length) => Resistivity.FromOhmMeters(electricResistance.ToOhms() * length.ToMeters());
 
+    // Reciprocal quantity (conductance G = 1/R)
+    public ElectricConductance ToElectricConductance() => ElectricConductance.FromSiemens(1.0 / ToOhms());
+
 }
