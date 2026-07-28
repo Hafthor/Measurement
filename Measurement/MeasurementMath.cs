@@ -3,7 +3,6 @@ namespace com.hafthor.Measurement;
 // Shared numeric helpers used by the generated measurement structs, so the per-type generated
 // code stays a thin delegation rather than duplicating each algorithm.
 internal static class MeasurementMath {
-
     // Approximate equality within a number of representable steps (ULPs). Relies on the
     // IEEE-754 property that reinterpreting a double's bits as a sign-magnitude integer makes
     // adjacent representable values adjacent integers — including across exponent boundaries

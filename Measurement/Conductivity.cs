@@ -1,15 +1,14 @@
 namespace com.hafthor.Measurement;
 
-[Measurement("S/m")]
+[Measurement("S/m", VariableName = "millisiemensPerCentimeter", DisplayFactor = 10)]
 public readonly partial struct Conductivity {
-
     // Units
-    public static Conductivity FromSiemensPerMeter(double siemensPerMeter) => new(siemensPerMeter);
-    public double ToSiemensPerMeter() => value;
-    public static Conductivity FromSiemensPerCentimeter(double siemensPerCentimeter) => new(siemensPerCentimeter * (100));
-    public double ToSiemensPerCentimeter() => value / (100);
-    public static Conductivity FromMillisiemensPerCentimeter(double millisiemensPerCentimeter) => new(millisiemensPerCentimeter * (0.1));
-    public double ToMillisiemensPerCentimeter() => value / (0.1);
+    public static Conductivity FromSiemensPerMeter(double siemensPerMeter) => new(siemensPerMeter * 10);
+    public double ToSiemensPerMeter() => millisiemensPerCentimeter / 10;
+    public static Conductivity FromSiemensPerCentimeter(double siemensPerCentimeter) => new(siemensPerCentimeter * 1e3);
+    public double ToSiemensPerCentimeter() => millisiemensPerCentimeter / 1e3;
+    public static Conductivity FromMillisiemensPerCentimeter(double millisiemensPerCentimeter) => new(millisiemensPerCentimeter);
+    public double ToMillisiemensPerCentimeter() => millisiemensPerCentimeter;
 
     // Composite relationships
     public static ElectricConductance operator *(Conductivity conductivity, Length length) => ElectricConductance.FromSiemens(conductivity.ToSiemensPerMeter() * length.ToMeters());
@@ -17,5 +16,4 @@ public readonly partial struct Conductivity {
 
     // Reciprocal quantity (resistivity ρ = 1/σ)
     public Resistivity ToResistivity() => Resistivity.FromOhmMeters(1.0 / ToSiemensPerMeter());
-
 }

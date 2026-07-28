@@ -23,20 +23,23 @@ public sealed class MeasurementGenerator : IIncrementalGenerator {
                     ? ctx.Attributes[0].ConstructorArguments[0].Value as string ?? ""
                     : "";
                 double displayFactor = 1;
+                string variableName = "value";
                 foreach (var na in ctx.Attributes[0].NamedArguments)
                     if (na.Key == "DisplayFactor" && na.Value.Value is double d)
                         displayFactor = d;
-                return (Name: type.Name, Namespace: type.ContainingNamespace.ToDisplayString(), Symbol: symbol, DisplayFactor: displayFactor);
+                    else if (na.Key == "VariableName" && na.Value.Value is string s)
+                        variableName = s;
+                return (Name: type.Name, Namespace: type.ContainingNamespace.ToDisplayString(), Symbol: symbol, DisplayFactor: displayFactor, VariableName: variableName);
             });
 
         context.RegisterSourceOutput(types, static (ctx, info) =>
-            ctx.AddSource(info.Name + ".g.cs", SourceText.From(Emit(info.Name, info.Namespace, info.Symbol, info.DisplayFactor), Encoding.UTF8)));
+            ctx.AddSource(info.Name + ".g.cs", SourceText.From(Emit(info.Name, info.Namespace, info.Symbol, info.DisplayFactor, info.VariableName), Encoding.UTF8)));
     }
 
-    private static string Emit(string name, string ns, string symbol, double displayFactor) {
+    private static string Emit(string name, string ns, string symbol, double displayFactor, string variableName) {
         string disp = displayFactor == 1d
-            ? "value"
-            : $"(value / {displayFactor.ToString("R", System.Globalization.CultureInfo.InvariantCulture)})";
+            ? variableName
+            : $"({variableName} / {displayFactor.ToString("R", System.Globalization.CultureInfo.InvariantCulture)})";
         string toStr = symbol.Length == 0 ? $"$\"{{{disp}}}\"" : $"$\"{{{disp}}} {symbol}\"";
         string toStrFmt = symbol.Length == 0
             ? $"({disp}).ToString(format, provider)"
@@ -51,47 +54,47 @@ namespace {ns};
 
 public readonly partial struct {name}
     : IMeasurement<{name}>, IComparable<{name}>, IComparable, IEquatable<{name}>, IFormattable {{
-    private readonly double value;
-    private {name}(double value) => this.value = value;
+    private readonly double {variableName};
+    private {name}(double {variableName}) => this.{variableName} = {variableName};
 
-    public static {name} FromCanonical(double value) => new {name}(value);
-    public double CanonicalValue => value;
+    public static {name} FromCanonical(double {variableName}) => new {name}({variableName});
+    public double CanonicalValue => {variableName};
     public static {name} Zero => new {name}(0);
 
     public override string ToString() => {toStr};
     public string ToString(string format, IFormatProvider provider) => {toStrFmt};
 
-    public override bool Equals(object obj) => obj is {name} o && o.value == value;
-    public bool Equals({name} other) => other.value == value;
-    public override int GetHashCode() => value.GetHashCode();
+    public override bool Equals(object obj) => obj is {name} o && o.{variableName} == {variableName};
+    public bool Equals({name} other) => other.{variableName} == {variableName};
+    public override int GetHashCode() => {variableName}.GetHashCode();
 
-    public bool NearlyEquals({name} other, int ulps = 4) => MeasurementMath.NearlyEqual(value, other.value, ulps);
+    public bool NearlyEquals({name} other, int ulps = 4) => MeasurementMath.NearlyEqual({variableName}, other.{variableName}, ulps);
 
-    public int CompareTo({name} other) => value.CompareTo(other.value);
+    public int CompareTo({name} other) => {variableName}.CompareTo(other.{variableName});
     int IComparable.CompareTo(object obj)
         => obj is null ? 1
-         : obj is {name} o ? value.CompareTo(o.value)
+         : obj is {name} o ? {variableName}.CompareTo(o.{variableName})
          : throw new ArgumentException(""Object must be of type {name}."", nameof(obj));
 
-    public static {name} operator +({name} a, {name} b) => new {name}(a.value + b.value);
-    public static {name} operator -({name} a, {name} b) => new {name}(a.value - b.value);
-    public static {name} operator -({name} a) => new {name}(-a.value);
-    public static {name} operator *({name} a, double factor) => new {name}(a.value * factor);
-    public static {name} operator *(double factor, {name} a) => new {name}(factor * a.value);
-    public static {name} operator /({name} a, double divisor) => new {name}(a.value / divisor);
-    public static double operator /({name} a, {name} b) => a.value / b.value;
-    public static bool operator <({name} a, {name} b) => a.value < b.value;
-    public static bool operator >({name} a, {name} b) => a.value > b.value;
-    public static bool operator <=({name} a, {name} b) => a.value <= b.value;
-    public static bool operator >=({name} a, {name} b) => a.value >= b.value;
-    public static bool operator ==({name} a, {name} b) => a.value == b.value;
-    public static bool operator !=({name} a, {name} b) => a.value != b.value;
+    public static {name} operator +({name} a, {name} b) => new {name}(a.{variableName} + b.{variableName});
+    public static {name} operator -({name} a, {name} b) => new {name}(a.{variableName} - b.{variableName});
+    public static {name} operator -({name} a) => new {name}(-a.{variableName});
+    public static {name} operator *({name} a, double factor) => new {name}(a.{variableName} * factor);
+    public static {name} operator *(double factor, {name} a) => new {name}(factor * a.{variableName});
+    public static {name} operator /({name} a, double divisor) => new {name}(a.{variableName} / divisor);
+    public static double operator /({name} a, {name} b) => a.{variableName} / b.{variableName};
+    public static bool operator <({name} a, {name} b) => a.{variableName} < b.{variableName};
+    public static bool operator >({name} a, {name} b) => a.{variableName} > b.{variableName};
+    public static bool operator <=({name} a, {name} b) => a.{variableName} <= b.{variableName};
+    public static bool operator >=({name} a, {name} b) => a.{variableName} >= b.{variableName};
+    public static bool operator ==({name} a, {name} b) => a.{variableName} == b.{variableName};
+    public static bool operator !=({name} a, {name} b) => a.{variableName} != b.{variableName};
 
-    public {name} Abs() => new {name}(Math.Abs(value));
-    public {name} Min({name} other) => value <= other.value ? this : other;
-    public {name} Max({name} other) => value >= other.value ? this : other;
-    public {name} Clamp({name} min, {name} max) => new {name}(Math.Clamp(value, min.value, max.value));
-    public static {name} Lerp({name} a, {name} b, double t) => new {name}(a.value + (b.value - a.value) * t);
+    public {name} Abs() => new {name}(Math.Abs({variableName}));
+    public {name} Min({name} other) => {variableName} <= other.{variableName} ? this : other;
+    public {name} Max({name} other) => {variableName} >= other.{variableName} ? this : other;
+    public {name} Clamp({name} min, {name} max) => new {name}(Math.Clamp({variableName}, min.{variableName}, max.{variableName}));
+    public static {name} Lerp({name} a, {name} b, double t) => new {name}(a.{variableName} + (b.{variableName} - a.{variableName}) * t);
 }}
 ";
     }

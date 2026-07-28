@@ -1,13 +1,14 @@
 namespace com.hafthor.Measurement;
 
-[Measurement("kg·m/s")]
+[Measurement("g·m/s", VariableName = "gramMetersPerSecond")]
 public readonly partial struct Momentum {
-
     // Units
-    public static Momentum FromKilogramMetersPerSecond(double kilogramMetersPerSecond) => new(kilogramMetersPerSecond);
-    public double ToKilogramMetersPerSecond() => value;
-    public static Momentum FromNewtonSeconds(double newtonSeconds) => new(newtonSeconds);
-    public double ToNewtonSeconds() => value;
+    public static Momentum FromKilogramMetersPerSecond(double kilogramMetersPerSecond) => new(kilogramMetersPerSecond * 1e3);
+    public double ToKilogramMetersPerSecond() => gramMetersPerSecond / 1e3;
+    public static Momentum FromGramMetersPerSecond(double gramMetersPerSecond) => new(gramMetersPerSecond);
+    public double ToGramMetersPerSecond() => gramMetersPerSecond;
+    public static Momentum FromNewtonSeconds(double newtonSeconds) => new(newtonSeconds * 1e3);
+    public double ToNewtonSeconds() => gramMetersPerSecond / 1e3;
 
     // Composite relationships
     public static Mass operator /(Momentum momentum, Speed speed) => Mass.FromKilograms(momentum.ToKilogramMetersPerSecond() / speed.ToMetersPerSecond());
@@ -17,5 +18,4 @@ public readonly partial struct Momentum {
 
     // Famous relations
     public static Force operator /(Momentum momentum, Duration duration) => Force.FromNewtons(momentum.ToKilogramMetersPerSecond() / duration.ToSeconds());
-
 }

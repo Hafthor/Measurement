@@ -337,5 +337,5 @@ used. Each is expressed as a combination of foundational units.
 > `Radiance` compose from three independent factors, so they are constructed via their
 > `From…` factories.
 
-> Amount / count of entities is modelled by the foundational
+> Amount / count of entities is modeled by the foundational
 > [`Quantity`](#foundational-units) type (unit: mole), not here.

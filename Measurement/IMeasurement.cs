@@ -11,6 +11,7 @@ public interface IMeasurement<T> :
     ISubtractionOperators<T, T, T>,
     IUnaryNegationOperators<T, T>,
     IAdditiveIdentity<T, T>,
+    IMultiplicativeIdentity<T, T>,
     IComparisonOperators<T, T, bool>,
     IMultiplyOperators<T, double, T>,
     IDivisionOperators<T, double, T>
@@ -23,6 +24,7 @@ public interface IMeasurement<T> :
     static T IUnaryNegationOperators<T, T>.operator -(T a) => T.FromCanonical(-a.CanonicalValue);
     static T IAdditiveIdentity<T, T>.AdditiveIdentity => T.FromCanonical(0);
     static T IMultiplyOperators<T, double, T>.operator *(T a, double factor) => T.FromCanonical(a.CanonicalValue * factor);
+    static T IMultiplicativeIdentity<T, T>.MultiplicativeIdentity => T.FromCanonical(1);
     static T IDivisionOperators<T, double, T>.operator /(T a, double divisor) => T.FromCanonical(a.CanonicalValue / divisor);
     static bool IComparisonOperators<T, T, bool>.operator <(T a, T b) => a.CanonicalValue < b.CanonicalValue;
     static bool IComparisonOperators<T, T, bool>.operator >(T a, T b) => a.CanonicalValue > b.CanonicalValue;

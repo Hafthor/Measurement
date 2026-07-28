@@ -7,7 +7,7 @@ public sealed class GeometryKinematicsTests {
         Assert.AreEqual(1e4, Area.FromHectares(1).ToSquareMeters());
         Assert.AreEqual(4046.8564224, Area.FromAcres(1).ToSquareMeters());
         Assert.AreEqual(1e6, Area.FromSquareKilometers(1).ToSquareMeters());
-        Assert.AreEqual(1e-28, Area.FromBarns(1).ToSquareMeters());
+        Assert.AreEqual(1e-28, Area.FromBarns(1).ToSquareMeters(), 1e-43);
     }
 
     [TestMethod]
@@ -37,7 +37,7 @@ public sealed class GeometryKinematicsTests {
     public void Angle_BaseConversions() {
         Assert.AreEqual(Math.PI / 180, Angle.FromDegrees(1).ToRadians());
         Assert.AreEqual(2 * Math.PI, Angle.FromTurns(1).ToRadians());
-        Assert.AreEqual(Math.PI / 200, Angle.FromGradians(1).ToRadians());
+        Assert.AreEqual(Math.PI / 200, Angle.FromGradians(1).ToRadians(), 1e-17);
         Assert.AreEqual(Math.PI / 648000, Angle.FromArcseconds(1).ToRadians());
     }
 

@@ -1,28 +1,27 @@
 namespace com.hafthor.Measurement;
 
-[Measurement("A", DisplayFactor = 1e6)]
+[Measurement("A", VariableName = "microamperes", DisplayFactor = 1e6)]
 public readonly partial struct ElectricCurrent {
-
     // Canonical (stored) unit is the microampere, so µA/mA-scale values land on exact
     // integers in IEEE-754; ToString presents amperes (DisplayFactor = 1e6).
     public static ElectricCurrent FromKiloamperes(double kiloamperes) => new(kiloamperes * 1e9);
-    public double ToKiloamperes() => value / 1e9;
+    public double ToKiloamperes() => microamperes / 1e9;
     public static ElectricCurrent FromAmperes(double amperes) => new(amperes * 1e6);
-    public double ToAmperes() => value / 1e6;
+    public double ToAmperes() => microamperes / 1e6;
     public static ElectricCurrent FromMilliamperes(double milliamperes) => new(milliamperes * 1e3);
-    public double ToMilliamperes() => value / 1e3;
+    public double ToMilliamperes() => microamperes / 1e3;
     public static ElectricCurrent FromMicroamperes(double microamperes) => new(microamperes);
-    public double ToMicroamperes() => value;
+    public double ToMicroamperes() => microamperes;
     public static ElectricCurrent FromNanoamperes(double nanoamperes) => new(nanoamperes * 1e-3);
-    public double ToNanoamperes() => value / 1e-3;
+    public double ToNanoamperes() => microamperes / 1e-3;
     public static ElectricCurrent FromPicoamperes(double picoamperes) => new(picoamperes * 1e-6);
-    public double ToPicoamperes() => value / 1e-6;
+    public double ToPicoamperes() => microamperes / 1e-6;
 
     // Electromagnetic (CGS) units
     public static ElectricCurrent FromAbamperes(double abamperes) => new(abamperes * 1e7);
-    public double ToAbamperes() => value / 1e7;
+    public double ToAbamperes() => microamperes / 1e7;
     public static ElectricCurrent FromStatamperes(double statamperes) => new(statamperes * 3.335641e-4);
-    public double ToStatamperes() => value / 3.335641e-4;
+    public double ToStatamperes() => microamperes / 3.335641e-4;
 
     // Composite relationships
     public static ElectricCharge operator *(ElectricCurrent current, Duration duration) => ElectricCharge.FromCoulombs(current.ToAmperes() * duration.ToSeconds());
@@ -33,5 +32,4 @@ public readonly partial struct ElectricCurrent {
     // Composite relationships (derived)
     public static CurrentDensity operator /(ElectricCurrent electricCurrent, Area area) => CurrentDensity.FromAmperesPerSquareMeter(electricCurrent.ToAmperes() / area.ToSquareMeters());
     public static MagneticFieldStrength operator /(ElectricCurrent electricCurrent, Length length) => MagneticFieldStrength.FromAmperesPerMeter(electricCurrent.ToAmperes() / length.ToMeters());
-
 }

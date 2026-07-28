@@ -1,18 +1,16 @@
 namespace com.hafthor.Measurement;
 
-[Measurement("rad/s²")]
+[Measurement("rad/s²", VariableName = "degreePerSecondSquared", DisplayFactor = 180 / Math.PI)]
 public readonly partial struct AngularAcceleration {
-
     // Units
-    public static AngularAcceleration FromRadiansPerSecondSquared(double radiansPerSecondSquared) => new(radiansPerSecondSquared);
-    public double ToRadiansPerSecondSquared() => value;
-    public static AngularAcceleration FromDegreesPerSecondSquared(double degreesPerSecondSquared) => new(degreesPerSecondSquared * (Math.PI / 180));
-    public double ToDegreesPerSecondSquared() => value / (Math.PI / 180);
-    public static AngularAcceleration FromRevolutionsPerMinutePerSecond(double revolutionsPerMinutePerSecond) => new(revolutionsPerMinutePerSecond * (2 * Math.PI / 60));
-    public double ToRevolutionsPerMinutePerSecond() => value / (2 * Math.PI / 60);
+    public static AngularAcceleration FromRadiansPerSecondSquared(double radiansPerSecondSquared) => new(radiansPerSecondSquared / Math.PI * 180);
+    public double ToRadiansPerSecondSquared() => degreePerSecondSquared * Math.PI / 180;
+    public static AngularAcceleration FromDegreesPerSecondSquared(double degreesPerSecondSquared) => new(degreesPerSecondSquared);
+    public double ToDegreesPerSecondSquared() => degreePerSecondSquared;
+    public static AngularAcceleration FromRevolutionsPerMinutePerSecond(double revolutionsPerMinutePerSecond) => new(revolutionsPerMinutePerSecond * 360);
+    public double ToRevolutionsPerMinutePerSecond() => degreePerSecondSquared / 360;
 
     // Composite relationships
     public static AngularVelocity operator *(AngularAcceleration angularAcceleration, Duration duration) => AngularVelocity.FromRadiansPerSecond(angularAcceleration.ToRadiansPerSecondSquared() * duration.ToSeconds());
     public static AngularVelocity operator *(Duration duration, AngularAcceleration angularAcceleration) => AngularVelocity.FromRadiansPerSecond(duration.ToSeconds() * angularAcceleration.ToRadiansPerSecondSquared());
-
 }

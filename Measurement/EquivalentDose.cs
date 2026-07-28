@@ -1,20 +1,18 @@
 namespace com.hafthor.Measurement;
 
-[Measurement("Sv")]
+[Measurement("Sv", VariableName = "microsieverts", DisplayFactor = 1e6)]
 public readonly partial struct EquivalentDose {
-
     // SI units
-    public static EquivalentDose FromSieverts(double sieverts) => new(sieverts);
-    public double ToSieverts() => value;
-    public static EquivalentDose FromMillisieverts(double millisieverts) => new(millisieverts * 1e-3);
-    public double ToMillisieverts() => value / 1e-3;
-    public static EquivalentDose FromMicrosieverts(double microsieverts) => new(microsieverts * 1e-6);
-    public double ToMicrosieverts() => value / 1e-6;
+    public static EquivalentDose FromSieverts(double sieverts) => new(sieverts * 1e6);
+    public double ToSieverts() => microsieverts / 1e6;
+    public static EquivalentDose FromMillisieverts(double millisieverts) => new(millisieverts * 1e3);
+    public double ToMillisieverts() => microsieverts / 1e3;
+    public static EquivalentDose FromMicrosieverts(double microsieverts) => new(microsieverts);
+    public double ToMicrosieverts() => microsieverts;
 
     // Legacy units
-    public static EquivalentDose FromRems(double rems) => new(rems * 1e-2);
-    public double ToRems() => value / 1e-2;
-    public static EquivalentDose FromMillirems(double millirems) => new(millirems * 1e-5);
-    public double ToMillirems() => value / 1e-5;
-
+    public static EquivalentDose FromRems(double rems) => new(rems * 1e4);
+    public double ToRems() => microsieverts / 1e4;
+    public static EquivalentDose FromMillirems(double millirems) => new(millirems * 1e1);
+    public double ToMillirems() => microsieverts / 1e1;
 }

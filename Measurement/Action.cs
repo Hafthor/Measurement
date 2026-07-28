@@ -1,15 +1,14 @@
 namespace com.hafthor.Measurement;
 
-[Measurement("J·s")]
+[Measurement("J·s", VariableName = "nanoJouleSeconds", DisplayFactor = 1e9)]
 public readonly partial struct Action {
-
     // Units
-    public static Action FromJouleSeconds(double jouleSeconds) => new(jouleSeconds);
-    public double ToJouleSeconds() => value;
-    public static Action FromErgSeconds(double ergSeconds) => new(ergSeconds * (1e-7));
-    public double ToErgSeconds() => value / (1e-7);
-    public static Action FromPlanckConstants(double planckConstants) => new(planckConstants * (6.62607015e-34));
-    public double ToPlanckConstants() => value / (6.62607015e-34);
+    public static Action FromJouleSeconds(double jouleSeconds) => new(jouleSeconds * 1e9);
+    public double ToJouleSeconds() => nanoJouleSeconds / 1e9;
+    public static Action FromErgSeconds(double ergSeconds) => new(ergSeconds * 1e2);
+    public double ToErgSeconds() => nanoJouleSeconds / 1e2;
+    public static Action FromPlanckConstants(double planckConstants) => new(planckConstants * (6.62607015e-25));
+    public double ToPlanckConstants() => nanoJouleSeconds / (6.62607015e-25);
 
     // Composite relationships
     public static Energy operator /(Action action, Duration duration) => Energy.FromJoules(action.ToJouleSeconds() / duration.ToSeconds());
@@ -20,5 +19,4 @@ public readonly partial struct Action {
     // Famous relations
     public static Length operator /(Action action, Momentum momentum) => Length.FromMeters(action.ToJouleSeconds() / momentum.ToKilogramMetersPerSecond());
     public static Momentum operator /(Action action, Length length) => Momentum.FromKilogramMetersPerSecond(action.ToJouleSeconds() / length.ToMeters());
-
 }

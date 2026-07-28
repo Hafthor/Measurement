@@ -1,14 +1,12 @@
 namespace com.hafthor.Measurement;
 
-[Measurement("C/m³")]
+[Measurement("C/m³", VariableName = "coulombsPerCubicMeter")]
 public readonly partial struct ChargeDensity {
-
     // Units
     public static ChargeDensity FromCoulombsPerCubicMeter(double coulombsPerCubicMeter) => new(coulombsPerCubicMeter);
-    public double ToCoulombsPerCubicMeter() => value;
+    public double ToCoulombsPerCubicMeter() => coulombsPerCubicMeter;
 
     // Composite relationships
     public static ElectricCharge operator *(ChargeDensity chargeDensity, Volume volume) => ElectricCharge.FromCoulombs(chargeDensity.ToCoulombsPerCubicMeter() * volume.ToCubicMeters());
     public static ElectricCharge operator *(Volume volume, ChargeDensity chargeDensity) => ElectricCharge.FromCoulombs(volume.ToCubicMeters() * chargeDensity.ToCoulombsPerCubicMeter());
-
 }
