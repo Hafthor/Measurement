@@ -1,6 +1,6 @@
 namespace com.hafthor.Measurement;
 
-[Measurement("Ω·m", VariableName = "microohmCentimeters")]
+[Measurement("Ω·m", VariableName = "microohmCentimeters", DisplayFactor = 1e8)]
 public readonly partial struct Resistivity {
     // Units
     public static Resistivity FromOhmMeters(double ohmMeters) => new(ohmMeters * 1e8);

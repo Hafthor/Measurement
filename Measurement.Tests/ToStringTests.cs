@@ -19,6 +19,8 @@ public sealed class ToStringTests {
         Assert.AreEqual("9 m/s²", Acceleration.FromMetersPerSecondSquared(9).ToString());
         Assert.AreEqual("50 Ω", ElectricResistance.FromOhms(50).ToString());
         Assert.AreEqual("4.184 J/(g·K)", SpecificHeatCapacity.FromJoulesPerKilogramKelvin(4184).ToString());
+        Assert.AreEqual("1 W/m²", HeatFluxDensity.FromWattsPerSquareMeter(1).ToString());
+        Assert.AreEqual("2 Ω·m", Resistivity.FromOhmMeters(2).ToString());
     }
 
     [TestMethod]

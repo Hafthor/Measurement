@@ -305,6 +305,7 @@ public static class DoubleSugar {
         public Momentum NewtonSeconds => Momentum.FromNewtonSeconds(value);
 
         public MomentOfInertia KilogramSquareMeters => MomentOfInertia.FromKilogramSquareMeters(value);
+        public MomentOfInertia GramSquareMeters => MomentOfInertia.FromGramSquareMeters(value);
         public MomentOfInertia GramSquareCentimeters => MomentOfInertia.FromGramSquareCentimeters(value);
         public MomentOfInertia PoundSquareFeet => MomentOfInertia.FromPoundSquareFeet(value);
 
@@ -333,6 +334,7 @@ public static class DoubleSugar {
         public HeatCapacity CaloriesPerKelvin => HeatCapacity.FromCaloriesPerKelvin(value);
 
         public SpecificHeatCapacity JoulesPerKilogramKelvin => SpecificHeatCapacity.FromJoulesPerKilogramKelvin(value);
+        public SpecificHeatCapacity JoulesPerGramKelvin => SpecificHeatCapacity.FromJoulesPerGramKelvin(value);
         public SpecificHeatCapacity CaloriesPerGramKelvin => SpecificHeatCapacity.FromCaloriesPerGramKelvin(value);
 
         public MolarHeatCapacity JoulesPerMoleKelvin => MolarHeatCapacity.FromJoulesPerMoleKelvin(value);

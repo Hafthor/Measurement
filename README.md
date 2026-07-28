@@ -7,10 +7,13 @@ methods and `ToXxx` accessors for every supported unit.
 ## Conventions
 
 - Each measurement is an immutable **`readonly partial struct`** (a value type — no heap
-  allocation, and `default(Length)` is `0 m`) that stores a single canonical `double` in the
-  **canonical SI unit** (e.g. `Length` stores metres). A **Roslyn source generator**
+  allocation, and `default(Length)` is `0 m`) that stores a single canonical `double`. That
+  canonical unit is usually the SI unit, but many types **anchor on a finer sub-unit** for
+  IEEE-754 precision (see [Storage anchoring](#storage-anchoring--precision)); the private
+  field is named for the actual stored unit. A **Roslyn source generator**
   (`Measurement.Generators`) emits the identical-across-every-type surface from a
-  `[Measurement("m")]` attribute: value equality (`Equals`/`GetHashCode`/`==`/`!=`, plus
+  `[Measurement("m")]` attribute (with optional `VariableName` for the stored-field name and
+  `DisplayFactor` for the store→display scale): value equality (`Equals`/`GetHashCode`/`==`/`!=`, plus
   `NearlyEquals` for ULP-tolerant checks), ordering (`IComparable<T>`, `< > <= >=`), formatting
   (`ToString`, `IFormattable`), the same-type `+`/`-`/negation operators, scalar math
   (`* k`, `/ k`, and same-type `/` → ratio), `Abs`/`Min`/`Max`/`Clamp`/`Lerp`, and the
@@ -18,8 +21,10 @@ methods and `ToXxx` accessors for every supported unit.
   contains its `FromXxx`/`ToXxx` unit methods and cross-type operators.
 - Construction is via `public static T FromUnit(double value)` factory methods.
 - Read-out is via `public double ToUnit()` methods.
-- `ToString()` renders the canonical value with the standard SI unit symbol, e.g.
-  `Force.FromNewtons(6).ToString()` → `"6 N"`, `Speed.FromMetersPerSecond(10)` → `"10 m/s"`.
+- `ToString()` renders the value in its **fundamental SI unit symbol** (converting from the
+  stored anchor via `DisplayFactor`), e.g. `Force.FromNewtons(6).ToString()` → `"6 N"`,
+  `Speed.FromMetersPerSecond(10)` → `"10 m/s"`. The one exception is `Mass`, which shows
+  grams (`"2000 g"`) rather than the SI kilogram.
 - Composite measurements are defined in terms of the foundational ones and expose C#
   arithmetic operators relating them, so you can write e.g. `Speed speed = length / duration;`,
   `Force f = mass * acceleration;`, or `Energy e = force * length;` directly.
@@ -132,14 +137,16 @@ The dimensional SI base quantities. Everything else is derived from these.
 
 ### Storage anchoring & precision
 
-Most quantities store their canonical value in their SI unit. A handful whose practitioners
-routinely work *below* the SI unit are anchored on a finer unit instead, so common small-scale
-decimals become exact integer counts of the anchor (e.g. `0.1 µF` = `100 pF`, exact). Because a
-`double` is integer-exact only up to 2⁵³ ≈ 9.0×10¹⁵, each anchor also sets the ceiling above
-which *integer* exactness is lost (relative precision, ~15–16 digits, is never affected).
-`ToString()` always renders the value in its **fundamental SI unit** (via the generator's
-`DisplayFactor`), so storage is an internal precision detail — the sole exception is `Mass`,
-which prints grams rather than the SI kilogram:
+Most quantities anchor their stored `double` on a unit **at or below** their SI unit, so common
+small-scale decimals become exact integer counts of the anchor (e.g. `0.1 µF` = `100 pF`, exact).
+Because a `double` is integer-exact only up to 2⁵³ ≈ 9.0×10¹⁵, each anchor also sets the ceiling
+above which *integer* exactness is lost (relative precision, ~15–16 digits, is never affected).
+The stored field is named for its anchor unit (the `VariableName`), and `ToString()` always
+renders the value in its **fundamental SI unit** by dividing out the `DisplayFactor` — so storage
+is an internal precision detail. The sole display exception is `Mass`, which prints grams rather
+than the SI kilogram.
+
+Headline anchors (with the integer-exact ceiling that matters in practice):
 
 | Type | stored unit | `ToString()` unit | exact-integer ceiling |
 |------|-------------|-------------------|-----------------------|
@@ -156,6 +163,36 @@ which prints grams rather than the SI kilogram:
 | `ElectricConductance` | nanosiemens (nS) | siemens (S) | ~9.0×10⁶ S |
 | `MagneticFlux` | nanoweber (nWb) | weber (Wb) | ~9.0×10⁶ Wb |
 | `MagneticFluxDensity` | nanotesla (nT) | tesla (T) | ~9.0×10⁶ T |
+
+Many derived quantities are anchored the same way (stored anchor → SI display), so their sub-SI
+inputs stay exact too:
+
+| Type | stored anchor | `ToString()` unit |
+|------|---------------|-------------------|
+| `Area` | square millimetre (mm²) | m² |
+| `Angle` | arcsecond (″) | rad |
+| `AngularVelocity` | degree/second | rad/s |
+| `AngularAcceleration` | degree/second² | rad/s² |
+| `Action` | nanojoule-second (nJ·s) | J·s |
+| `AbsorbedDose` | microgray (µGy) | Gy |
+| `EquivalentDose` | microsievert (µSv) | Sv |
+| `DoseRate` | milligray/hour | Gy/s |
+| `CatalyticActivity` | nanokatal (nkat) | kat |
+| `Concentration` | micromole/litre | mol/m³ |
+| `Conductivity` | millisiemens/centimetre | S/m |
+| `Resistivity` | microohm-centimetre (µΩ·cm) | Ω·m |
+| `DynamicViscosity` | millipascal-second (mPa·s) | Pa·s |
+| `KinematicViscosity` | centistokes (cSt) | m²/s |
+| `Illuminance` | millilux (mlx) | lx |
+| `LuminousFlux` | millilumen (mlm) | lm |
+| `LuminousIntensity` | millicandela (mcd) | cd |
+| `HeatFluxDensity` | milliwatt/m² | W/m² |
+| `ThermalConductivity` | milliwatt/(m·K) | W/(m·K) |
+| `SurfaceTension` | millinewton/metre | N/m |
+| `Torque` | newton-millimetre (N·mm) | N·m |
+| `SpecificVolume` | cubic millimetre/gram | m³/g |
+| `VolumetricFlowRate` | cubic millimetre/second | m³/s |
+| `LinearMagneticFluxDensity` | nanoweber/metre (nWb/m) | Wb/m |
 
 All other types store (and display) their SI unit. `Duration` and `Temperature` are deliberately
 left on seconds / kelvin. Every `From*`/`To*` method is provided regardless of the anchor, and
@@ -257,22 +294,22 @@ used. Each is expressed as a combination of foundational units.
 
 | Class | Quantity | SI unit | Composition |
 |-------|----------|---------|-------------|
-| `Density` | mass density | kg/m³ | Mass / Volume |
-| `SpecificVolume` | specific volume | m³/kg | Volume / Mass |
-| `LinearDensity` | linear mass density | kg/m | Mass / Length |
-| `AreaDensity` | area (surface) density | kg/m² | Mass / Area |
-| `MassFlowRate` | mass flow rate | kg/s | Mass / Duration |
-| `Molality` | molality | mol/kg | Quantity / Mass |
-| `MolarMass` | molar mass | kg/mol | Mass / Quantity |
+| `Density` | mass density | g/m³ | Mass / Volume |
+| `SpecificVolume` | specific volume | m³/g | Volume / Mass |
+| `LinearDensity` | linear mass density | g/m | Mass / Length |
+| `AreaDensity` | area (surface) density | g/m² | Mass / Area |
+| `MassFlowRate` | mass flow rate | g/s | Mass / Duration |
+| `Molality` | molality | mol/g | Quantity / Mass |
+| `MolarMass` | molar mass | g/mol | Mass / Quantity |
 
 ### Mechanics & dynamics
 
 | Class | Quantity | SI unit | Composition |
 |-------|----------|---------|-------------|
-| `Momentum` | linear momentum, impulse | kg·m/s | Mass × Speed |
-| `AngularMomentum` | angular momentum | kg·m²/s | MomentOfInertia × AngularVelocity |
+| `Momentum` | linear momentum, impulse | g·m/s | Mass × Speed |
+| `AngularMomentum` | angular momentum | g·m²/s | MomentOfInertia × AngularVelocity |
 | `Torque` | torque, moment of force | N·m | Force × Length |
-| `MomentOfInertia` | moment of inertia | kg·m² | Mass × Area |
+| `MomentOfInertia` | moment of inertia | g·m² | Mass × Area |
 | `SurfaceTension` | surface tension | N/m | Force / Length |
 | `DynamicViscosity` | dynamic viscosity | Pa·s | Pressure × Duration |
 | `KinematicViscosity` | kinematic viscosity | m²/s | Area / Duration |
@@ -283,7 +320,7 @@ used. Each is expressed as a combination of foundational units.
 | Class | Quantity | SI unit | Composition |
 |-------|----------|---------|-------------|
 | `HeatCapacity` | heat capacity, entropy | J/K | Energy / Temperature |
-| `SpecificHeatCapacity` | specific heat capacity | J/(kg·K) | HeatCapacity / Mass |
+| `SpecificHeatCapacity` | specific heat capacity | J/(g·K) | HeatCapacity / Mass |
 | `MolarHeatCapacity` | molar heat capacity | J/(mol·K) | HeatCapacity / Quantity |
 | `ThermalConductivity` | thermal conductivity | W/(m·K) | Power / (Length × Temperature) |
 | `ThermalResistance` | thermal resistance | K/W | Temperature / Power |
@@ -302,6 +339,7 @@ used. Each is expressed as a combination of foundational units.
 | `MagneticFieldStrength` | magnetic field strength | A/m | ElectricCurrent / Length |
 | `Resistivity` | electrical resistivity | Ω·m | ElectricResistance × Length |
 | `Conductivity` | electrical conductivity | S/m | ElectricConductance / Length |
+| `LinearMagneticFluxDensity` | magnetic flux per length | Wb/m | MagneticFlux / Length |
 | `ElectricDipoleMoment` | electric dipole moment | C·m | ElectricCharge × Length |
 
 ### Photometry & radiation
@@ -313,7 +351,7 @@ used. Each is expressed as a combination of foundational units.
 | `LuminousExposure` | luminous exposure | lx·s | Illuminance × Duration |
 | `Radiance` | radiance | W/(m²·sr) | Power / (Area × SolidAngle) |
 | `RadiantIntensity` | radiant intensity | W/sr | Power / SolidAngle |
-| `Exposure` | radiation exposure | C/kg | ElectricCharge / Mass |
+| `Exposure` | radiation exposure | C/g | ElectricCharge / Mass |
 | `DoseRate` | absorbed dose rate | Gy/s | AbsorbedDose / Duration |
 
 ### Chemistry
@@ -328,8 +366,11 @@ used. Each is expressed as a combination of foundational units.
 
 | Class | Quantity | SI unit | Notes |
 |-------|----------|---------|-------|
-| `Ratio` | dimensionless ratio | 1 | percent, ppm, ppb, dB helpers |
-| `PlaneAngle` | see `Angle` above | rad | |
+| `Ratio` | dimensionless ratio | 1 | percent, ppm, ppb, ppt, dB helpers |
+
+> **Reciprocal helpers.** Reciprocal quantity pairs expose direct converters rather than an
+> operator: `ElectricResistance.ToElectricConductance()` ⇄ `ElectricConductance.ToElectricResistance()`
+> (G = 1/R), and `Resistivity.ToConductivity()` ⇄ `Conductivity.ToResistivity()` (σ = 1/ρ).
 
 > **Operator caveat.** A few classes omit their defining arithmetic operator: `Torque` (N·m)
 > would clash with `Energy` (joule, same signature `Force × Length`); `Wavenumber` uses
@@ -338,4 +379,4 @@ used. Each is expressed as a combination of foundational units.
 > `From…` factories.
 
 > Amount / count of entities is modeled by the foundational
-> [`Quantity`](#foundational-units) type (unit: mole), not here.
+> [`Quantity`](#foundational-units) type (canonical unit: raw count), not here.

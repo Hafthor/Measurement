@@ -304,6 +304,7 @@ public static class Units {
         public Momentum GramMetersPerSecond => Momentum.FromGramMetersPerSecond(p.Value);
         public Momentum NewtonSeconds => Momentum.FromNewtonSeconds(p.Value);
         public MomentOfInertia KilogramSquareMeters => MomentOfInertia.FromKilogramSquareMeters(p.Value);
+        public MomentOfInertia GramSquareMeters => MomentOfInertia.FromGramSquareMeters(p.Value);
         public MomentOfInertia GramSquareCentimeters => MomentOfInertia.FromGramSquareCentimeters(p.Value);
         public MomentOfInertia PoundSquareFeet => MomentOfInertia.FromPoundSquareFeet(p.Value);
         public AngularMomentum GramSquareMetersPerSecond => AngularMomentum.FromGramSquareMetersPerSecond(p.Value);
@@ -324,6 +325,7 @@ public static class Units {
         public HeatCapacity JoulesPerKelvin => HeatCapacity.FromJoulesPerKelvin(p.Value);
         public HeatCapacity CaloriesPerKelvin => HeatCapacity.FromCaloriesPerKelvin(p.Value);
         public SpecificHeatCapacity JoulesPerKilogramKelvin => SpecificHeatCapacity.FromJoulesPerKilogramKelvin(p.Value);
+        public SpecificHeatCapacity JoulesPerGramKelvin => SpecificHeatCapacity.FromJoulesPerGramKelvin(p.Value);
         public SpecificHeatCapacity CaloriesPerGramKelvin => SpecificHeatCapacity.FromCaloriesPerGramKelvin(p.Value);
         public MolarHeatCapacity JoulesPerMoleKelvin => MolarHeatCapacity.FromJoulesPerMoleKelvin(p.Value);
         public MolarHeatCapacity CaloriesPerMoleKelvin => MolarHeatCapacity.FromCaloriesPerMoleKelvin(p.Value);
@@ -787,6 +789,7 @@ public static class Units {
     }
     extension(Reader<MomentOfInertia> r) {
         public double KilogramSquareMeters => r.Value.ToKilogramSquareMeters() / r.Factor;
+        public double GramSquareMeters => r.Value.ToGramSquareMeters() / r.Factor;
         public double GramSquareCentimeters => r.Value.ToGramSquareCentimeters() / r.Factor;
         public double PoundSquareFeet => r.Value.ToPoundSquareFeet() / r.Factor;
     }
@@ -825,6 +828,7 @@ public static class Units {
     }
     extension(Reader<SpecificHeatCapacity> r) {
         public double JoulesPerKilogramKelvin => r.Value.ToJoulesPerKilogramKelvin() / r.Factor;
+        public double JoulesPerGramKelvin => r.Value.ToJoulesPerGramKelvin() / r.Factor;
         public double CaloriesPerGramKelvin => r.Value.ToCaloriesPerGramKelvin() / r.Factor;
     }
     extension(Reader<MolarHeatCapacity> r) {

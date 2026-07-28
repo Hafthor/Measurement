@@ -15,7 +15,7 @@ public readonly partial struct Mass {
     public static Mass FromMicrograms(double micrograms) => new(micrograms);
     public double ToMicrograms() => micrograms;
     public static Mass FromNanograms(double nanograms) => new(nanograms * 1e-3);
-    public double ToNanograms() => micrograms / 1e3;
+    public double ToNanograms() => micrograms / 1e-3;
 
     // Imperial / US units
     public static Mass FromLongTons(double longTons) => new(longTons * 1016046.9088e6);

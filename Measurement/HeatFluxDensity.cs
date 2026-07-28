@@ -1,6 +1,6 @@
 namespace com.hafthor.Measurement;
 
-[Measurement("W/m²", VariableName = "milliwattsPerSquareMeter")]
+[Measurement("W/m²", VariableName = "milliwattsPerSquareMeter", DisplayFactor = 1e3)]
 public readonly partial struct HeatFluxDensity {
     // Units
     public static HeatFluxDensity FromWattsPerSquareMeter(double wattsPerSquareMeter) => new(wattsPerSquareMeter * 1e3);
