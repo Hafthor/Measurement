@@ -90,7 +90,7 @@ public sealed class CompositeOperatorTests {
         MagneticFluxDensity b = flux / Area.FromSquareMeters(4);
         Assert.AreEqual(2.0, b.ToTeslas());
         LinearMagneticFluxDensity lmb = flux / Length.FromMeters(32e6);
-        Assert.AreEqual(250.0, lmb.ToNanowebersPerMeter(), 1e-13);
+        Assert.AreEqual(250.0, lmb.ToNanowebersPerMeter(), 1e-13); // 1000 Hz reference fluxivity
     }
 
     [TestMethod]
