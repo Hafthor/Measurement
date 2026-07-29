@@ -37,9 +37,10 @@ public sealed class MeasurementGenerator : IIncrementalGenerator {
     }
 
     private static string Emit(string name, string ns, string symbol, double displayFactor, string variableName) {
+        string dfStr = displayFactor.ToString("R", System.Globalization.CultureInfo.InvariantCulture);
         string disp = displayFactor == 1d
             ? variableName
-            : $"({variableName} / {displayFactor.ToString("R", System.Globalization.CultureInfo.InvariantCulture)})";
+            : $"({variableName} / {dfStr})";
         string toStr = symbol.Length == 0 ? $"$\"{{{disp}}}\"" : $"$\"{{{disp}}} {symbol}\"";
         string toStrFmt = symbol.Length == 0
             ? $"({disp}).ToString(format, provider)"
@@ -53,16 +54,38 @@ using System.Numerics;
 namespace {ns};
 
 public readonly partial struct {name}
-    : IMeasurement<{name}>, IComparable<{name}>, IComparable, IEquatable<{name}>, IFormattable {{
+    : IMeasurement<{name}>, IComparable<{name}>, IComparable, IEquatable<{name}>, IFormattable, IParsable<{name}>, ISpanParsable<{name}> {{
     private readonly double {variableName};
     private {name}(double {variableName}) => this.{variableName} = {variableName};
 
     public static {name} FromCanonical(double {variableName}) => new {name}({variableName});
     public double CanonicalValue => {variableName};
+    public string UnitSymbol => ""{symbol}"";
     public static {name} Zero => new {name}(0);
 
     public override string ToString() => {toStr};
     public string ToString(string format, IFormatProvider provider) => {toStrFmt};
+
+    public static {name} Parse(string s, IFormatProvider provider) {{
+        if (!MeasurementParsing.TryParseCanonical(s, ""{symbol}"", {dfStr}, provider, out double c))
+            throw new FormatException($""Could not parse as {name}: {{s}}"");
+        return new {name}(c);
+    }}
+    public static bool TryParse(string s, IFormatProvider provider, out {name} result) {{
+        if (MeasurementParsing.TryParseCanonical(s, ""{symbol}"", {dfStr}, provider, out double c)) {{ result = new {name}(c); return true; }}
+        result = default; return false;
+    }}
+    public static {name} Parse(ReadOnlySpan<char> s, IFormatProvider provider) {{
+        if (!MeasurementParsing.TryParseCanonical(s, ""{symbol}"", {dfStr}, provider, out double c))
+            throw new FormatException($""Could not parse as {name}: {{s.ToString()}}"");
+        return new {name}(c);
+    }}
+    public static bool TryParse(ReadOnlySpan<char> s, IFormatProvider provider, out {name} result) {{
+        if (MeasurementParsing.TryParseCanonical(s, ""{symbol}"", {dfStr}, provider, out double c)) {{ result = new {name}(c); return true; }}
+        result = default; return false;
+    }}
+    public static {name} Parse(string s) => Parse(s, null);
+    public static bool TryParse(string s, out {name} result) => TryParse(s, null, out result);
 
     public override bool Equals(object obj) => obj is {name} o && o.{variableName} == {variableName};
     public bool Equals({name} other) => other.{variableName} == {variableName};

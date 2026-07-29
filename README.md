@@ -15,7 +15,8 @@ methods and `ToXxx` accessors for every supported unit.
   `[Measurement("m")]` attribute (with optional `VariableName` for the stored-field name and
   `DisplayFactor` for the store→display scale): value equality (`Equals`/`GetHashCode`/`==`/`!=`, plus
   `NearlyEquals` for ULP-tolerant checks), ordering (`IComparable<T>`, `< > <= >=`), formatting
-  (`ToString`, `IFormattable`), the same-type `+`/`-`/negation operators, scalar math
+  and parsing (`ToString`/`IFormattable`, `Parse`/`TryParse` via `IParsable<T>`/`ISpanParsable<T>`),
+  the same-type `+`/`-`/negation operators, scalar math
   (`* k`, `/ k`, and same-type `/` → ratio), `Abs`/`Min`/`Max`/`Clamp`/`Lerp`, and the
   `IMeasurement<T>` / `System.Numerics` implementation. Each type's hand-written source only
   contains its `FromXxx`/`ToXxx` unit methods and cross-type operators.
@@ -85,6 +86,67 @@ shared by two quantities — `JouleSeconds` (`Action`/`AngularMomentum`) and
 their explicit `FromJouleSeconds`/`FromRevolutionsPerMinute` factories there (read-out is
 unaffected). The explicit `FromKilometers`/`ToMilligrams`-style methods remain on every type
 regardless. Requires C# 14 / .NET 10 (extension members).
+
+## JSON serialization
+
+`System.Text.Json` support ships in the box. Register `MeasurementJsonConverterFactory` once and
+every measurement type serializes in its **fundamental SI unit** (stable and human-readable —
+independent of the internal storage anchor); dimensionless types (`Ratio`, `Quantity`) serialize
+as a bare number.
+
+```csharp
+var options = new JsonSerializerOptions {
+    Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping, // keep unit symbols like ² · Ω literal
+};
+options.Converters.Add(new MeasurementJsonConverterFactory());
+
+JsonSerializer.Serialize(Length.FromMeters(5), options);   // "5 m"
+JsonSerializer.Serialize(Mass.FromKilograms(2), options);  // "2000 g"
+JsonSerializer.Serialize(Quantity.FromCount(1000), options); // 1000  (bare number)
+```
+
+Reading is lenient: `"5 m"`, `"5"`, and `5` all deserialize to `Length.FromMeters(5)` (the unit
+suffix is validated-if-present, optional otherwise). The converter is fully generic — it works for
+any `[Measurement]` type, including new ones, via `IMeasurement<T>` and the type's `DisplayFactor`.
+
+## Parsing
+
+Every type implements `IParsable<T>` and `ISpanParsable<T>`, so `Parse`/`TryParse` are the inverse
+of `ToString` (they read the value in its **fundamental SI unit**):
+
+```csharp
+Length a = Length.Parse("5 m");                       // 5 m
+Length b = Length.Parse("5m");                        // space optional
+Length c = Length.Parse("1000 m");                    // == Length.FromKilometers(1)
+Mass   m = Mass.Parse("2000 g");                       // == Mass.FromKilograms(2)
+if (Speed.TryParse("9.8 m/s", out var s)) { /* … */ } // non-throwing
+
+// culture-aware, and usable through the generic constraint
+Length d = Length.Parse("1,5 m", CultureInfo.GetCultureInfo("de-DE"));  // 1.5 m
+static T Read<T>(string s) where T : IParsable<T> => T.Parse(s, CultureInfo.InvariantCulture);
+```
+
+The trailing symbol is validated when present and optional otherwise (a bare number is accepted);
+a wrong unit (`"5 kg"` for `Length`) or a unit on a dimensionless type fails. Only the SI symbol is
+recognised — for other units use the `FromXxx` factories (`Length.FromMiles(1)`).
+
+### Dynamic parsing
+
+When you don't know the type up front, `Measure.Parse`/`TryParse` inspect the **unit symbol** and
+return the matching type boxed as the non-generic `IMeasurement`:
+
+```csharp
+IMeasurement m = Measure.Parse("5 m/s");   // → a Speed
+m.UnitSymbol;                              // "m/s"
+m.CanonicalValue;                          // stored value
+if (m is Speed s) { /* strongly typed again */ }
+
+Measure.TryParse("2000 g", out var mass);  // → a Mass (== Mass.FromKilograms(2))
+```
+
+A recognised SI unit symbol is required: a bare number is ambiguous (e.g. `Ratio` vs `Quantity`)
+and is rejected. The symbol→type registry is built once by reflection, so new `[Measurement]` types
+are picked up automatically.
 
 ## Worked relations
 

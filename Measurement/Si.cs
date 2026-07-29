@@ -64,7 +64,7 @@ public readonly struct Reader<T> {
 }
 
 // Non-double entry point — always available (never extends double): Measure.Of(5).Kilo.Grams.
-public static class Measure {
+public static partial class Measure {
     public static Prefixed Of(double value) => new(value);
 }
 

@@ -2,11 +2,19 @@ using System.Numerics;
 
 namespace com.hafthor.Measurement;
 
+// Non-generic base so a measurement can be handled without knowing its concrete type — e.g. the
+// return of Measure.Parse. Every measurement struct implements this (via IMeasurement<T>).
+public interface IMeasurement {
+    double CanonicalValue { get; }
+    string UnitSymbol { get; }
+}
+
 // Opts every measurement into System.Numerics generic math: addition, subtraction, negation,
 // additive identity, comparison/equality, and scaling by a scalar. Default implementations are
 // supplied here (explicit form); each measurement struct provides the static FromCanonical
 // factory and CanonicalValue (both emitted by the source generator).
 public interface IMeasurement<T> :
+    IMeasurement,
     IAdditionOperators<T, T, T>,
     ISubtractionOperators<T, T, T>,
     IUnaryNegationOperators<T, T>,
@@ -17,7 +25,6 @@ public interface IMeasurement<T> :
     IDivisionOperators<T, double, T>
     where T : IMeasurement<T> {
     static abstract T FromCanonical(double canonicalValue);
-    double CanonicalValue { get; }
 
     static T IAdditionOperators<T, T, T>.operator +(T a, T b) => T.FromCanonical(a.CanonicalValue + b.CanonicalValue);
     static T ISubtractionOperators<T, T, T>.operator -(T a, T b) => T.FromCanonical(a.CanonicalValue - b.CanonicalValue);
