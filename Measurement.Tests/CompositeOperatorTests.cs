@@ -52,14 +52,26 @@ public sealed class CompositeOperatorTests {
     // so `mass * c * c` chains into an Energy directly.
     [TestMethod]
     public void MassEnergyEquivalence() {
+        Energy avgHouseYear = Measure.Of(12.5).Mega.WattHours;
         Speed c = Speed.FromSpeedOfLight(1);
         Energy e = Mass.FromGrams(1) * c * c; // a heavy paper clip converted to pure energy
         // 1 g ≈ 8.9875517873681764e13 J (c = 299792458 m/s exactly)
         Assert.AreEqual(299792458.0 * 299792458.0 * 1e-3, e.ToJoules()); // wattseconds
-        Assert.AreEqual(24.96542163157827, e.To.Giga.WattHours); // that's enough for 2000 average houses for a year
+        Assert.AreEqual(1997.2337305262615, e / avgHouseYear); // that's enough for 2000 average houses for a year
         // and the inverse relations recover mass and speed
         Assert.AreEqual(1.0, (e / c / c).ToGrams());
         Assert.AreEqual(299792458.0, (e / (Mass.FromGrams(1) * c)).ToMetersPerSecond());
+
+        // nuclear fission (total energy of 1g of U-235, initial fissle products only)
+        Mass neutron = Mass.FromDaltons(1.008664891), u235 = Mass.FromDaltons(235.043928);
+        Mass kr92 = Mass.FromDaltons(91.9261731), ba141 = Mass.FromDaltons(140.914403);
+        e = ((neutron + u235) - (kr92 + ba141 + neutron * 3)) * c * c * (Mass.FromGrams(1) / u235);
+        Assert.AreEqual(1.580681755342055, e / avgHouseYear); // that's roughly 1.6 average houses for a year
+
+        // nuclear fusion (total energy from 1g of hydrogen)
+        Mass h2 = Mass.FromDaltons(2.01410177812), he4 = Mass.FromDaltons(4.00260325415);
+        e = (h2 * 2 - he4) * c * c * (Mass.FromGrams(1) / h2);
+        Assert.AreEqual(25.38590025650838, e / avgHouseYear); // that's roughly 25.4 average houses for a year
     }
 
     // E = h f : Planck's constant (an Action, J·s) × Frequency (1/s) = Energy.
