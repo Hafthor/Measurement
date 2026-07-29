@@ -53,12 +53,13 @@ public sealed class CompositeOperatorTests {
     [TestMethod]
     public void MassEnergyEquivalence() {
         Speed c = Speed.FromSpeedOfLight(1);
-        Energy e = Mass.FromKilograms(1) * c * c;
-        // 1 kg ≈ 8.9875517873681764e16 J (c = 299792458 m/s exactly)
-        Assert.AreEqual(299792458.0 * 299792458.0, e.ToJoules());
+        Energy e = Mass.FromGrams(1) * c * c; // a heavy paper clip converted to pure energy
+        // 1 g ≈ 8.9875517873681764e13 J (c = 299792458 m/s exactly)
+        Assert.AreEqual(299792458.0 * 299792458.0 * 1e-3, e.ToJoules()); // wattseconds
+        Assert.AreEqual(24.96542163157827, e.To.Giga.WattHours); // that's enough for 2000 average houses for a year
         // and the inverse relations recover mass and speed
-        Assert.AreEqual(1.0, (e / c / c).ToKilograms());
-        Assert.AreEqual(299792458.0, (e / (Mass.FromKilograms(1) * c)).ToMetersPerSecond());
+        Assert.AreEqual(1.0, (e / c / c).ToGrams());
+        Assert.AreEqual(299792458.0, (e / (Mass.FromGrams(1) * c)).ToMetersPerSecond());
     }
 
     // E = h f : Planck's constant (an Action, J·s) × Frequency (1/s) = Energy.
