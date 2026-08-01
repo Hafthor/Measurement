@@ -178,8 +178,7 @@ public sealed class PerFluentTests {
     }
 
     [TestMethod]
-    public void PolymorphicDenominator_AnyUnitOfTheDimension() {
-        // A denominator slot now accepts ANY unit of its dimension, not only the ones spelled in a
+    public void PolymorphicDenominator_AnyUnitOfTheDimension() {        // A denominator slot now accepts ANY unit of its dimension, not only the ones spelled in a
         // compound unit. `.Minute`/`.Hour`/`.Day` are dimensionally computed from the coherent basis.
         AngularVelocity dpm = Measure.Of(90).Degrees.Per.Minute;     // 90°/min = 1.5°/s
         Assert.AreEqual(1.5, dpm.ToDegreesPerSecond(), 1e-9);
@@ -190,6 +189,24 @@ public sealed class PerFluentTests {
         // Squared works with any duration too: 90°/min² in rad/s².
         AngularAcceleration a = Measure.Of(90).Degrees.Per.Minute.Squared;
         Assert.AreEqual((System.Math.PI / 2) / 3600.0, a.ToRadiansPerSecondSquared(), 1e-12);
+    }
+
+    [TestMethod]
+    public void Revolutions_DecomposeToAngularRates() {
+        // A revolution is an angle (one full turn), so .Revolutions.Per.<time> is an angular rate —
+        // no dedicated RevolutionsPerMinute hook needed.
+        AngularVelocity w = Measure.Of(1).Revolutions.Per.Minute;
+        Assert.AreEqual(AngularVelocity.FromRevolutionsPerMinute(1).ToRadiansPerSecond(),
+            w.ToRadiansPerSecond(), 1e-12);
+        AngularAcceleration a = Measure.Of(1).Revolutions.Per.Minute.Per.Second;
+        Assert.AreEqual(AngularAcceleration.FromRevolutionsPerMinutePerSecond(1).ToRadiansPerSecondSquared(),
+            a.ToRadiansPerSecondSquared(), 1e-12);
+        AngularVelocity rps = Measure.Of(2).Revolutions.Per.Second;
+        Assert.AreEqual(AngularVelocity.FromRevolutionsPerSecond(2).ToRadiansPerSecond(),
+            rps.ToRadiansPerSecond(), 1e-12);
+        // read-out mirrors it
+        double rpm = AngularVelocity.FromRevolutionsPerMinute(3).To.Revolutions.Per.Minute;
+        Assert.AreEqual(3.0, rpm, 1e-12);
     }
 
     // ---- Read-out side: reader.To.<Numerator>.Per.<denominator…> mirrors the input walk. ----

@@ -51,7 +51,6 @@ public sealed class GeometryKinematicsTests {
     public void Frequency_BaseConversions() {
         Assert.AreEqual(1000.0, Frequency.FromKilohertz(1).ToHertz());
         Assert.AreEqual(1e9, Frequency.FromGigahertz(1).ToHertz());
-        Assert.AreEqual(1.0 / 60, Frequency.FromRevolutionsPerMinute(1).ToHertz());
     }
 
     [TestMethod]

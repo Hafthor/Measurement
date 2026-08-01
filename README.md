@@ -98,11 +98,11 @@ A few naming rules to know:
 - **SI-prefixed unit names** aren't separate hooks — reach `Kilomoles`, `Milliamperehours`, etc.
   through the chain (`Measure.Of(1).Kilo.Moles`). The explicit `FromKilomoles`/`ToKilomoles` factories
   are always available.
-- **Names shared by two quantities** are disambiguated by naming the quantity. A product spelling like
-  `JouleSeconds` (shared by `Action`/`AngularMomentum`) uses the [compositional walk](#compositional-fluent-grammar):
-  `Measure.Of(1).Joule.Seconds` is an `Action`, and `.Joule.Seconds.AngularMomentum` names the other
-  reading. A quotient spelling like `RevolutionsPerMinute` (shared by `Frequency`/`AngularVelocity`)
-  uses a trailing selector: `Measure.Of(3).RevolutionsPerMinute.Frequency`.
+- **Compound-unit names shared by two quantities** are disambiguated by the compositional walk rather
+  than a fused hook. `JouleSeconds` (shared by `Action`/`AngularMomentum`) composes as
+  `Measure.Of(1).Joule.Seconds` — implicitly an `Action`, with `.Joule.Seconds.AngularMomentum` naming
+  the other reading. `RevolutionsPerMinute` (rpm) is an angular rate — a revolution is one turn — so it
+  composes as `Measure.Of(3).Revolutions.Per.Minute` → an `AngularVelocity`.
 
 ## Compositional fluent grammar
 
@@ -124,6 +124,7 @@ a spelled compound unit. Denominators decompose through the prefix chain just li
 Speed        v  = Measure.Of(10).Meters.Per.Second;             // m/s
 Speed        h  = Measure.Of(90).Kilo.Meters.Per.Hour;          // any duration works: km/h
 AngularVelocity r = Measure.Of(90).Degrees.Per.Minute;          // 90°/min = 1.5°/s
+AngularVelocity w = Measure.Of(45).Revolutions.Per.Minute;      // rpm (a revolution is one turn)
 Acceleration a  = Measure.Of(9).Meters.Per.Second.Per.Second;   // m/s² (chained)
 Acceleration a2 = Measure.Of(9).Meters.Per.Second.Squared;      // …or .Squared / .Cubed shorthand
 Density      d  = Measure.Of(1).Grams.Per.Cubic.Centi.Meter;    // g/cm³ (cubic-length denominator)

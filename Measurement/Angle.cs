@@ -3,6 +3,7 @@ namespace com.hafthor.Measurement;
 [Measurement("rad", VariableName = "arcseconds", DisplayFactor = 648000 / Math.PI)]
 [Unit("Radians", 648000 / Math.PI)]
 [Unit("Turns", 1296000)]
+[Unit("Revolutions", 1296000)]
 [Unit("Degrees", 3600)]
 [Unit("Gradians", 3240)]
 [Unit("Arcminutes", 60)]
