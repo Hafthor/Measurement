@@ -5,6 +5,19 @@ namespace com.hafthor.Measurement;
 // Spot-checks that the fluent API is wired across a broad sample of classes.
 [TestClass]
 public sealed class FluentRolloutTests {
+[TestMethod]
+public void CollisionSelector_DisambiguatesSharedUnitName() {
+    // JouleSeconds is shared by Action and AngularMomentum; the selector names the type.
+    Assert.AreEqual(5.0, (5.0.JouleSeconds.Action).ToJouleSeconds());
+    Assert.AreEqual(5.0, (5.0.JouleSeconds.AngularMomentum).ToJouleSeconds());
+    Assert.AreEqual(5000.0, (Measure.Of(5).Kilo.JouleSeconds.Action).ToJouleSeconds());
+    // RevolutionsPerMinute is shared by AngularVelocity and Frequency.
+    Assert.AreEqual(3.0, (3.0.RevolutionsPerMinute.Frequency).ToRevolutionsPerMinute(), 1e-12);
+    Assert.AreEqual(3.0, (3.0.RevolutionsPerMinute.AngularVelocity).ToRevolutionsPerMinute(), 1e-12);
+    // read-out remains direct and unambiguous
+    Assert.AreEqual(2.0, Frequency.FromRevolutionsPerMinute(2).To.RevolutionsPerMinute, 1e-12);
+}
+
     [TestMethod]
     public void PrefixInput_AcrossClasses() {
         Assert.AreEqual(5000.0, Measure.Of(5).Kilo.Joules.ToJoules());

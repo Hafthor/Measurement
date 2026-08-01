@@ -14,3 +14,41 @@ internal sealed class MeasurementAttribute(string symbol) : Attribute {
 
     public string VariableName { get; set; } = "value";
 }
+
+// Declares a family of metric units to be generated for a measurement struct. The factor of the
+// base (un-prefixed) unit relative to the stored anchor is 10^TenExponent, and Prefixes lists the
+// SI prefixes to expand (space-separated; "None" = the base unit itself). The prefix attaches to
+// the leading token, e.g. [SiUnit("WattsPerSquareMeter", 3, "None Milli")] generates
+// From/ToWattsPerSquareMeter (×1e3) and From/ToMilliwattsPerSquareMeter (×1e0).
+[AttributeUsage(AttributeTargets.Struct, AllowMultiple = true)]
+internal sealed class SiUnitAttribute(string baseName, int tenExponent, string prefixes = "None") : Attribute {
+    public string BaseName => baseName;
+    public int TenExponent => tenExponent;
+    public string Prefixes => prefixes;
+
+    // SI prefixes to apply to the denominator unit (the token after "Per"). The generated factor
+    // accounts for its power (Square ⇒ ², Cubic ⇒ ³) and the division, so on "…PerSquareMeter",
+    // PerPrefixes = "None Centi Milli" yields …PerSquareMeter, …PerSquareCentimeter (×1e4 relative),
+    // …PerSquareMillimeter (×1e6 relative). Numerator × denominator prefixes form a cross product.
+    public string PerPrefixes { get; set; } = "None";
+}
+
+// Declares a single non-metric unit whose factor to the stored anchor isn't a power of ten (e.g.
+// Pounds, Daltons, SolarMasses). Factor = anchor units per one of this unit, so with a microgram
+// anchor, [Unit("Pounds", 453.59237e6)] gives From/ToPounds. For affine scales (e.g. temperature),
+// Offset and PreOffset give anchor = (value + PreOffset) * factor + Offset, so
+// [Unit("Fahrenheit", 5.0/9.0, PreOffset = -32, Offset = 273.15)] is (°F − 32)·5⁄9 + 273.15 K.
+[AttributeUsage(AttributeTargets.Struct, AllowMultiple = true)]
+internal sealed class UnitAttribute(string name, double factor) : Attribute {
+    public string Name => name;
+    public double Factor => factor;
+    public double Offset { get; set; }
+}
+
+// Declares an extra fluent hook (Measure.Of(x).Name, x.Name, value.To.Name) for a unit whose
+// From/To methods are hand-written rather than generated (e.g. the logarithmic Ratio.Decibels).
+// The generator emits only the fluent wiring and assumes From{Name}/To{Name} already exist.
+[AttributeUsage(AttributeTargets.Struct, AllowMultiple = true)]
+internal sealed class UnitHookAttribute(string name) : Attribute {
+    public string Name => name;
+}

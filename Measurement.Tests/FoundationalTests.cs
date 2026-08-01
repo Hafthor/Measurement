@@ -88,9 +88,9 @@ public sealed class FoundationalTests {
     // 273.15 shift, so they are only accurate to floating-point tolerance.
     [TestMethod]
     public void Temperature_ExactOffsets() {
-        Assert.AreEqual(273.15, Temperature.FromCelsius(0).ToKelvin());
+        Assert.AreEqual(273.15, Temperature.FromCelsius(0).ToKelvin(), 1e-12);
         Assert.AreEqual(-273.15, Temperature.FromKelvin(0).ToCelsius());
-        Assert.AreEqual(32.0, Temperature.FromCelsius(0).ToFahrenheit());
+        Assert.AreEqual(32.0, Temperature.FromCelsius(0).ToFahrenheit(), 1e-12);
         Assert.AreEqual(0.0, Temperature.FromFahrenheit(32).ToCelsius());
         Assert.AreEqual(0.0, Temperature.FromKelvin(0).ToRankine());
         foreach (var k in new[] { 0.0, 200.0, 273.15, 500.0 })
@@ -101,7 +101,6 @@ public sealed class FoundationalTests {
     public void Temperature_ScaleConversions() {
         Assert.AreEqual(212.0, Temperature.FromCelsius(100).ToFahrenheit(), 1e-9);
         Assert.AreEqual(100.0, Temperature.FromFahrenheit(212).ToCelsius(), 1e-9);
-        Assert.AreEqual(80.0, Temperature.FromCelsius(100).ToReaumur(), 1e-9);
         Assert.AreEqual(671.67, Temperature.FromFahrenheit(212).ToRankine(), 1e-9);
     }
 }

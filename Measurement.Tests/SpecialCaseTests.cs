@@ -59,7 +59,7 @@ public sealed class SpecialCaseTests {
     [TestMethod]
     public void Duration_ExtremeScales() {
         Assert.AreEqual(5.391247e-44, Duration.FromPlanckTimes(1).ToSeconds());
-        Assert.AreEqual(31557600000000000.0, Duration.FromGigaannums(1).ToSeconds());
+        Assert.AreEqual(31557600000000000.0, Measure.Of(1).Giga.Annums.ToSeconds());
         Assert.AreEqual(4.803349612e17, Duration.FromHubbleTimes(1).ToSeconds());
     }
 }

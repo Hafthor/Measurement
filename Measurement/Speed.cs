@@ -1,29 +1,17 @@
 namespace com.hafthor.Measurement;
 
+// Canonical unit is metres/second. Curated compound units (km/h, mph, ft/s, knots, …) pair a
+// numerator and a non-SI denominator (e.g. Hour = 3600 s), so they aren't a power-of-ten prefix
+// grid — each is declared as an explicit [Unit] with its factor (m/s per unit).
 [Measurement("m/s", VariableName = "metersPerSecond")]
+[SiUnit("MetersPerSecond", 0)]
+[Unit("KilometersPerHour", 1.0 / 3.6)]
+[Unit("MilesPerHour", 0.44704)]
+[Unit("FeetPerSecond", 0.3048)]
+[Unit("Knots", 0.514444444444)]
+[Unit("Mach", 340.29)]
+[Unit("SpeedOfLight", 299792458)]
 public readonly partial struct Speed {
-    // SI units
-    public static Speed FromMetersPerSecond(double metersPerSecond) => new(metersPerSecond);
-    public double ToMetersPerSecond() => metersPerSecond;
-    public static Speed FromKilometersPerHour(double kilometersPerHour) => new(kilometersPerHour / 3.6);
-    public double ToKilometersPerHour() => metersPerSecond * 3.6;
-
-    // Imperial / US units
-    public static Speed FromMilesPerHour(double milesPerHour) => new(milesPerHour * 0.44704);
-    public double ToMilesPerHour() => metersPerSecond / 0.44704;
-    public static Speed FromFeetPerSecond(double feetPerSecond) => new(feetPerSecond * 0.3048);
-    public double ToFeetPerSecond() => metersPerSecond / 0.3048;
-
-    // Nautical units
-    public static Speed FromKnots(double knots) => new(knots * 0.514444444444);
-    public double ToKnots() => metersPerSecond / 0.514444444444;
-
-    // Physical references
-    public static Speed FromMach(double mach) => new(mach * 340.29);
-    public double ToMach() => metersPerSecond / 340.29;
-    public static Speed FromSpeedOfLight(double speedOfLight) => new(speedOfLight * 299792458);
-    public double ToSpeedOfLight() => metersPerSecond / 299792458;
-
     // Composite relationships
     public static Length operator *(Speed speed, Duration duration) => Length.FromMeters(speed.ToMetersPerSecond() * duration.ToSeconds());
     public static Acceleration operator /(Speed speed, Duration duration) => Acceleration.FromMetersPerSecondSquared(speed.ToMetersPerSecond() / duration.ToSeconds());

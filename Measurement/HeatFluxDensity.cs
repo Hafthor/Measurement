@@ -1,14 +1,10 @@
 namespace com.hafthor.Measurement;
 
 [Measurement("W/m²", VariableName = "milliwattsPerSquareMeter", DisplayFactor = 1e3)]
+[SiUnit("WattsPerSquareMeter", 3, "None Milli", PerPrefixes = "None Centi Milli")]
 public readonly partial struct HeatFluxDensity {
-    // Units
-    public static HeatFluxDensity FromWattsPerSquareMeter(double wattsPerSquareMeter) => new(wattsPerSquareMeter * 1e3);
-    public double ToWattsPerSquareMeter() => milliwattsPerSquareMeter / 1e3;
-    public static HeatFluxDensity FromMilliwattsPerSquareMeter(double milliwattsPerSquareMeter) => new(milliwattsPerSquareMeter);
-    public double ToMilliwattsPerSquareMeter() => milliwattsPerSquareMeter;
-    public static HeatFluxDensity FromWattsPerSquareCentimeter(double wattsPerSquareCentimeter) => new(wattsPerSquareCentimeter * (1e7));
-    public double ToWattsPerSquareCentimeter() => milliwattsPerSquareMeter / (1e7);
+    // Unit From/To methods are generated from the [SiUnit] declaration above (numerator ×
+    // denominator prefixes → WattsPerSquareMeter/Centimeter/Millimeter and the Milliwatt variants).
 
     // Composite relationships
     public static Power operator *(HeatFluxDensity heatFluxDensity, Area area) => Power.FromWatts(heatFluxDensity.ToWattsPerSquareMeter() * area.ToSquareMeters());

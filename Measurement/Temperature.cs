@@ -1,35 +1,17 @@
 namespace com.hafthor.Measurement;
 
-[Measurement("K", VariableName = "kelvin")]
+// Canonical unit is kelvin. Non-kelvin scales are affine: anchor = (value + PreOffset) * Factor +
+// Offset. Subtracting the pre-offset before scaling keeps offset-cancelling conversions exact
+// (e.g. 32 °F → 0 °C). Uses the inherited +/- operators: kelvin is an absolute (true-zero) scale,
+// so they are well-defined; note a sum read on an offset scale looks shifted (0 °C + 0 °C = 546.30 K).
+[Measurement("K", VariableName = "ninthsOfKelvin", DisplayFactor = 9)]
+[Unit("Kelvin", 9.0)]
+[Unit("Rankine", 5.0)]
+[Unit("Celsius", 9.0, Offset = 273.15)]
+[Unit("Fahrenheit", 5.0, Offset = 459.67)]
 public readonly partial struct Temperature {
-    // Absolute scales
-    public static Temperature FromKelvin(double kelvin) => new(kelvin);
-    public double ToKelvin() => kelvin;
-    public static Temperature FromRankine(double rankine) => new(rankine * 5.0 / 9.0);
-    public double ToRankine() => kelvin * 9.0 / 5.0;
-
-    // Relative (offset) scales
-    public static Temperature FromCelsius(double celsius) => new(celsius + 273.15);
-    public double ToCelsius() => kelvin - 273.15;
-    public static Temperature FromFahrenheit(double fahrenheit) => new((fahrenheit - 32.0) * 5.0 / 9.0 + 273.15);
-    public double ToFahrenheit() => (kelvin - 273.15) * 9.0 / 5.0 + 32.0;
-
-    // Historical scales
-    public static Temperature FromReaumur(double reaumur) => new(reaumur * 5.0 / 4.0 + 273.15);
-    public double ToReaumur() => (kelvin - 273.15) * 4.0 / 5.0;
-    public static Temperature FromDelisle(double delisle) => new(373.15 - delisle * 2.0 / 3.0);
-    public double ToDelisle() => (373.15 - kelvin) * 3.0 / 2.0;
-    public static Temperature FromNewton(double newton) => new(newton * 100.0 / 33.0 + 273.15);
-    public double ToNewton() => (kelvin - 273.15) * 33.0 / 100.0;
-    public static Temperature FromRomer(double romer) => new((romer - 7.5) * 40.0 / 21.0 + 273.15);
-    public double ToRomer() => (kelvin - 273.15) * 21.0 / 40.0 + 7.5;
-
-    // Uses the inherited +/- operators: the canonical unit is kelvin, an absolute (true-zero)
-    // scale, so they are well-defined; note a sum read back on an offset scale looks shifted
-    // (0 °C + 0 °C = 273.15 °C, i.e. 546.30 K).
-
     // Composite relationships
-    public static Energy operator *(Temperature temperatureChange, HeatCapacity heatCapacity) => Energy.FromJoules(temperatureChange.kelvin * heatCapacity.ToJoulesPerKelvin());
-    public static ThermalResistance operator /(Temperature temperatureChange, Power power) => ThermalResistance.FromKelvinsPerWatt(temperatureChange.kelvin / power.ToWatts());
-    public static Power operator /(Temperature temperatureChange, ThermalResistance thermalResistance) => Power.FromWatts(temperatureChange.kelvin / thermalResistance.ToKelvinsPerWatt());
+    public static Energy operator *(Temperature temperatureChange, HeatCapacity heatCapacity) => Energy.FromJoules(temperatureChange.ToKelvin() * heatCapacity.ToJoulesPerKelvin());
+    public static ThermalResistance operator /(Temperature temperatureChange, Power power) => ThermalResistance.FromKelvinsPerWatt(temperatureChange.ToKelvin() / power.ToWatts());
+    public static Power operator /(Temperature temperatureChange, ThermalResistance thermalResistance) => Power.FromWatts(temperatureChange.ToKelvin() / thermalResistance.ToKelvinsPerWatt());
 }

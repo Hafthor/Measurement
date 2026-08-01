@@ -1,36 +1,14 @@
 namespace com.hafthor.Measurement;
 
 [Measurement("C", VariableName = "nanocoulombs", DisplayFactor = 1e9)]
+[SiUnit("Coulombs", 9, "None Kilo Milli Micro Nano")]
+[Unit("AmpereHours", 3.6e12)]
+[Unit("MilliampereHours", 3.6e9)]
+[Unit("Faradays", 96485.33212e9)]
+[Unit("ElementaryCharges", 1.602176634e-10)]
+[SiUnit("Abcoulombs", 10)]
+[Unit("Statcoulombs", 3.335641e-1)]
 public readonly partial struct ElectricCharge {
-    // Canonical (stored) unit is the nanocoulomb, so nC/µC/mC-scale values land on exact
-    // integers in IEEE-754; ToString presents coulombs (DisplayFactor = 1e9).
-    public static ElectricCharge FromKilocoulombs(double kilocoulombs) => new(kilocoulombs * 1e12);
-    public double ToKilocoulombs() => nanocoulombs / 1e12;
-    public static ElectricCharge FromCoulombs(double coulombs) => new(coulombs * 1e9);
-    public double ToCoulombs() => nanocoulombs / 1e9;
-    public static ElectricCharge FromMillicoulombs(double millicoulombs) => new(millicoulombs * 1e6);
-    public double ToMillicoulombs() => nanocoulombs / 1e6;
-    public static ElectricCharge FromMicrocoulombs(double microcoulombs) => new(microcoulombs * 1e3);
-    public double ToMicrocoulombs() => nanocoulombs / 1e3;
-    public static ElectricCharge FromNanocoulombs(double nanocoulombs) => new(nanocoulombs);
-    public double ToNanocoulombs() => nanocoulombs;
-
-    // Battery-capacity units
-    public static ElectricCharge FromAmpereHours(double ampereHours) => new(ampereHours * 3.6e12);
-    public double ToAmpereHours() => nanocoulombs / 3.6e12;
-    public static ElectricCharge FromMilliampereHours(double milliampereHours) => new(milliampereHours * 3.6e9);
-    public double ToMilliampereHours() => nanocoulombs / 3.6e9;
-
-    // Physical & CGS units
-    public static ElectricCharge FromFaradays(double faradays) => new(faradays * 96485.33212e9);
-    public double ToFaradays() => nanocoulombs / 96485.33212e9;
-    public static ElectricCharge FromElementaryCharges(double elementaryCharges) => new(elementaryCharges * 1.602176634e-10);
-    public double ToElementaryCharges() => nanocoulombs / 1.602176634e-10;
-    public static ElectricCharge FromAbcoulombs(double abcoulombs) => new(abcoulombs * 1e10);
-    public double ToAbcoulombs() => nanocoulombs / 1e10;
-    public static ElectricCharge FromStatcoulombs(double statcoulombs) => new(statcoulombs * 3.335641e-1);
-    public double ToStatcoulombs() => nanocoulombs / 3.335641e-1;
-
     // Composite relationships
     public static ElectricCurrent operator /(ElectricCharge charge, Duration duration) => ElectricCurrent.FromAmperes(charge.ToCoulombs() / duration.ToSeconds());
     public static Duration operator /(ElectricCharge charge, ElectricCurrent current) => Duration.FromSeconds(charge.ToCoulombs() / current.ToAmperes());

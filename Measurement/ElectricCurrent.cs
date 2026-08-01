@@ -1,28 +1,10 @@
 namespace com.hafthor.Measurement;
 
 [Measurement("A", VariableName = "microamperes", DisplayFactor = 1e6)]
+[SiUnit("Amperes", 6, "None Kilo Milli Micro Nano Pico")]
+[SiUnit("Abamperes", 7)]
+[Unit("Statamperes", 3.335641e-4)]
 public readonly partial struct ElectricCurrent {
-    // Canonical (stored) unit is the microampere, so µA/mA-scale values land on exact
-    // integers in IEEE-754; ToString presents amperes (DisplayFactor = 1e6).
-    public static ElectricCurrent FromKiloamperes(double kiloamperes) => new(kiloamperes * 1e9);
-    public double ToKiloamperes() => microamperes / 1e9;
-    public static ElectricCurrent FromAmperes(double amperes) => new(amperes * 1e6);
-    public double ToAmperes() => microamperes / 1e6;
-    public static ElectricCurrent FromMilliamperes(double milliamperes) => new(milliamperes * 1e3);
-    public double ToMilliamperes() => microamperes / 1e3;
-    public static ElectricCurrent FromMicroamperes(double microamperes) => new(microamperes);
-    public double ToMicroamperes() => microamperes;
-    public static ElectricCurrent FromNanoamperes(double nanoamperes) => new(nanoamperes * 1e-3);
-    public double ToNanoamperes() => microamperes / 1e-3;
-    public static ElectricCurrent FromPicoamperes(double picoamperes) => new(picoamperes * 1e-6);
-    public double ToPicoamperes() => microamperes / 1e-6;
-
-    // Electromagnetic (CGS) units
-    public static ElectricCurrent FromAbamperes(double abamperes) => new(abamperes * 1e7);
-    public double ToAbamperes() => microamperes / 1e7;
-    public static ElectricCurrent FromStatamperes(double statamperes) => new(statamperes * 3.335641e-4);
-    public double ToStatamperes() => microamperes / 3.335641e-4;
-
     // Composite relationships
     public static ElectricCharge operator *(ElectricCurrent current, Duration duration) => ElectricCharge.FromCoulombs(current.ToAmperes() * duration.ToSeconds());
     public static Voltage operator *(ElectricCurrent current, ElectricResistance resistance) => Voltage.FromVolts(current.ToAmperes() * resistance.ToOhms());

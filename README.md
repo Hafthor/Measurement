@@ -18,8 +18,14 @@ methods and `ToXxx` accessors for every supported unit.
   and parsing (`ToString`/`IFormattable`, `Parse`/`TryParse` via `IParsable<T>`/`ISpanParsable<T>`),
   the same-type `+`/`-`/negation operators, scalar math
   (`* k`, `/ k`, and same-type `/` → ratio), `Abs`/`Min`/`Max`/`Clamp`/`Lerp`, and the
-  `IMeasurement<T>` / `System.Numerics` implementation. Each type's hand-written source only
-  contains its `FromXxx`/`ToXxx` unit methods and cross-type operators.
+  `IMeasurement<T>` / `System.Numerics` implementation. From a declarative list of
+  **`[SiUnit]`/`[Unit]` attributes** it also generates each type's `FromXxx`/`ToXxx` unit methods
+  and the fluent-prefix hooks (see [Fluent SI prefixes](#fluent-si-prefixes)): `[SiUnit("Grams", 6,
+  "Kilo None Milli")]` expands a metric family (a base factor of `10^6` relative to the stored
+  anchor, one method per listed prefix), while `[Unit("Pounds", 453.59237e6)]` declares a single
+  non-metric unit by its factor (with an optional `Offset` for affine scales like temperature). So
+  a type's hand-written source only **declares its units** via these attributes plus its cross-type
+  operators — the `FromXxx`/`ToXxx` bodies are generated.
 - Construction is via `public static T FromUnit(double value)` factory methods.
 - Read-out is via `public double ToUnit()` methods.
 - `ToString()` renders the value in its **fundamental SI unit symbol** (converting from the
@@ -77,15 +83,27 @@ Mass m = 5.0.Kilo.Grams;                 // only compiles where this using is pr
 ```
 
 Direct unit hooks cover each class's base SI unit and its non-SI units for both input and
-read-out; SI-prefixed decades come from the prefix chain. Squared/cubed metric units whose
-factor can't be reproduced by a single chained prefix — `SquareKilometers`,
-`SquareCentimeters`, `SquareMillimeters`, `CubicCentimeters`, `CubicMillimeters` — keep their
-own bare hooks (e.g. 1 cm² = 1e-4 m², not the 1e-2 a lone `Centi` would give). Two unit names
-shared by two quantities — `JouleSeconds` (`Action`/`AngularMomentum`) and
-`RevolutionsPerMinute` (`Frequency`/`AngularVelocity`) — are ambiguous as bare input, so use
-their explicit `FromJouleSeconds`/`FromRevolutionsPerMinute` factories there (read-out is
-unaffected). The explicit `FromKilometers`/`ToMilligrams`-style methods remain on every type
-regardless. Requires C# 14 / .NET 10 (extension members).
+read-out; SI-prefixed decades come from the prefix chain. The entire fluent surface (input hooks,
+the `To` read-out builder, and output hooks) is **generated** from the same `[SiUnit]`/`[Unit]`
+declarations, so it stays in sync with the `FromXxx`/`ToXxx` methods automatically. A few rules the
+generator applies:
+
+- **Squared/cubed metric units** whose factor can't be reproduced by a single chained prefix —
+  `SquareKilometers`, `SquareCentimeters`, `SquareMillimeters`, `CubicCentimeters`,
+  `CubicMillimeters` — keep their own bare hooks (e.g. 1 cm² = 1e-4 m², not the 1e-2 a lone `Centi`
+  would give).
+- **Prefixed aliases** — a declared unit whose name is just an SI prefix plus another unit
+  (`Kilomoles` = `Kilo` + `Moles`, `Kilocalories`, `MilliampereHours`, `KilogramSquareMeters`, …) —
+  get **no** fluent hook; reach them through the chain (`Measure.Of(1).Kilo.Moles`). Their explicit
+  `FromKilomoles`/`ToKilomoles` factories still exist.
+- **Shared names** — a unit name owned by two quantities (`JouleSeconds` on `Action`/`AngularMomentum`,
+  `RevolutionsPerMinute` on `Frequency`/`AngularVelocity`) would be ambiguous as a bare input hook, so
+  it resolves to a **selector** that names the measurement: `1.0.JouleSeconds.Action`,
+  `Measure.Of(3).RevolutionsPerMinute.Frequency`. Read-out is unambiguous and stays direct
+  (`freq.To.RevolutionsPerMinute`).
+
+The explicit `FromKilometers`/`ToMilligrams`-style methods remain on every type regardless.
+Requires C# 14 / .NET 10 (extension members).
 
 ## JSON serialization
 
