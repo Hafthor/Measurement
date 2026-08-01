@@ -18,6 +18,18 @@ public sealed class SpecialCaseTests {
     }
 
     [TestMethod]
+    public void Exposure_GramCanonicalAndRoentgen() {
+        // canonical is C/g: 1 C/kg = 1e-3 C/g
+        Assert.AreEqual(1e-3, Exposure.FromCoulombsPerKilogram(1).ToCoulombsPerGram());
+        Assert.AreEqual(1000.0, Exposure.FromCoulombsPerGram(1).ToCoulombsPerKilogram());
+        Assert.AreEqual("0.001 C/g", Exposure.FromCoulombsPerKilogram(1).ToString());
+        // 1 roentgen = 2.58e-4 C/kg
+        Assert.AreEqual(2.58e-4, Exposure.FromRoentgens(1).ToCoulombsPerKilogram(), 1e-16);
+        // Exposure × Mass = Charge:  2 C/kg over 3 kg = 6 C
+        Assert.AreEqual(6.0, (Exposure.FromCoulombsPerKilogram(2) * Mass.FromKilograms(3)).ToCoulombs(), 1e-9);
+    }
+
+    [TestMethod]
     public void ResistanceConductance_AreReciprocal() {
         Assert.AreEqual(0.25, ElectricResistance.FromOhms(4).ToElectricConductance().ToSiemens());
         Assert.AreEqual(4.0, ElectricConductance.FromSiemens(0.25).ToElectricResistance().ToOhms());

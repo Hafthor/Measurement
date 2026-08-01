@@ -7,8 +7,8 @@ public readonly partial struct AngularAcceleration {
     public double ToRadiansPerSecondSquared() => degreePerSecondSquared * Math.PI / 180;
     public static AngularAcceleration FromDegreesPerSecondSquared(double degreesPerSecondSquared) => new(degreesPerSecondSquared);
     public double ToDegreesPerSecondSquared() => degreePerSecondSquared;
-    public static AngularAcceleration FromRevolutionsPerMinutePerSecond(double revolutionsPerMinutePerSecond) => new(revolutionsPerMinutePerSecond * 360);
-    public double ToRevolutionsPerMinutePerSecond() => degreePerSecondSquared / 360;
+    public static AngularAcceleration FromRevolutionsPerMinutePerSecond(double revolutionsPerMinutePerSecond) => new(revolutionsPerMinutePerSecond * 6);
+    public double ToRevolutionsPerMinutePerSecond() => degreePerSecondSquared / 6;
 
     // Composite relationships
     public static AngularVelocity operator *(AngularAcceleration angularAcceleration, Duration duration) => AngularVelocity.FromRadiansPerSecond(angularAcceleration.ToRadiansPerSecondSquared() * duration.ToSeconds());
