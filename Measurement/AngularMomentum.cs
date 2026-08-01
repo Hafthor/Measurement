@@ -4,6 +4,7 @@ namespace com.hafthor.Measurement;
 [SiUnit("GramSquareMetersPerSecond", 0, "None Kilo")]
 [SiUnit("JouleSeconds", 3)]
 [SiUnit("NewtonMeterSeconds", 3)]
+[Product<Energy, Duration>]
 public readonly partial struct AngularMomentum {
     public static MomentOfInertia operator /(AngularMomentum angularMomentum, AngularVelocity angularVelocity) => MomentOfInertia.FromKilogramSquareMeters(angularMomentum.ToKilogramSquareMetersPerSecond() / angularVelocity.ToRadiansPerSecond());
     public static AngularVelocity operator /(AngularMomentum angularMomentum, MomentOfInertia momentOfInertia) => AngularVelocity.FromRadiansPerSecond(angularMomentum.ToKilogramSquareMetersPerSecond() / momentOfInertia.ToKilogramSquareMeters());

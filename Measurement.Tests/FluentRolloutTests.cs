@@ -7,11 +7,18 @@ namespace com.hafthor.Measurement;
 public sealed class FluentRolloutTests {
 [TestMethod]
 public void CollisionSelector_DisambiguatesSharedUnitName() {
-    // JouleSeconds is shared by Action and AngularMomentum; the selector names the type.
-    Assert.AreEqual(5.0, (5.0.JouleSeconds.Action).ToJouleSeconds());
-    Assert.AreEqual(5.0, (5.0.JouleSeconds.AngularMomentum).ToJouleSeconds());
-    Assert.AreEqual(5000.0, (Measure.Of(5).Kilo.JouleSeconds.Action).ToJouleSeconds());
-    // RevolutionsPerMinute is shared by AngularVelocity and Frequency.
+    // JouleSeconds is a product spelling (Joule·Seconds), so the compositional walk disambiguates it:
+    // `.Joule.Seconds` is implicitly the Primary (Action); `.Action`/`.AngularMomentum` name the reading.
+    Action implicitlyAction = 5.0.Joule.Seconds;
+    Assert.AreEqual(5.0, implicitlyAction.ToJouleSeconds());
+    Action a = 5.0.Joule.Seconds.Action;
+    Assert.AreEqual(5.0, a.ToJouleSeconds());
+    AngularMomentum am = 5.0.Joule.Seconds.AngularMomentum;
+    Assert.AreEqual(5.0, am.ToJouleSeconds());
+    Action ka = Measure.Of(5).Kilo.Joule.Seconds.Action;
+    Assert.AreEqual(5000.0, ka.ToJouleSeconds());
+    // RevolutionsPerMinute is a quotient spelling (has Per), not reachable by the product walk, so it
+    // keeps its flat selector, shared by AngularVelocity and Frequency.
     Assert.AreEqual(3.0, (3.0.RevolutionsPerMinute.Frequency).ToRevolutionsPerMinute(), 1e-12);
     Assert.AreEqual(3.0, (3.0.RevolutionsPerMinute.AngularVelocity).ToRevolutionsPerMinute(), 1e-12);
     // read-out remains direct and unambiguous

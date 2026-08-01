@@ -4,6 +4,6 @@ namespace com.hafthor.Measurement;
 [SiUnit("JouleSeconds", 9)]
 [SiUnit("ErgSeconds", 2)]
 [Unit("PlanckConstants", 6.62607015e-25)]
-[Product<Energy, Duration>]
+[Product<Energy, Duration>(Primary = true)]
 [Product<Length, Momentum>]
 public readonly partial struct Action { }

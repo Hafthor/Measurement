@@ -1,70 +1,78 @@
 # Measurement
 
-A library of strongly-typed measurement classes. Each class stores its value
-internally in a single canonical (SI) unit and exposes `FromXxx` factory
-methods and `ToXxx` accessors for every supported unit.
+A library of strongly-typed C# measurement classes — `Length`, `Mass`, `Force`, `Energy`, and about
+80 more. Each quantity is its own immutable value type, so the compiler stops you mixing incompatible
+units, and dimensioned arithmetic (`Speed = Length / Duration`) just works.
 
-## Conventions
+Requires C# 14 / .NET 10.
 
-- Each measurement is an immutable **`readonly partial struct`** (a value type — no heap
-  allocation, and `default(Length)` is `0 m`) that stores a single canonical `double`. That
-  canonical unit is usually the SI unit, but many types **anchor on a finer sub-unit** for
-  IEEE-754 precision (see [Storage anchoring](#storage-anchoring--precision)); the private
-  field is named for the actual stored unit. A **Roslyn source generator**
-  (`Measurement.Generators`) emits the identical-across-every-type surface from a
-  `[Measurement("m")]` attribute (with optional `VariableName` for the stored-field name and
-  `DisplayFactor` for the store→display scale): value equality (`Equals`/`GetHashCode`/`==`/`!=`, plus
-  `NearlyEquals` for ULP-tolerant checks), ordering (`IComparable<T>`, `< > <= >=`), formatting
-  and parsing (`ToString`/`IFormattable`, `Parse`/`TryParse` via `IParsable<T>`/`ISpanParsable<T>`),
-  the same-type `+`/`-`/negation operators, scalar math
-  (`* k`, `/ k`, and same-type `/` → ratio), `Abs`/`Min`/`Max`/`Clamp`/`Lerp`, and the
-  `IMeasurement<T>` / `System.Numerics` implementation. From a declarative list of
-  **`[SiUnit]`/`[Unit]` attributes** it also generates each type's `FromXxx`/`ToXxx` unit methods
-  and the fluent-prefix hooks (see [Fluent SI prefixes](#fluent-si-prefixes)): `[SiUnit("Grams", 6,
-  "Kilo None Milli")]` expands a metric family (a base factor of `10^6` relative to the stored
-  anchor, one method per listed prefix), while `[Unit("Pounds", 453.59237e6)]` declares a single
-  non-metric unit by its factor (with an optional `Offset` for affine scales like temperature). So
-  a type's hand-written source only **declares its units** via these attributes plus its cross-type
-  operators — the `FromXxx`/`ToXxx` bodies are generated.
-- Construction is via `public static T FromUnit(double value)` factory methods.
-- Read-out is via `public double ToUnit()` methods.
-- `ToString()` renders the value in its **fundamental SI unit symbol** (converting from the
-  stored anchor via `DisplayFactor`), e.g. `Force.FromNewtons(6).ToString()` → `"6 N"`,
-  `Speed.FromMetersPerSecond(10)` → `"10 m/s"`. The one exception is `Mass`, which shows
-  grams (`"2000 g"`) rather than the SI kilogram.
-- Composite measurements are defined in terms of the foundational ones and expose C#
-  arithmetic operators relating them, so you can write e.g. `Speed speed = length / duration;`,
-  `Force f = mass * acceleration;`, or `Energy e = force * length;` directly.
-- Every measurement supports same-type `+`, `-`, and unary negation
-  (e.g. `Length total = a + b;`). This includes **`Temperature`**: its canonical unit is
-  kelvin — an absolute (true-zero) scale — so the arithmetic is well-defined. Just note that
-  a sum read back on an offset scale looks shifted (`0 °C + 0 °C` = 546.30 K = 273.15 °C).
-- Every measurement implements `IMeasurement<T>`, opting into **`System.Numerics` generic
-  math** — `IAdditionOperators`, `ISubtractionOperators`, `IUnaryNegationOperators`,
-  `IAdditiveIdentity` (`T.AdditiveIdentity` / `T.Zero`), `IComparisonOperators`, and scalar
-  `IMultiply`/`IDivisionOperators` — so you can write generic algorithms like
-  `T Sum<T>(IEnumerable<T> xs) where T : IMeasurement<T>`.
+## Two ways to use it
 
-## Fluent SI prefixes
+Everything in the library is reachable two equivalent ways — pick whichever reads best in context, and
+mix them freely (the result of one is an ordinary measurement you can feed to the other):
 
-Alongside the explicit `FromXxx`/`ToXxx` API, there is a fluent interface for SI prefixes so
-you never hand-write `FromKilo…`/`FromMilli…` per class. All 24 SI prefixes (`Quetta`…`Quecto`)
-are defined once and stack.
-
-**Construction** — the always-available, non-`double` entry point (no opt-in needed). Each
-class exposes a direct hook for its **base SI unit** and its **non-SI units**; the SI-prefixed
-decades (kilo, milli, …) are expressed through the prefix chain rather than as separate
-`Kilometers`/`Milligrams` members, and prefixes stack:
+**1. Explicit methods** — a `FromXxx` factory and a `ToXxx` accessor for every unit:
 
 ```csharp
-Mass    m = Measure.Of(5).Kilo.Grams;      // 5 kg  (mass prefixes attach to the gram)
-Length  d = Measure.Of(3).Kilo.Meters;     // 3 km  (not .Kilometers — use the chain)
-Length  y = Measure.Of(1).Miles;           // non-SI unit → direct hook
-Energy  e = Measure.Of(2).Mega.Joules;     // 2 MJ
+Length d  = Length.FromKilometers(5);
+double mi = d.ToMiles();
+Speed  v  = d / Duration.FromHours(2);          // dimensioned arithmetic
+```
+
+**2. Fluent interface** — name units to build a value, and again after `.To` to read one back:
+
+```csharp
+Length d  = Measure.Of(5).Kilo.Meters;
+double mi = d.To.Miles;
+Speed  v  = Measure.Of(10).Meters.Per.Second;
+```
+
+The fluent form composes units word-by-word (`.Kilo.Meters`, `.Meters.Per.Second`, `.Joule.Seconds`);
+see [Fluent interface](#fluent-interface) and [Compositional grammar](#compositional-fluent-grammar).
+
+## What every measurement provides
+
+Whichever style you use, every quantity type offers the same surface:
+
+- **Construction / read-out** — `T.FromUnit(double)` factories and `double x.ToUnit()` accessors for
+  every supported unit.
+- **Value semantics** — equality and hashing (`==`, `!=`, `Equals`, plus `NearlyEquals` for
+  ULP-tolerant comparison) and ordering (`<`, `>`, `<=`, `>=`, `IComparable<T>`).
+- **Arithmetic** — same-type `+`, `-`, and unary negation; scalar `* k` and `/ k`; same-type `/` → a
+  `Ratio`; and `Abs`/`Min`/`Max`/`Clamp`/`Lerp`.
+- **Cross-type operators** — dimensioned relations such as `Force = Mass * Acceleration` and
+  `Energy = Force * Length` (see [Worked relations](#worked-relations)).
+- **Formatting & parsing** — `ToString()`/`IFormattable` render the SI unit (`"10 m/s"`), and
+  `Parse`/`TryParse` (`IParsable<T>`/`ISpanParsable<T>`) read it back.
+- **Generic math** — implements `IMeasurement<T>` and the `System.Numerics` operator interfaces, so
+  you can write `T Sum<T>(IEnumerable<T> xs) where T : IMeasurement<T>`.
+
+`ToString()` renders each value in its **fundamental SI unit** (`Force.FromNewtons(6)` → `"6 N"`). Two
+quantities show a friendlier form: `Mass` prints grams (`"2000 g"`), and the dimensionless `Quantity`
+and `Ratio` print a bare number.
+
+Same-type addition is well-defined for **`Temperature`** as well — its canonical scale is kelvin, an
+absolute (true-zero) scale — though a sum read back on an offset scale looks shifted
+(`0 °C + 0 °C` = 273.15 °C).
+
+## Fluent interface
+
+The fluent interface builds and reads values by naming units, with all 24 SI prefixes
+(`Quetta`…`Quecto`) available on every quantity so you never spell out `FromKilo…`/`FromMilli…`.
+
+**Construction** — start with `Measure.Of(value)` and name a unit. Each quantity has a direct hook
+for its **base SI unit** and its **non-SI units**; the SI-prefixed decades (kilo, milli, …) come from
+the prefix chain rather than separate `Kilometers`/`Milligrams` members, and prefixes stack:
+
+```csharp
+Mass    m = Measure.Of(5).Kilo.Grams;       // 5 kg  (mass prefixes attach to the gram)
+Length  d = Measure.Of(3).Kilo.Meters;      // 3 km  (not .Kilometers — use the chain)
+Length  y = Measure.Of(1).Miles;            // non-SI unit → direct hook
+Energy  e = Measure.Of(2).Mega.Joules;      // 2 MJ
 Length  x = Measure.Of(1).Mega.Mega.Meters; // prefixes stack → 1e12 m
 ```
 
-**Read-out** — base/non-SI unit, optionally prefixed, returns a `double`:
+**Read-out** — `.To` then a unit (optionally prefixed) returns a `double`:
 
 ```csharp
 double lb = Measure.Of(5).Kilo.Grams.To.Pounds;   // 5 kg expressed in pounds
@@ -73,8 +81,8 @@ double ms = duration.To.Milli.Seconds;            // seconds → ms
 double f  = temperature.To.Fahrenheit;            // non-SI reader
 ```
 
-**Opt-in `double` sugar** — for `5.0.Kilo.Meters` directly on numbers, add the import. It is
-scoped to a separate namespace so it never pollutes `double` unless you ask for it:
+**Opt-in `double` sugar** — to write `5.0.Kilo.Meters` directly on a number, add the import. It lives
+in its own namespace so it never affects `double` unless you ask for it:
 
 ```csharp
 using com.hafthor.Measurement.Fluent;   // per file, or in a GlobalUsings.cs
@@ -82,35 +90,115 @@ using com.hafthor.Measurement.Fluent;   // per file, or in a GlobalUsings.cs
 Mass m = 5.0.Kilo.Grams;                 // only compiles where this using is present
 ```
 
-Direct unit hooks cover each class's base SI unit and its non-SI units for both input and
-read-out; SI-prefixed decades come from the prefix chain. The entire fluent surface (input hooks,
-the `To` read-out builder, and output hooks) is **generated** from the same `[SiUnit]`/`[Unit]`
-declarations, so it stays in sync with the `FromXxx`/`ToXxx` methods automatically. A few rules the
-generator applies:
+A few naming rules to know:
 
-- **Squared/cubed metric units** whose factor can't be reproduced by a single chained prefix —
-  `SquareKilometers`, `SquareCentimeters`, `SquareMillimeters`, `CubicCentimeters`,
-  `CubicMillimeters` — keep their own bare hooks (e.g. 1 cm² = 1e-4 m², not the 1e-2 a lone `Centi`
-  would give).
-- **Prefixed aliases** — a declared unit whose name is just an SI prefix plus another unit
-  (`Kilomoles` = `Kilo` + `Moles`, `Kilocalories`, `MilliampereHours`, `KilogramSquareMeters`, …) —
-  get **no** fluent hook; reach them through the chain (`Measure.Of(1).Kilo.Moles`). Their explicit
-  `FromKilomoles`/`ToKilomoles` factories still exist.
-- **Shared names** — a unit name owned by two quantities (`JouleSeconds` on `Action`/`AngularMomentum`,
-  `RevolutionsPerMinute` on `Frequency`/`AngularVelocity`) would be ambiguous as a bare input hook, so
-  it resolves to a **selector** that names the measurement: `1.0.JouleSeconds.Action`,
-  `Measure.Of(3).RevolutionsPerMinute.Frequency`. Read-out is unambiguous and stays direct
-  (`freq.To.RevolutionsPerMinute`).
+- **Squared/cubed metric units** are spelled with the [`.Square`/`.Cubic` grammar](#compositional-fluent-grammar)
+  (`.Square.Centi.Meters`), because a lone prefix would give the wrong factor (1 cm² = 1e-4 m², not
+  1e-2). Bare hooks like `.SquareCentimeters` also exist.
+- **SI-prefixed unit names** aren't separate hooks — reach `Kilomoles`, `Milliamperehours`, etc.
+  through the chain (`Measure.Of(1).Kilo.Moles`). The explicit `FromKilomoles`/`ToKilomoles` factories
+  are always available.
+- **Names shared by two quantities** are disambiguated by naming the quantity. A product spelling like
+  `JouleSeconds` (shared by `Action`/`AngularMomentum`) uses the [compositional walk](#compositional-fluent-grammar):
+  `Measure.Of(1).Joule.Seconds` is an `Action`, and `.Joule.Seconds.AngularMomentum` names the other
+  reading. A quotient spelling like `RevolutionsPerMinute` (shared by `Frequency`/`AngularVelocity`)
+  uses a trailing selector: `Measure.Of(3).RevolutionsPerMinute.Frequency`.
 
-The explicit `FromKilometers`/`ToMilligrams`-style methods remain on every type regardless.
-Requires C# 14 / .NET 10 (extension members).
+## Compositional fluent grammar
+
+The prefix hooks above name a **whole** unit (`.Kilo.Meters`). On top of that, compound units compose
+**word by word** — quotients via `.Per`, products by naming each factor, and areal/cubic scaling via
+`.Square`/`.Cubic` — so you rarely need a dedicated hook for a compound unit. Every intermediate is a
+real value (implicitly convertible to its measurement), and each slot accepts **any dimensionally
+compatible unit**, not just an exactly-spelled one.
+
+### `.Per` — quotient walk
+
+Attach `.Per` to any numerator unit to divide by a denominator; chain it for repeated division. Each
+denominator slot accepts **any (non-affine) unit of that dimension**, not just the ones that appear in
+a spelled compound unit. Denominators decompose through the prefix chain just like numerators
+(`.Per.Kilo.Gram`), and an areal/cubic denominator is spelled with `.Square`/`.Cubic`
+(`.Per.Cubic.Centi.Meter`):
+
+```csharp
+Speed        v  = Measure.Of(10).Meters.Per.Second;             // m/s
+Speed        h  = Measure.Of(90).Kilo.Meters.Per.Hour;          // any duration works: km/h
+AngularVelocity r = Measure.Of(90).Degrees.Per.Minute;          // 90°/min = 1.5°/s
+Acceleration a  = Measure.Of(9).Meters.Per.Second.Per.Second;   // m/s² (chained)
+Acceleration a2 = Measure.Of(9).Meters.Per.Second.Squared;      // …or .Squared / .Cubed shorthand
+Density      d  = Measure.Of(1).Grams.Per.Cubic.Centi.Meter;    // g/cm³ (cubic-length denominator)
+SpecificHeatCapacity sh = Measure.Of(4184).Joules.Per.Kilo.Gram.Kelvin;    // J/(kg·K)
+MolarHeatCapacity    mh = Measure.Of(8.314).Joules.Per.Mole.Kelvin;        // J/(mol·K)
+```
+
+The same walk works on the **read-out** side after `.To`, returning a `double`, with the same
+polymorphic denominators:
+
+```csharp
+double mps = someSpeed.To.Meters.Per.Second;
+double mph = someSpeed.To.Meters.Per.Hour;                 // read in any duration
+double shk = someSpecificHeat.To.Joules.Per.Kilo.Gram.Kelvin;
+```
+
+### Products — name each factor
+
+Name a product's factors in sequence; each factor multiplies the running value by one of that unit.
+Because the factors compose **dimensionally**, any compatible unit fits a slot even when no single
+factory spells it:
+
+```csharp
+ElectricCharge q  = Measure.Of(2).Ampere.Hours;      // A·h
+Action         a  = Measure.Of(1).Joule.Minutes;     // J·min == 60 J·s (no JouleMinutes factory needed)
+Length         ls = Measure.Of(1).Light.Seconds;     // .Light is c; c × time → length (a light-second)
+Length         ly = Measure.Of(1).Light.Annums;      // × a Julian year → a light-year
+```
+
+A **leading SI prefix** comes from the prefix chain, and the running value is usable at any step:
+
+```csharp
+ElectricCharge mAh = Measure.Of(500).Milli.Ampere.Hours;  // mA·h
+Energy         kWh = Measure.Of(3).Kilo.Watt.Hours;       // kW·h
+Force          f   = Measure.Of(10).Newton;               // first token alone is already a Force
+```
+
+When a product is **dimensionally ambiguous** (Force × Length is both torque and energy; Energy ×
+Duration is both action and angular momentum), the walk gives you the primary result by default, and a
+trailing token names either reading explicitly:
+
+```csharp
+Energy e = Measure.Of(5).Newton.Meters.Energy;
+Torque t = Measure.Of(5).Newton.Meters.Torque;
+Action          a  = Measure.Of(1).Joule.Seconds;                   // the primary reading (Action)
+AngularMomentum am = Measure.Of(1).Joule.Seconds.AngularMomentum;   // …or name the other reading
+```
+
+### `.Square` / `.Cubic` — areal and cubic units
+
+`.Square`/`.Cubic` scale by an area or volume unit, decomposing the length through the prefix chain —
+so you never need a dedicated `.SquareMillimeters`-style hook:
+
+```csharp
+Area   sm  = Measure.Of(4).Square.Meters;         // m²
+Area   smm = Measure.Of(1).Square.Milli.Meters;   // mm² = 1e-6 m²
+Volume ccm = Measure.Of(1).Cubic.Centi.Meters;    // cm³ = 1e-6 m³
+```
+
+The same modifier extends a running product, scaling it by an area or volume (Mass × Area →
+MomentOfInertia, Length × Area → Volume, Pressure × Area → Force, …):
+
+```csharp
+MomentOfInertia moi = Measure.Of(1).Kilogram.Square.Meters;       // kg·m²
+MomentOfInertia mi2 = Measure.Of(1).Kilogram.Square.Centi.Meters; // kg·cm² = 1e-4 kg·m²
+```
+
+All three forms also work on the opt-in `double` sugar (`2.0.Ampere.Hours`, `4.0.Square.Meters`)
+wherever `using com.hafthor.Measurement.Fluent;` is in scope.
 
 ## JSON serialization
 
 `System.Text.Json` support ships in the box. Register `MeasurementJsonConverterFactory` once and
-every measurement type serializes in its **fundamental SI unit** (stable and human-readable —
-independent of the internal storage anchor); dimensionless types (`Ratio`, `Quantity`) serialize
-as a bare number.
+every measurement type serializes in its **fundamental SI unit** (stable and human-readable);
+dimensionless types (`Ratio`, `Quantity`) serialize as a bare number.
 
 ```csharp
 var options = new JsonSerializerOptions {
@@ -124,8 +212,8 @@ JsonSerializer.Serialize(Quantity.FromCount(1000), options); // 1000  (bare numb
 ```
 
 Reading is lenient: `"5 m"`, `"5"`, and `5` all deserialize to `Length.FromMeters(5)` (the unit
-suffix is validated-if-present, optional otherwise). The converter is fully generic — it works for
-any `[Measurement]` type, including new ones, via `IMeasurement<T>` and the type's `DisplayFactor`.
+suffix is validated when present, optional otherwise). The converter is fully generic — it works for
+every measurement type.
 
 ## Parsing
 
@@ -163,8 +251,7 @@ Measure.TryParse("2000 g", out var mass);  // → a Mass (== Mass.FromKilograms(
 ```
 
 A recognised SI unit symbol is required: a bare number is ambiguous (e.g. `Ratio` vs `Quantity`)
-and is rejected. The symbol→type registry is built once by reflection, so new `[Measurement]` types
-are picked up automatically.
+and is rejected.
 
 ## Worked relations
 
@@ -208,93 +295,27 @@ The dimensional SI base quantities. Everything else is derived from these.
 | `Quantity` | amount of substance / count | count | — |
 | `LuminousIntensity` | luminous intensity | candela | cd |
 
-> **`Mass`** is stored canonically in **micrograms** (not the official SI base unit, the
-> kilogram). A `double` represents every integer exactly up to 2⁵³ ≈ 9.0×10¹⁵, so anchoring
-> on the microgram keeps microgram/milligram/gram-scale values — and any finer decimal that
-> is a whole number of micrograms, e.g. `0.1 mg` = `100 µg` — exact in IEEE-754, at the cost
-> of losing *integer* exactness above ~9,000 t (relative precision, ~15–16 digits, is
-> unchanged). See **Storage anchoring & precision** below.
+> **`Mass`** displays in grams (`"2000 g"`) rather than the SI kilogram; all `From*`/`To*` methods
+> are available regardless.
 
-### Storage anchoring & precision
+Three foundational quantities have usage notes worth knowing:
 
-Most quantities anchor their stored `double` on a unit **at or below** their SI unit, so common
-small-scale decimals become exact integer counts of the anchor (e.g. `0.1 µF` = `100 pF`, exact).
-Because a `double` is integer-exact only up to 2⁵³ ≈ 9.0×10¹⁵, each anchor also sets the ceiling
-above which *integer* exactness is lost (relative precision, ~15–16 digits, is never affected).
-The stored field is named for its anchor unit (the `VariableName`), and `ToString()` always
-renders the value in its **fundamental SI unit** by dividing out the `DisplayFactor` — so storage
-is an internal precision detail. The sole display exception is `Mass`, which prints grams rather
-than the SI kilogram.
+- **`Duration`** (not `Time`, to avoid clashing with `System.DateTime`/`TimeSpan`) represents an
+  *elapsed* quantity over a huge range — from Planck time to cosmological scales. It is **not** meant
+  for calendar arithmetic (adding months or years).
+- **`Quantity`** models amount of substance and plain counts. Its canonical unit is the raw **count**,
+  so integer counts (and whole pairs, dozens, gross) are exact; moles are `Quantity.FromMoles(n)`.
+  Being dimensionless, it prints a bare number.
+- **`Temperature`** is a single class (kelvin canonical); Celsius, Fahrenheit, Rankine, etc. are
+  `From`/`To` methods on it rather than separate classes.
 
-Headline anchors (with the integer-exact ceiling that matters in practice):
+### Precision
 
-| Type | stored unit | `ToString()` unit | exact-integer ceiling |
-|------|-------------|-------------------|-----------------------|
-| `Length` | nanometre (nm) | metre (m) | ~9.0×10⁶ m (AU/ly become approximate) |
-| `Mass` | microgram (µg) | gram (g) | ~9,000 t |
-| `Volume` | microlitre (µL) | cubic metre (m³) | ~9,000 m³ |
-| `ElectricCurrent` | microampere (µA) | ampere (A) | ~9.0×10⁹ A |
-| `Voltage` | microvolt (µV) | volt (V) | ~9.0×10⁹ V |
-| `Quantity` | count (entities) | — (bare number) | 2⁵³ ≈ 9.0×10¹⁵ entities |
-| `Ratio` | parts-per-trillion (ppt) | — (bare ratio) | ~9.0×10³ (ratio) |
-| `Capacitance` | picofarad (pF) | farad (F) | ~9,000 F |
-| `Inductance` | nanohenry (nH) | henry (H) | ~9.0×10⁶ H |
-| `ElectricCharge` | nanocoulomb (nC) | coulomb (C) | ~9.0×10⁶ C |
-| `ElectricConductance` | nanosiemens (nS) | siemens (S) | ~9.0×10⁶ S |
-| `MagneticFlux` | nanoweber (nWb) | weber (Wb) | ~9.0×10⁶ Wb |
-| `MagneticFluxDensity` | nanotesla (nT) | tesla (T) | ~9.0×10⁶ T |
-
-Many derived quantities are anchored the same way (stored anchor → SI display), so their sub-SI
-inputs stay exact too:
-
-| Type | stored anchor | `ToString()` unit |
-|------|---------------|-------------------|
-| `Area` | square millimetre (mm²) | m² |
-| `Angle` | arcsecond (″) | rad |
-| `AngularVelocity` | degree/second | rad/s |
-| `AngularAcceleration` | degree/second² | rad/s² |
-| `Action` | nanojoule-second (nJ·s) | J·s |
-| `AbsorbedDose` | microgray (µGy) | Gy |
-| `EquivalentDose` | microsievert (µSv) | Sv |
-| `DoseRate` | milligray/hour | Gy/s |
-| `CatalyticActivity` | nanokatal (nkat) | kat |
-| `Concentration` | micromole/litre | mol/m³ |
-| `Conductivity` | millisiemens/centimetre | S/m |
-| `Resistivity` | microohm-centimetre (µΩ·cm) | Ω·m |
-| `DynamicViscosity` | millipascal-second (mPa·s) | Pa·s |
-| `KinematicViscosity` | centistokes (cSt) | m²/s |
-| `Illuminance` | millilux (mlx) | lx |
-| `LuminousFlux` | millilumen (mlm) | lm |
-| `LuminousIntensity` | millicandela (mcd) | cd |
-| `HeatFluxDensity` | milliwatt/m² | W/m² |
-| `ThermalConductivity` | milliwatt/(m·K) | W/(m·K) |
-| `SurfaceTension` | millinewton/metre | N/m |
-| `Torque` | newton-millimetre (N·mm) | N·m |
-| `SpecificVolume` | cubic millimetre/gram | m³/g |
-| `VolumetricFlowRate` | cubic millimetre/second | m³/s |
-| `LinearMagneticFluxDensity` | nanoweber/metre (nWb/m) | Wb/m |
-
-All other types store (and display) their SI unit. `Duration` and `Temperature` are deliberately
-left on seconds / kelvin. Every `From*`/`To*` method is provided regardless of the anchor, and
-cross-type operators read through the `To*` accessors so results are unaffected.
-
-
-> **`Duration`** is preferred over `Time` to avoid clashing with `System.DateTime`/`TimeSpan`
-> semantics, to make clear it represents an *elapsed* quantity, and because we want it to
-> cover the full range from Planck time up to astronomical/cosmological scales
-> (nanoseconds → seconds → days → Julian years → millennia → Hubble time, etc.). Note that `Duration`
-> is **NOT** suited for exact calendaring operations (such as adding months or years).
-
-> **`Quantity`** models amount of substance and plain counts. Although the mole is really a
-> *count* of elementary entities, chemists carry it through equations like a unit (mol/L,
-> g/mol, …), so it earns its own dimensioned type. The canonical unit is the **raw count**, so
-> integer counts (and whole pairs, dozens, gross) are exact; moles are carried as
-> count ÷ Avogadro's number and are the approximate side (the two can't both be exact). Because
-> it is fundamentally a dimensionless count, `ToString()` prints the **bare number** (no
-> symbol). E.g. `Quantity.FromMoles(n)`, `Quantity.FromCount(n)`.
-
-> **Temperature** is a single `Temperature` class (kelvin canonical); Celsius, Fahrenheit,
-> Rankine, etc. are exposed as `From/To` methods on it rather than as separate classes.
+Values are stored as a `double` (~15–16 significant digits) and always displayed in the fundamental
+SI unit, so how a value is held internally never affects results or output. Typical magnitudes stay
+exact; only extreme values lose integer-exactness — for example an astronomical `Length` such as a
+light-year becomes approximate. `Duration` and `Temperature` keep full precision across their whole
+ranges.
 
 ---
 
