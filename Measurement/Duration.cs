@@ -23,19 +23,4 @@ public readonly partial struct Duration {
     public static Duration FromFrequency(Frequency frequency) => new(1 / frequency.ToHertz());
     public Frequency ToFrequency() => Frequency.FromHertz(1 / seconds);
 
-    // Composite relationships
-    public static Length operator *(Duration duration, Speed speed) => Length.FromMeters(duration.seconds * speed.ToMetersPerSecond());
-    public static Speed operator *(Duration duration, Acceleration acceleration) => Speed.FromMetersPerSecond(duration.seconds * acceleration.ToMetersPerSecondSquared());
-    public static Energy operator *(Duration duration, Power power) => Energy.FromJoules(duration.seconds * power.ToWatts());
-    public static ElectricCharge operator *(Duration duration, ElectricCurrent current) => ElectricCharge.FromCoulombs(duration.seconds * current.ToAmperes());
-    public static MagneticFlux operator *(Duration duration, Voltage voltage) => MagneticFlux.FromWebers(duration.seconds * voltage.ToVolts());
-
-    // Composite relationships (derived)
-    public static DynamicViscosity operator *(Duration duration, Pressure pressure) => DynamicViscosity.FromPascalSeconds(duration.ToSeconds() * pressure.ToPascals());
-    public static Action operator *(Duration duration, Energy energy) => Action.FromJouleSeconds(duration.ToSeconds() * energy.ToJoules());
-    public static LuminousEnergy operator *(Duration duration, LuminousFlux luminousFlux) => LuminousEnergy.FromLumenSeconds(duration.ToSeconds() * luminousFlux.ToLumens());
-    public static LuminousExposure operator *(Duration duration, Illuminance illuminance) => LuminousExposure.FromLuxSeconds(duration.ToSeconds() * illuminance.ToLux());
-
-    // Famous relations
-    public static Momentum operator *(Duration duration, Force force) => Momentum.FromKilogramMetersPerSecond(duration.ToSeconds() * force.ToNewtons());
 }

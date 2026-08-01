@@ -8,6 +8,4 @@ public readonly partial struct Frequency {
     public static Frequency FromPeriod(Duration period) => new(1 / period.ToSeconds());
     public Duration ToPeriod() => Duration.FromSeconds(1 / hertz);
 
-    // Famous relations
-    public static Speed operator *(Frequency frequency, Length length) => Speed.FromMetersPerSecond(frequency.ToHertz() * length.ToMeters());
 }

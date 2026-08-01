@@ -6,8 +6,4 @@ namespace com.hafthor.Measurement;
 [Unit("LitersPerMinute", 1e6 / 60)]
 [Unit("CubicFeetPerSecond", 0.028316846592e9)]
 [Unit("GallonsPerMinute", 0.003785411784e9 / 60)]
-public readonly partial struct VolumetricFlowRate {
-    // Composite relationships
-    public static Volume operator *(VolumetricFlowRate volumetricFlowRate, Duration duration) => Volume.FromCubicMeters(volumetricFlowRate.ToCubicMetersPerSecond() * duration.ToSeconds());
-    public static Volume operator *(Duration duration, VolumetricFlowRate volumetricFlowRate) => Volume.FromCubicMeters(duration.ToSeconds() * volumetricFlowRate.ToCubicMetersPerSecond());
-}
+public readonly partial struct VolumetricFlowRate { }

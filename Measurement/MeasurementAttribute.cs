@@ -52,3 +52,17 @@ internal sealed class UnitAttribute(string name, double factor) : Attribute {
 internal sealed class UnitHookAttribute(string name) : Attribute {
     public string Name => name;
 }
+
+// Declares the dimensional relation C = Left × Right on the result struct C, from which the
+// generator emits the full operator set — Left*Right and Right*Left → C, plus C/Left → Right and
+// C/Right → Left — with the unit-conversion factor derived from each type's measurement symbol
+// (grams→kilograms) and DisplayFactor, so the grams↔kilograms scaling is always correct. When two
+// result types declare the same product (e.g. Energy and Torque both = Force × Length) the product
+// resolves to a selector naming each result; set Primary = true on the one the selector should
+// implicitly convert to.
+[AttributeUsage(AttributeTargets.Struct, AllowMultiple = true)]
+internal sealed class ProductAttribute<TLeft, TRight> : Attribute
+    where TLeft : struct, IMeasurement
+    where TRight : struct, IMeasurement {
+    public bool Primary { get; set; }
+}

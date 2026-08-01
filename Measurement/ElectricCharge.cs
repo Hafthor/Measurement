@@ -8,19 +8,9 @@ namespace com.hafthor.Measurement;
 [Unit("ElementaryCharges", 1.602176634e-10)]
 [SiUnit("Abcoulombs", 10)]
 [Unit("Statcoulombs", 3.335641e-1)]
-public readonly partial struct ElectricCharge {
-    // Composite relationships
-    public static ElectricCurrent operator /(ElectricCharge charge, Duration duration) => ElectricCurrent.FromAmperes(charge.ToCoulombs() / duration.ToSeconds());
-    public static Duration operator /(ElectricCharge charge, ElectricCurrent current) => Duration.FromSeconds(charge.ToCoulombs() / current.ToAmperes());
-    public static Capacitance operator /(ElectricCharge charge, Voltage voltage) => Capacitance.FromFarads(charge.ToCoulombs() / voltage.ToVolts());
-    public static Voltage operator /(ElectricCharge charge, Capacitance capacitance) => Voltage.FromVolts(charge.ToCoulombs() / capacitance.ToFarads());
-
-    // Composite relationships (derived)
-    public static ChargeDensity operator /(ElectricCharge electricCharge, Volume volume) => ChargeDensity.FromCoulombsPerCubicMeter(electricCharge.ToCoulombs() / volume.ToCubicMeters());
-    public static SurfaceChargeDensity operator /(ElectricCharge electricCharge, Area area) => SurfaceChargeDensity.FromCoulombsPerSquareMeter(electricCharge.ToCoulombs() / area.ToSquareMeters());
-    public static ElectricDipoleMoment operator *(ElectricCharge electricCharge, Length length) => ElectricDipoleMoment.FromCoulombMeters(electricCharge.ToCoulombs() * length.ToMeters());
-    public static Exposure operator /(ElectricCharge electricCharge, Mass mass) => Exposure.FromCoulombsPerKilogram(electricCharge.ToCoulombs() / mass.ToKilograms());
-
-    // Famous relations
-    public static Energy operator *(ElectricCharge charge, Voltage voltage) => Energy.FromJoules(charge.ToCoulombs() * voltage.ToVolts());
-}
+[Product<Voltage, Capacitance>]
+[Product<Mass, Exposure>]
+[Product<ElectricCurrent, Duration>]
+[Product<Volume, ChargeDensity>]
+[Product<Area, SurfaceChargeDensity>]
+public readonly partial struct ElectricCharge { }

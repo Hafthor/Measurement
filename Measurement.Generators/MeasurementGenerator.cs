@@ -58,7 +58,19 @@ public sealed class MeasurementGenerator : IIncrementalGenerator {
                         unitSpecs.Add($"h|{hookName}");
                     }
                 }
-                return (Name: type.Name, Namespace: type.ContainingNamespace.ToDisplayString(), Symbol: symbol, DisplayFactor: displayFactor, VariableName: variableName, Units: string.Join(";", unitSpecs));
+                // [Product<TLeft, TRight>] relations: Name = Left × Right (Primary marks the result a
+                // selector implicitly converts to when the product is shared by several types).
+                var products = new List<string>();
+                foreach (var a in type.GetAttributes())
+                    if (a.AttributeClass?.Name == "ProductAttribute" && a.AttributeClass.TypeArguments.Length == 2
+                        && a.AttributeClass.TypeArguments[0] is INamedTypeSymbol l
+                        && a.AttributeClass.TypeArguments[1] is INamedTypeSymbol r) {
+                        bool primary = false;
+                        foreach (var na in a.NamedArguments)
+                            if (na.Key == "Primary" && na.Value.Value is bool p) primary = p;
+                        products.Add($"{l.Name},{r.Name},{(primary ? 1 : 0)}");
+                    }
+                return (Name: type.Name, Namespace: type.ContainingNamespace.ToDisplayString(), Symbol: symbol, DisplayFactor: displayFactor, VariableName: variableName, Units: string.Join(";", unitSpecs), Products: string.Join(";", products));
             });
 
         // Struct body: identical-per-type boilerplate plus the unit From/To methods.
@@ -69,6 +81,9 @@ public sealed class MeasurementGenerator : IIncrementalGenerator {
         // Fluent sugar: needs every type at once so input-hook name collisions across
         // dimensionally-equivalent types can be detected and dropped.
         context.RegisterSourceOutput(types.Collect(), static (ctx, all) => EmitFluentSet(ctx, all));
+
+        // Cross-type operators from [Product] relations: needs every type's symbol + DisplayFactor.
+        context.RegisterSourceOutput(types.Collect(), static (ctx, all) => EmitProducts(ctx, all));
     }
 
     // SI prefix name → power-of-ten exponent (used to expand SiUnit families).
@@ -231,7 +246,7 @@ public sealed class MeasurementGenerator : IIncrementalGenerator {
     // (distinct Reader<T>). Prefixed aliases (Kilomoles == Kilo + Moles) are dropped from both sides —
     // reach them via the prefix chain (Measure.Of(x).Kilo.Moles). Other SI-prefixed variants likewise
     // go through the chain; only un-prefixed bases and non-metric units get a direct hook.
-    private static void EmitFluentSet(SourceProductionContext ctx, System.Collections.Immutable.ImmutableArray<(string Name, string Namespace, string Symbol, double DisplayFactor, string VariableName, string Units)> all) {
+    private static void EmitFluentSet(SourceProductionContext ctx, System.Collections.Immutable.ImmutableArray<(string Name, string Namespace, string Symbol, double DisplayFactor, string VariableName, string Units, string Products)> all) {
         // Per struct: ordered hook candidates minus prefixed aliases.
         var perType = new List<(string Name, string Ns, List<string> Hooks)>();
         var inputCounts = new Dictionary<string, int>();
@@ -339,6 +354,156 @@ namespace {ns}.Fluent {{
 }}
 ";
         ctx.AddSource("_FluentCollisions.g.cs", SourceText.From(src, Encoding.UTF8));
+    }
+
+    // Net power of the grams unit (`g`) in a measurement symbol, positive in the numerator and
+    // negative in the denominator — used to convert between the grams-based stored value and the
+    // coherent-SI (kilogram) basis when deriving operator factors. `Gy`/`Bq` etc. don't contain a
+    // lowercase g atom; derived units (N, J, …) are already kilogram-based, so contribute 0.
+    private static int GramPower(string symbol) {
+        int total = 0, sign = 1, depth = 0;
+        var parenSign = new Stack<int>();
+        for (int i = 0; i < symbol.Length; i++) {
+            char c = symbol[i];
+            if (c == '(') { parenSign.Push(sign); depth++; }
+            else if (c == ')') { depth--; if (parenSign.Count > 0) sign = parenSign.Pop(); }
+            else if (c == '/') sign = -sign;                 // everything after '/' at this level is a denominator
+            else if (c == '·') { /* keep sign */ }
+            else if (c == 'g' && (i == 0 || !char.IsLetter(symbol[i - 1])) && (i + 1 >= symbol.Length || !char.IsLetter(symbol[i + 1]))) {
+                int exp = 1;
+                if (i + 1 < symbol.Length) {
+                    if (symbol[i + 1] == '²') exp = 2; else if (symbol[i + 1] == '³') exp = 3;
+                }
+                total += sign * exp;
+            }
+        }
+        return total;
+    }
+
+    // Splits a DisplayFactor into a power-of-ten exponent and a non-power-of-ten residual
+    // (e.g. 1e6 → (6, 1), 9 → (0, 9)), so operator factors keep their ten-scaling exact in a single
+    // 1e{n} and carry any residual (like Temperature's 9) as an explicit divisor.
+    private static void SplitTen(double v, out int tenExp, out double residual) {
+        tenExp = 0; residual = v;
+        if (v <= 0) return;
+        int e = (int)System.Math.Round(System.Math.Log10(v));
+        if (System.Math.Pow(10, e) == v) { tenExp = e; residual = 1; }
+    }
+
+    // Emits every cross-type operator implied by the [Product] relations. For C = A × B it writes
+    // A*B, B*A → C and C/A → B, C/B → A, each with an exact factor derived from the symbols'
+    // gram-power and DisplayFactor, placed in a partial of one of its parameter types.
+    private static void EmitProducts(SourceProductionContext ctx, System.Collections.Immutable.ImmutableArray<(string Name, string Namespace, string Symbol, double DisplayFactor, string VariableName, string Units, string Products)> all) {
+        var meta = new Dictionary<string, (double DF, int G)>();
+        string ns = all.Length > 0 ? all[0].Namespace : "com.hafthor.Measurement";
+        foreach (var info in all) meta[info.Name] = (info.DisplayFactor, GramPower(info.Symbol));
+
+        // container type → operator source lines.
+        var byContainer = new Dictionary<string, StringBuilder>();
+        StringBuilder Body(string container) {
+            if (!byContainer.TryGetValue(container, out var sb)) byContainer[container] = sb = new StringBuilder();
+            return sb;
+        }
+        // Each type's coherent-SI divisor = DisplayFactor × 10^(3·gramPower): dividing a stored
+        // value by it yields the value in coherent SI units (kg·m·s·…). Split into a power-of-ten
+        // exponent and a non-ten residual (e.g. Temperature's 9) so the division stays exact.
+        (int Ten, double Res) Div(string t) {
+            var m = meta[t];
+            SplitTen(m.DF, out int te, out double re);
+            return (te + 3 * m.G, re);
+        }
+        // Divides a value expression by a coherent-SI divisor (positive powers of ten are exact),
+        // parenthesised so it binds to that operand inside a product.
+        string ToCoherent(string val, (int Ten, double Res) d) {
+            var s = new StringBuilder(val);
+            if (d.Ten > 0) s.Append($" / 1e{d.Ten}");
+            else if (d.Ten < 0) s.Append($" * 1e{-d.Ten}");
+            if (d.Res != 1) s.Append($" / {d.Res.ToString("R", System.Globalization.CultureInfo.InvariantCulture)}");
+            return d.Ten != 0 || d.Res != 1 ? $"({s})" : val;
+        }
+        // Multiplies a value expression by a coherent-SI divisor (to convert a coherent result back
+        // to the result type's stored value).
+        string FromCoherent(string expr, (int Ten, double Res) d) {
+            var s = new StringBuilder(expr);
+            if (d.Ten > 0) s.Append($" * 1e{d.Ten}");
+            else if (d.Ten < 0) s.Append($" / 1e{-d.Ten}");
+            if (d.Res != 1) s.Append($" * {d.Res.ToString("R", System.Globalization.CultureInfo.InvariantCulture)}");
+            return s.ToString();
+        }
+        // Gather every operator "intent" keyed by its C# signature; a signature that resolves to more
+        // than one result type (a dimensionally-ambiguous product like Force×Length → Energy or
+        // Torque) is emitted as a selector instead of colliding.
+        var intents = new Dictionary<string, (string Container, string Op, string P1, string P2, string Expr, List<(string Name, bool Primary)> Results)>();
+        void Intent(string container, string op, string p1, string p2, string expr, string result, bool primary) {
+            string sig = $"{container}|{op}|{p1}|{p2}";
+            if (!intents.TryGetValue(sig, out var it)) intents[sig] = it = (container, op, p1, p2, expr, new List<(string, bool)>());
+            if (!it.Results.Exists(x => x.Name == result)) it.Results.Add((result, primary));
+        }
+
+        foreach (var info in all) {
+            if (info.Products.Length == 0) continue;
+            string C = info.Name;
+            if (!meta.ContainsKey(C)) continue;
+            var dC = Div(C);
+            foreach (var rel in info.Products.Split(';')) {
+                var ab = rel.Split(',');
+                if (ab.Length < 2) continue;
+                string A = ab[0], B = ab[1];
+                bool primary = ab.Length > 2 && ab[2] == "1";
+                if (!meta.ContainsKey(A) || !meta.ContainsKey(B)) continue;
+                var dA = Div(A); var dB = Div(B);
+                // C = A × B and B × A — coherent product of the two operands.
+                Intent(A, "*", A, B, $"{ToCoherent("a.CanonicalValue", dA)} * {ToCoherent("b.CanonicalValue", dB)}", C, primary);
+                if (A != B) Intent(B, "*", B, A, $"{ToCoherent("a.CanonicalValue", dB)} * {ToCoherent("b.CanonicalValue", dA)}", C, primary);
+                // A = C / B and B = C / A — coherent quotient (a is C, b is the divisor).
+                Intent(C, "/", C, A, $"{ToCoherent("a.CanonicalValue", dC)} / {ToCoherent("b.CanonicalValue", dA)}", B, false);
+                if (A != B) Intent(C, "/", C, B, $"{ToCoherent("a.CanonicalValue", dC)} / {ToCoherent("b.CanonicalValue", dB)}", A, false);
+            }
+        }
+
+        // Emit each intent: a single result → a direct operator; multiple → a selector operator plus
+        // a selector struct whose type-named properties pick the intended result (f×l).Energy / .Torque.
+        var selectors = new Dictionary<string, List<(string Name, bool Primary)>>();
+        string SelName(string op, string p1, string p2) {
+            if (op == "*") { var a = new[] { p1, p2 }; System.Array.Sort(a, System.StringComparer.Ordinal); return a[0] + a[1] + "Product"; }
+            return p1 + "Over" + p2 + "Quotient";
+        }
+        foreach (var it in intents.Values) {
+            if (it.Results.Count == 1) {
+                string r = it.Results[0].Name;
+                Body(it.Container).Append($"    public static {r} operator {it.Op}({it.P1} a, {it.P2} b) => {r}.FromCanonical({FromCoherent(it.Expr, Div(r))});\n");
+            } else {
+                string sel = SelName(it.Op, it.P1, it.P2);
+                if (!selectors.ContainsKey(sel)) selectors[sel] = it.Results;
+                Body(it.Container).Append($"    public static {sel} operator {it.Op}({it.P1} a, {it.P2} b) => new({it.Expr});\n");
+            }
+        }
+        if (byContainer.Count == 0) return;
+        var src = new StringBuilder("// <auto-generated/>\n#nullable disable\n\nnamespace " + ns + " {\n");
+        foreach (var kv in selectors) {
+            var results = kv.Value;
+            string primary = results.Find(x => x.Primary).Name;   // null when none is marked
+            var names = new List<string>();
+            foreach (var r in results) names.Add(r.Name);
+            src.Append(primary != null
+                ? $"    // Ambiguous product — implicitly a {primary}; also (a * b).{string.Join(" / (a * b).", names)}\n"
+                : $"    // Ambiguous product — pick the result: (a * b).{string.Join(" / (a * b).", names)}\n");
+            src.Append($"    public readonly struct {kv.Key} {{\n");
+            src.Append("        private readonly double v;\n");
+            src.Append($"        internal {kv.Key}(double v) => this.v = v;\n");
+            foreach (var r in names)
+                src.Append($"        public {r} {r} => {r}.FromCanonical({FromCoherent("v", Div(r))});\n");
+            if (primary != null)
+                src.Append($"        public static implicit operator {primary}({kv.Key} s) => s.{primary};\n");
+            src.Append("    }\n");
+        }
+        foreach (var kv in byContainer) {
+            src.Append($"    public readonly partial struct {kv.Key} {{\n");
+            src.Append(kv.Value);
+            src.Append("    }\n");
+        }
+        src.Append("}\n");
+        ctx.AddSource("_Operators.g.cs", SourceText.From(src.ToString(), Encoding.UTF8));
     }
 
     private static string Emit(string name, string ns, string symbol, double displayFactor, string variableName, string units) {

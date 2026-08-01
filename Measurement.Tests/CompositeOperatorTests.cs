@@ -32,7 +32,7 @@ public sealed class CompositeOperatorTests {
         Assert.AreEqual(6.0, f.ToNewtons());
         Assert.AreEqual(3.0, (f / Mass.FromKilograms(2)).ToMetersPerSecondSquared());
         Assert.AreEqual(2.0, (f / Acceleration.FromMetersPerSecondSquared(3)).ToKilograms());
-        Energy e = f * Length.FromMeters(5);
+        Energy e = f * Length.FromMeters(5);   // implicit conversion to the primary (Energy)
         Assert.AreEqual(30.0, e.ToJoules());
         Power p = e / Duration.FromSeconds(2);
         Assert.AreEqual(15.0, p.ToWatts());
@@ -43,9 +43,16 @@ public sealed class CompositeOperatorTests {
     }
 
     [TestMethod]
-    public void ForceTimesLength_IsEnergyNotTorque() {
-        Energy e = Force.FromNewtons(2) * Length.FromMeters(3);
-        Assert.AreEqual(6.0, e.ToJoules());
+    public void ForceTimesLength_SelectorPicksEnergyOrTorque() {
+        // Force × Length is dimensionally ambiguous (J ≡ N·m), so the product is a selector that
+        // names the intended result rather than silently choosing one.
+        var product = Force.FromNewtons(2) * Length.FromMeters(3);
+        Energy implicitlyEnergy = product;                 // implicit conversion to the primary result
+        Assert.AreEqual(6.0, implicitlyEnergy.ToJoules());
+        Assert.AreEqual(6.0, product.Energy.ToJoules());
+        Assert.AreEqual(6.0, product.Torque.ToNewtonMeters());
+        // commutative order yields the same selector
+        Assert.AreEqual(6.0, (Length.FromMeters(3) * Force.FromNewtons(2)).Torque.ToNewtonMeters());
     }
 
     // E = m c^2 : Mass × Speed = Momentum, then Momentum × Speed = Energy,

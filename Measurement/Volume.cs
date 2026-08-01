@@ -17,15 +17,7 @@ namespace com.hafthor.Measurement;
 [Unit("CubicFeet", 0.028316846592e9)]
 [Unit("CubicInches", 1.6387064e4)]
 [Unit("OilBarrels", 0.158987294928e9)]
-public readonly partial struct Volume {
-    // Composite relationships
-    public static Area operator /(Volume volume, Length length) => Area.FromSquareMeters(volume.ToCubicMeters() / length.ToMeters());
-    public static Length operator /(Volume volume, Area area) => Length.FromMeters(volume.ToCubicMeters() / area.ToSquareMeters());
-
-    // Composite relationships (derived)
-    public static VolumetricFlowRate operator /(Volume volume, Duration duration) => VolumetricFlowRate.FromCubicMetersPerSecond(volume.ToCubicMeters() / duration.ToSeconds());
-    public static SpecificVolume operator /(Volume volume, Mass mass) => SpecificVolume.FromCubicMetersPerKilogram(volume.ToCubicMeters() / mass.ToKilograms());
-
-    // Famous relations
-    public static Energy operator *(Volume volume, Pressure pressure) => Energy.FromJoules(volume.ToCubicMeters() * pressure.ToPascals());
-}
+[Product<Area, Length>]
+[Product<Duration, VolumetricFlowRate>]
+[Product<Mass, SpecificVolume>]
+public readonly partial struct Volume { }

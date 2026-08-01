@@ -9,9 +9,5 @@ namespace com.hafthor.Measurement;
 [Unit("Rankine", 5.0)]
 [Unit("Celsius", 9.0, Offset = 273.15)]
 [Unit("Fahrenheit", 5.0, Offset = 459.67)]
-public readonly partial struct Temperature {
-    // Composite relationships
-    public static Energy operator *(Temperature temperatureChange, HeatCapacity heatCapacity) => Energy.FromJoules(temperatureChange.ToKelvin() * heatCapacity.ToJoulesPerKelvin());
-    public static ThermalResistance operator /(Temperature temperatureChange, Power power) => ThermalResistance.FromKelvinsPerWatt(temperatureChange.ToKelvin() / power.ToWatts());
-    public static Power operator /(Temperature temperatureChange, ThermalResistance thermalResistance) => Power.FromWatts(temperatureChange.ToKelvin() / thermalResistance.ToKelvinsPerWatt());
-}
+[Product<Power, ThermalResistance>]
+public readonly partial struct Temperature { }

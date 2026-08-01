@@ -6,5 +6,5 @@ namespace com.hafthor.Measurement;
 [Unit("KilogramForceMeters", 9.80665e3)]
 [Unit("PoundFeet", 1.3558179483314004e3)]
 [Unit("PoundInches", 0.11298482902762e3)]
-public readonly partial struct Torque {
-}
+[Product<Force, Length>]
+public readonly partial struct Torque { }

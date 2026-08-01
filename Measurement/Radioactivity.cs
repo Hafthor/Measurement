@@ -6,5 +6,4 @@ namespace com.hafthor.Measurement;
 [Unit("Millicuries", 3.7e7)]
 [Unit("Microcuries", 3.7e4)]
 [SiUnit("Rutherfords", 6)]
-public readonly partial struct Radioactivity {
-}
+public readonly partial struct Radioactivity { }

@@ -11,16 +11,6 @@ namespace com.hafthor.Measurement;
 [Unit("Knots", 0.514444444444)]
 [Unit("Mach", 340.29)]
 [Unit("SpeedOfLight", 299792458)]
-public readonly partial struct Speed {
-    // Composite relationships
-    public static Length operator *(Speed speed, Duration duration) => Length.FromMeters(speed.ToMetersPerSecond() * duration.ToSeconds());
-    public static Acceleration operator /(Speed speed, Duration duration) => Acceleration.FromMetersPerSecondSquared(speed.ToMetersPerSecond() / duration.ToSeconds());
-    public static Power operator *(Speed speed, Force force) => Power.FromWatts(speed.ToMetersPerSecond() * force.ToNewtons());
-
-    // Composite relationships (derived)
-    public static Momentum operator *(Speed speed, Mass mass) => Momentum.FromKilogramMetersPerSecond(speed.ToMetersPerSecond() * mass.ToKilograms());
-
-    // Famous relations
-    public static Frequency operator /(Speed speed, Length length) => Frequency.FromHertz(speed.ToMetersPerSecond() / length.ToMeters());
-    public static Length operator /(Speed speed, Frequency frequency) => Length.FromMeters(speed.ToMetersPerSecond() / frequency.ToHertz());
-}
+[Product<Acceleration, Duration>]
+[Product<Length, Frequency>]
+public readonly partial struct Speed { }

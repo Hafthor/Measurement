@@ -13,13 +13,6 @@ namespace com.hafthor.Measurement;
 [Unit("SquareFeet", 0.09290304e6)]
 [Unit("SquareInches", 0.00064516e6)]
 [SiUnit("Barns", -22)]
-public readonly partial struct Area {
-    // Composite relationships
-    public static Length operator /(Area area, Length length) => Length.FromMeters(area.ToSquareMeters() / length.ToMeters());
-    public static Volume operator *(Area area, Length length) => Volume.FromCubicMeters(area.ToSquareMeters() * length.ToMeters());
-    public static Force operator *(Area area, Pressure pressure) => Force.FromNewtons(area.ToSquareMeters() * pressure.ToPascals());
-
-    // Composite relationships (derived)
-    public static MomentOfInertia operator *(Area area, Mass mass) => MomentOfInertia.FromKilogramSquareMeters(area.ToSquareMeters() * mass.ToKilograms());
-    public static KinematicViscosity operator /(Area area, Duration duration) => KinematicViscosity.FromSquareMetersPerSecond(area.ToSquareMeters() / duration.ToSeconds());
-}
+[Product<Length, Length>]
+[Product<Duration, KinematicViscosity>]
+public readonly partial struct Area { }

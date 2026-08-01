@@ -31,16 +31,12 @@ namespace com.hafthor.Measurement;
 [Unit("JupiterMasses", 1.898e36)]
 [Unit("EarthMasses", 5.9722e33)]
 [Unit("LunarMasses", 7.342e31)]
+[Product<Length, LinearDensity>]
+[Product<Volume, Density>]
+[Product<Area, AreaDensity>]
+[Product<Duration, MassFlowRate>]
 public readonly partial struct Mass {
-    // Composite relationships
-    public static Force operator *(Mass mass, Acceleration acceleration) => Force.FromNewtons(mass.ToKilograms() * acceleration.ToMetersPerSecondSquared());
 
     // Composite relationships (derived)
-    public static Density operator /(Mass mass, Volume volume) => Density.FromKilogramsPerCubicMeter(mass.ToKilograms() / volume.ToCubicMeters());
-    public static LinearDensity operator /(Mass mass, Length length) => LinearDensity.FromKilogramsPerMeter(mass.ToKilograms() / length.ToMeters());
-    public static AreaDensity operator /(Mass mass, Area area) => AreaDensity.FromKilogramsPerSquareMeter(mass.ToKilograms() / area.ToSquareMeters());
-    public static MassFlowRate operator /(Mass mass, Duration duration) => MassFlowRate.FromKilogramsPerSecond(mass.ToKilograms() / duration.ToSeconds());
     public static MolarMass operator /(Mass mass, Quantity quantity) => MolarMass.FromKilogramsPerMole(mass.ToKilograms() / quantity.ToMoles());
-    public static Momentum operator *(Mass mass, Speed speed) => Momentum.FromKilogramMetersPerSecond(mass.ToKilograms() * speed.ToMetersPerSecond());
-    public static MomentOfInertia operator *(Mass mass, Area area) => MomentOfInertia.FromKilogramSquareMeters(mass.ToKilograms() * area.ToSquareMeters());
 }

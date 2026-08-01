@@ -25,7 +25,7 @@ public sealed class PhysicsRelationsTests {
     [TestMethod]
     public void WorkEnergyPrinciple() {
         // W = F d
-        Energy w = Force.FromNewtons(20) * Length.FromMeters(5);
+        Energy w = Force.FromNewtons(20) * Length.FromMeters(5);   // implicit → Energy
         Assert.AreEqual(100.0, w.ToJoules());
     }
 

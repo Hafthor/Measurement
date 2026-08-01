@@ -5,10 +5,5 @@ namespace com.hafthor.Measurement;
 [Unit("Candlepower", 0.981e3)]
 [Unit("Hefnerkerze", 0.903e3)]
 [Unit("Carcels", 9.74e3)]
-public readonly partial struct LuminousIntensity {
-    // Composite relationships
-    public static LuminousFlux operator *(LuminousIntensity intensity, SolidAngle solidAngle) => LuminousFlux.FromLumens(intensity.ToCandelas() * solidAngle.ToSteradians());
-
-    // Composite relationships (derived)
-    public static Luminance operator /(LuminousIntensity luminousIntensity, Area area) => Luminance.FromCandelasPerSquareMeter(luminousIntensity.ToCandelas() / area.ToSquareMeters());
-}
+[Product<Area, Luminance>]
+public readonly partial struct LuminousIntensity { }
