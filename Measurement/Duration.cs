@@ -22,5 +22,4 @@ public readonly partial struct Duration {
     // Frequency (reciprocal relationship: T = 1 / f)
     public static Duration FromFrequency(Frequency frequency) => new(1 / frequency.ToHertz());
     public Frequency ToFrequency() => Frequency.FromHertz(1 / seconds);
-
 }

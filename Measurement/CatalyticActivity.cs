@@ -7,5 +7,4 @@ namespace com.hafthor.Measurement;
 public readonly partial struct CatalyticActivity {
     // Enzyme unit (1 U = 1 micromole per minute)
     private const double EnzymeUnitsToNanokatals = 50.0 / 3;
-
 }

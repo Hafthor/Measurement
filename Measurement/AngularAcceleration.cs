@@ -5,7 +5,6 @@ namespace com.hafthor.Measurement;
 [Unit("RadiansPerSecondSquared", 180 / Math.PI)]
 [Unit("RevolutionsPerMinutePerSecond", 6)]
 public readonly partial struct AngularAcceleration {
-    // Composite relationships
     public static AngularVelocity operator *(AngularAcceleration angularAcceleration, Duration duration) => AngularVelocity.FromRadiansPerSecond(angularAcceleration.ToRadiansPerSecondSquared() * duration.ToSeconds());
     public static AngularVelocity operator *(Duration duration, AngularAcceleration angularAcceleration) => AngularVelocity.FromRadiansPerSecond(duration.ToSeconds() * angularAcceleration.ToRadiansPerSecondSquared());
 }

@@ -5,6 +5,5 @@ namespace com.hafthor.Measurement;
 [Unit("CaloriesPerKelvin", 4.184)]
 [Product<Mass, SpecificHeatCapacity>]
 public readonly partial struct HeatCapacity {
-    // Composite relationships
     public static MolarHeatCapacity operator /(HeatCapacity heatCapacity, Quantity quantity) => MolarHeatCapacity.FromJoulesPerMoleKelvin(heatCapacity.ToJoulesPerKelvin() / quantity.ToMoles());
 }

@@ -6,6 +6,5 @@ namespace com.hafthor.Measurement;
 [Unit("PoundSquareFeet", 0.04214011009380e3)]
 [Product<Area, Mass>]
 public readonly partial struct MomentOfInertia {
-    // Composite relationships
     public static AngularMomentum operator *(MomentOfInertia momentOfInertia, AngularVelocity angularVelocity) => AngularMomentum.FromKilogramSquareMetersPerSecond(momentOfInertia.ToKilogramSquareMeters() * angularVelocity.ToRadiansPerSecond());
 }

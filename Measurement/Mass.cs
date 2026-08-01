@@ -36,7 +36,5 @@ namespace com.hafthor.Measurement;
 [Product<Area, AreaDensity>]
 [Product<Duration, MassFlowRate>]
 public readonly partial struct Mass {
-
-    // Composite relationships (derived)
     public static MolarMass operator /(Mass mass, Quantity quantity) => MolarMass.FromKilogramsPerMole(mass.ToKilograms() / quantity.ToMoles());
 }

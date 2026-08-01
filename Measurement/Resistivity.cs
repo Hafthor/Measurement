@@ -5,7 +5,6 @@ namespace com.hafthor.Measurement;
 [SiUnit("OhmCentimeters", 6, "None Micro")]
 [Product<ElectricResistance, Length>]
 public readonly partial struct Resistivity {
-
     // Reciprocal quantity (conductivity σ = 1/ρ)
     public Conductivity ToConductivity() => Conductivity.FromSiemensPerMeter(1.0 / ToOhmMeters());
 }
