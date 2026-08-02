@@ -81,12 +81,15 @@ public sealed class ProductFluentTests {
     [TestMethod]
     public void SquareCubic_ExtendProductStates() {
         // A running product state can be scaled by an areal/cubic unit via the [Product] graph:
-        // Mass × Area → MomentOfInertia, so .Kilogram.Square.Meters is a moment of inertia.
-        MomentOfInertia moi = Measure.Of(1).Kilogram.Square.Meters;
+        // Mass × Area → MomentOfInertia, so .Kilo.Gram.Square.Meters is a moment of inertia.
+        MomentOfInertia moi = Measure.Of(1).Kilo.Gram.Square.Meters;
         Assert.AreEqual(MomentOfInertia.FromKilogramSquareMeters(1).ToKilogramSquareMeters(),
             moi.ToKilogramSquareMeters(), 1e-9);
         // Prefixed length inside the modifier walk works too: 1 kg·cm² = 1e-4 kg·m².
-        MomentOfInertia moiCm = Measure.Of(1).Kilogram.Square.Centi.Meters;
+        MomentOfInertia moiCm = Measure.Of(1).Kilo.Gram.Square.Centi.Meters;
         Assert.AreEqual(1e-4, moiCm.ToKilogramSquareMeters(), 1e-16);
+        // .Gram alone (unprefixed) enters the Mass product state: 1 g·m².
+        MomentOfInertia moiG = Measure.Of(1).Gram.Square.Meters;
+        Assert.AreEqual(1e-3, moiG.ToKilogramSquareMeters(), 1e-9);
     }
 }

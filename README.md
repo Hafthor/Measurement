@@ -188,8 +188,8 @@ The same modifier extends a running product, scaling it by an area or volume (Ma
 MomentOfInertia, Length × Area → Volume, Pressure × Area → Force, …):
 
 ```csharp
-MomentOfInertia moi = Measure.Of(1).Kilogram.Square.Meters;       // kg·m²
-MomentOfInertia mi2 = Measure.Of(1).Kilogram.Square.Centi.Meters; // kg·cm² = 1e-4 kg·m²
+MomentOfInertia moi = Measure.Of(1).Kilo.Gram.Square.Meters;       // kg·m²
+MomentOfInertia mi2 = Measure.Of(1).Kilo.Gram.Square.Centi.Meters; // kg·cm² = 1e-4 kg·m²
 ```
 
 All three forms also work on the opt-in `double` sugar (`2.0.Ampere.Hours`, `4.0.Square.Meters`)

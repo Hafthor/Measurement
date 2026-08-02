@@ -1183,11 +1183,14 @@ namespace {ns}.Fluent {{
         var tokenType = new Dictionary<string, (string Type, string Unit)>();       // multiplying tokens
         var entryToken = new Dictionary<string, (string Type, string Unit)>();       // Prefixed entry tokens
         var baseUnit = new Dictionary<string, string>();                             // type → its base unit
+        var singleWords = new Dictionary<string, HashSet<string>>();                 // type → its single-word units
         foreach (var info in all) {
             foreach (var u in EnumerateUnitNames(info.Units)) {
                 if (SplitWords(u).Count != 1) continue;
                 if (!tokenType.ContainsKey(u)) tokenType[u] = (info.Name, u);
                 if (!baseUnit.ContainsKey(info.Name)) baseUnit[info.Name] = u;       // first single-word unit
+                if (!singleWords.TryGetValue(info.Name, out var set)) singleWords[info.Name] = set = new HashSet<string>();
+                set.Add(u);
             }
         }
         // product pairs (unordered) → results, plus the Primary result of each pair (implicit target).
@@ -1212,13 +1215,19 @@ namespace {ns}.Fluent {{
             string k = string.CompareOrdinal(r, t) <= 0 ? r + "|" + t : t + "|" + r;
             return primaryResult.TryGetValue(k, out var p) ? p : "";
         }
-        // Entry tokens: singular base unit of each product-participating type + Light.
+        // Entry tokens: the singular base unit of each product-participating type + Light. If a type's
+        // base unit is itself an SI-prefixed name (Mass's coherent unit is the kilogram = Kilo+Grams),
+        // decompose it so the entry token is the un-prefixed singular (Gram), reached via the prefix
+        // chain (`.Kilo.Gram`) — matching the rest of the fluent surface rather than a fused `.Kilogram`.
         var participating = new HashSet<string>();
         foreach (var k in pair.Keys) { var ab = k.Split('|'); participating.Add(ab[0]); participating.Add(ab[1]); }
         foreach (var t in participating) {
             if (!baseUnit.TryGetValue(t, out var bu)) continue;
-            string sing = bu.EndsWith("s") ? bu.Substring(0, bu.Length - 1) : bu;
-            if (!tokenType.ContainsKey(sing) && !entryToken.ContainsKey(sing)) entryToken[sing] = (t, bu);
+            singleWords.TryGetValue(t, out var sw);
+            var dec = DecomposeDenom(bu, sw ?? new HashSet<string>());
+            string factoryUnit = dec[dec.Count - 1];                                 // un-prefixed base (Grams)
+            string sing = factoryUnit.EndsWith("s") ? factoryUnit.Substring(0, factoryUnit.Length - 1) : factoryUnit;
+            if (!tokenType.ContainsKey(sing) && !entryToken.ContainsKey(sing)) entryToken[sing] = (t, factoryUnit);
         }
         if (meta.ContainsKey("Speed")) entryToken["Light"] = ("Speed", "SpeedOfLight");
 
