@@ -90,6 +90,16 @@ using com.hafthor.Measurement.Fluent;   // per file, or in a GlobalUsings.cs
 Mass m = 5.0.Kilo.Grams;                 // only compiles where this using is present
 ```
 
+**Type-constrained entry** — where `Measure.Of(x)` opens the whole fluent surface, `T.Of(x)` is a
+constrained entry that only offers ways of constructing `T` (its own units), so autocompletion stays
+tight and the result is always a `T`:
+
+```csharp
+Area   a = Area.Of(4).Square.Milli.Meters;   // Area.Of(4). lists just its area units (+ .Square)
+Length d = Length.Of(5).Kilo.Meters;
+Speed  v = Speed.Of(10).Meters.Per.Second;
+```
+
 A few naming rules to know:
 
 - **Squared/cubed metric units** are spelled with the [`.Square`/`.Cubic` grammar](#compositional-fluent-grammar)

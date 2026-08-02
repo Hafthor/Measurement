@@ -92,4 +92,27 @@ public sealed class ProductFluentTests {
         MomentOfInertia moiG = Measure.Of(1).Gram.Square.Meters;
         Assert.AreEqual(1e-3, moiG.ToKilogramSquareMeters(), 1e-9);
     }
+
+    [TestMethod]
+    public void TypedEntry_ConstrainsToTheType() {
+        // T.Of(v) is a fluent entry limited to ways of constructing T (its own units only).
+        Area a = Area.Of(4).Square.Milli.Meters;
+        Assert.AreEqual(4.0, a.ToSquareMillimeters(), 1e-9);
+        Area am = Area.Of(2).Square.Meters;
+        Assert.AreEqual(2.0, am.ToSquareMeters(), 1e-12);
+        Area ha = Area.Of(3).Hectares;                      // flat non-square area unit
+        Assert.AreEqual(Area.FromHectares(3).ToSquareMeters(), ha.ToSquareMeters(), 1e-6);
+        // prefix chain and non-SI units for other types
+        Length km = Length.Of(5).Kilo.Meters;
+        Assert.AreEqual(5000.0, km.ToMeters(), 1e-9);
+        Length mi = Length.Of(1).Miles;
+        Assert.AreEqual(Length.FromMiles(1).ToMeters(), mi.ToMeters(), 1e-6);
+        Mass kg = Mass.Of(2).Kilo.Grams;
+        Assert.AreEqual(2.0, kg.ToKilograms(), 1e-12);
+        // compound (Per) units compose too, still constrained to the type
+        Speed s = Speed.Of(10).Meters.Per.Second;
+        Assert.AreEqual(10.0, s.ToMetersPerSecond(), 1e-12);
+        Volume cc = Volume.Of(1).Cubic.Centi.Meters;
+        Assert.AreEqual(1e-6, cc.ToCubicMeters(), 1e-18);
+    }
 }
