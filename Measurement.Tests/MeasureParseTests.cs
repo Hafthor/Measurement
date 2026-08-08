@@ -17,10 +17,10 @@ public sealed class MeasureParseTests {
     [TestMethod]
     public void ReturnsEquivalentValue() {
         var m = Measure.Parse("2000 g");
-        Assert.AreEqual(Mass.FromKilograms(2), (Mass)m);
+        Assert.AreEqual(Mass.Of(2).Kilo.Grams, (Mass)m);
         // usable through the non-generic surface
         Assert.AreEqual("m/s", Measure.Parse("5 m/s").UnitSymbol);
-        Assert.AreEqual(Speed.FromMetersPerSecond(5).CanonicalValue, Measure.Parse("5 m/s").CanonicalValue);
+        Assert.AreEqual(Speed.Of(5).Meters.Per.Second.CanonicalValue, Measure.Parse("5 m/s").CanonicalValue);
     }
 
     [TestMethod]
@@ -35,7 +35,7 @@ public sealed class MeasureParseTests {
     [TestMethod]
     public void IsCultureAware() {
         var de = CultureInfo.GetCultureInfo("de-DE");
-        Assert.AreEqual(Length.FromMeters(1.5), (Length)Measure.Parse("1,5 m", de));
+        Assert.AreEqual(Length.Of(1.5).Meters, (Length)Measure.Parse("1,5 m", de));
     }
 
     [TestMethod]

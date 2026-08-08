@@ -57,50 +57,43 @@ public sealed class ConversionInvariantTests {
         ("Zepto", 1e-21), ("Yocto", 1e-24), ("Ronto", 1e-27), ("Quecto", 1e-30),
     ];
 
-    // A prefixed unit (FromKilograms / ToMilligrams) must agree exactly with its base unit scaled
-    // by the SI prefix: FromKiloXxx(1) == FromXxx(1000), and FromXxx(v).ToMilliXxx() == v * 1000.
-    // A pair is any FromPrefixBase whose FromBase (and ToBase) also exist. This catches a mis-typed
-    // prefix factor or an asymmetric From/To on a prefixed unit.
+    // Leading-SI-prefix aliases (Kilometers = Kilo·Meters, Milligrams = Milli·Grams) have no generated
+    // From*/To* method — they are synthesized from the base unit + a power-of-ten scale. This verifies
+    // that synthesis: for every linear base unit, FromPrefixBase(v) reads back as v·factor in the base
+    // and FromBase(v) reads back as v/factor in the prefixed unit, across all SI prefixes. Catches a
+    // wrong prefix exponent or an asymmetric synthesis.
     [TestMethod]
-    public void SiPrefixedUnitsAgreeWithScaledBaseUnit() {
+    public void SiPrefixAliasesSynthesizeFromScaledBase() {
         var problems = new List<string>();
         int pairs = 0;
         foreach (var t in MeasurementReflection.AllMeasurementTypes()) {
             var froms = MeasurementReflection.Froms(t);
             var tos = MeasurementReflection.Tos(t);
-            foreach (var (full, fromFull) in froms) {
-                if (!TryMatchPrefix(full, froms.Keys, out string baseUnit, out double factor)) continue;
-                if (!tos.TryGetValue(full, out var toFull)) continue;         // covered by pairing test
-                var fromBase = froms[baseUnit];
-                var toBase = tos[baseUnit];
-                pairs++;
-                foreach (var v in Samples) {
-                    // Construction: FromPrefix(v) builds the same canonical as FromBase(v * factor).
-                    double canonPrefix = MeasurementReflection.Canonical(fromFull.Invoke(null, [v]));
-                    double canonBase = MeasurementReflection.Canonical(fromBase.Invoke(null, [v * factor]));
-                    if (!Close(canonPrefix, canonBase)) {
-                        problems.Add($"{t.Name}: From{full}({v}) canonical {canonPrefix} != From{baseUnit}({v * factor}) canonical {canonBase}");
-                        break;
-                    }
-                    // Read-out: base value read in the prefixed unit is scaled by 1/factor
-                    // (e.g. FromXxx(v).ToMilliXxx() == v * 1000), and symmetrically the other way.
-                    object baseInst = fromBase.Invoke(null, [v]);
-                    double readPrefixed = (double)toFull.Invoke(baseInst, null);
-                    if (!Close(readPrefixed, v / factor)) {
-                        problems.Add($"{t.Name}: From{baseUnit}({v}).To{full}() = {readPrefixed}, expected {v / factor}");
-                        break;
-                    }
-                    object prefixedInst = fromFull.Invoke(null, [v]);
-                    double readBase = (double)toBase.Invoke(prefixedInst, null);
-                    if (!Close(readBase, v * factor)) {
-                        problems.Add($"{t.Name}: From{full}({v}).To{baseUnit}() = {readBase}, expected {v * factor}");
-                        break;
+            foreach (var (baseUnit, fromBase) in froms) {
+                if (!tos.ContainsKey(baseUnit)) continue;
+                if (MeasurementReflection.Canonical(fromBase.Invoke(null, [0.0])) != 0.0) continue; // affine (e.g. °C) — not scalable
+                if (TryMatchPrefix(baseUnit, froms.Keys, out _, out _)) continue;                   // already a prefixed spelling
+                foreach (var (name, factor) in Prefixes) {
+                    string alias = name + char.ToLowerInvariant(baseUnit[0]) + baseUnit[1..];
+                    if (froms.ContainsKey(alias)) continue;                                          // still a real method (kept)
+                    pairs++;
+                    foreach (var v in Samples) {
+                        double readBase = MeasurementReflection.Convert(t, alias, v, baseUnit);
+                        if (!Close(readBase, v * factor)) {
+                            problems.Add($"{t.Name}: From{alias}({v}).To{baseUnit}() = {readBase}, expected {v * factor}");
+                            break;
+                        }
+                        double readAlias = MeasurementReflection.Convert(t, baseUnit, v, alias);
+                        if (!Close(readAlias, v / factor)) {
+                            problems.Add($"{t.Name}: From{baseUnit}({v}).To{alias}() = {readAlias}, expected {v / factor}");
+                            break;
+                        }
                     }
                 }
             }
         }
         if (problems.Count != 0) Assert.Fail(string.Join("\n", problems));
-        if (pairs < 60) Assert.Fail($"expected many SI-prefix pairs, only found {pairs}");
+        if (pairs < 60) Assert.Fail($"expected many SI-prefix aliases, only found {pairs}");
     }
 
     // A unit name is "PrefixBase" when it starts with an SI prefix and the remainder (re-capitalised)

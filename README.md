@@ -6,36 +6,38 @@ units, and dimensioned arithmetic (`Speed = Length / Duration`) just works.
 
 Requires C# 14 / .NET 10.
 
-## Two ways to use it
+## Two ways to construct and read
 
-Everything in the library is reachable two equivalent ways — pick whichever reads best in context, and
-mix them freely (the result of one is an ordinary measurement you can feed to the other):
+Values are built and read through the **fluent interface**. There are two entry points — pick whichever
+reads best; both produce ordinary measurements you can feed to operators and each other:
 
-**1. Explicit methods** — a `FromXxx` factory and a `ToXxx` accessor for every unit:
-
-```csharp
-Length d  = Length.FromKilometers(5);
-double mi = d.ToMiles();
-Speed  v  = d / Duration.FromHours(2);          // dimensioned arithmetic
-```
-
-**2. Fluent interface** — name units to build a value, and again after `.To` to read one back:
+**1. `Measure.Of(x)`** — the general entry: name any unit (with SI prefixes and compound composition),
+and read back after `.To`:
 
 ```csharp
-Length d  = Measure.Of(5).Kilo.Meters;
-double mi = d.To.Miles;
+Length d  = Measure.Of(5).Kilo.Meters;      // 5 km
+double mi = d.To.Miles;                      // read in miles
 Speed  v  = Measure.Of(10).Meters.Per.Second;
+Speed  w  = d / Measure.Of(2).Hours;         // …or via dimensioned arithmetic
 ```
 
-The fluent form composes units word-by-word (`.Kilo.Meters`, `.Meters.Per.Second`, `.Joule.Seconds`);
-see [Fluent interface](#fluent-interface) and [Compositional grammar](#compositional-fluent-grammar).
+**2. `T.Of(x)`** — a type-constrained entry that only offers ways of constructing `T`, so
+autocompletion stays tight and the result is always a `T`:
+
+```csharp
+Area   a = Area.Of(4).Square.Milli.Meters;
+Length d = Length.Of(5).Kilo.Meters;
+```
+
+Naming units composes word-by-word (`.Kilo.Meters`, `.Meters.Per.Second`, `.Joule.Seconds`); see
+[Fluent interface](#fluent-interface) and [Compositional grammar](#compositional-fluent-grammar).
 
 ## What every measurement provides
 
-Whichever style you use, every quantity type offers the same surface:
+Every quantity type offers the same surface:
 
-- **Construction / read-out** — `T.FromUnit(double)` factories and `double x.ToUnit()` accessors for
-  every supported unit.
+- **Construction / read-out** — the fluent `Measure.Of(x)` / `T.Of(x)` entries and the `x.To` reader
+  (above), covering every supported unit with SI prefixes.
 - **Value semantics** — equality and hashing (`==`, `!=`, `Equals`, plus `NearlyEquals` for
   ULP-tolerant comparison) and ordering (`<`, `>`, `<=`, `>=`, `IComparable<T>`).
 - **Arithmetic** — same-type `+`, `-`, and unary negation; scalar `* k` and `/ k`; same-type `/` → a
@@ -47,7 +49,7 @@ Whichever style you use, every quantity type offers the same surface:
 - **Generic math** — implements `IMeasurement<T>` and the `System.Numerics` operator interfaces, so
   you can write `T Sum<T>(IEnumerable<T> xs) where T : IMeasurement<T>`.
 
-`ToString()` renders each value in its **fundamental SI unit** (`Force.FromNewtons(6)` → `"6 N"`). Two
+`ToString()` renders each value in its **fundamental SI unit** (`Measure.Of(6).Newtons` → `"6 N"`). Two
 quantities show a friendlier form: `Mass` prints grams (`"2000 g"`), and the dimensionless `Quantity`
 and `Ratio` print a bare number.
 
@@ -106,8 +108,8 @@ A few naming rules to know:
   (`.Square.Centi.Meters`), because a lone prefix would give the wrong factor (1 cm² = 1e-4 m², not
   1e-2). Bare hooks like `.SquareCentimeters` also exist.
 - **SI-prefixed unit names** aren't separate hooks — reach `Kilomoles`, `Milliamperehours`, etc.
-  through the chain (`Measure.Of(1).Kilo.Moles`). The explicit `FromKilomoles`/`ToKilomoles` factories
-  are always available.
+  through the prefix chain (`Measure.Of(1).Kilo.Moles`, `Measure.Of(1).Kilo.Grams`). Every quantity's
+  full SI prefix range is available this way.
 - **Compound-unit names shared by two quantities** are disambiguated by the compositional walk rather
   than a fused hook. `JouleSeconds` (shared by `Action`/`AngularMomentum`) composes as
   `Measure.Of(1).Joule.Seconds` — implicitly an `Action`, with `.Joule.Seconds.AngularMomentum` naming
@@ -217,12 +219,12 @@ var options = new JsonSerializerOptions {
 };
 options.Converters.Add(new MeasurementJsonConverterFactory());
 
-JsonSerializer.Serialize(Length.FromMeters(5), options);   // "5 m"
-JsonSerializer.Serialize(Mass.FromKilograms(2), options);  // "2000 g"
-JsonSerializer.Serialize(Quantity.FromCount(1000), options); // 1000  (bare number)
+JsonSerializer.Serialize(Measure.Of(5).Meters, options);     // "5 m"
+JsonSerializer.Serialize(Measure.Of(2).Kilo.Grams, options); // "2000 g"
+JsonSerializer.Serialize(Measure.Of(1000).Count, options);   // 1000  (bare number)
 ```
 
-Reading is lenient: `"5 m"`, `"5"`, and `5` all deserialize to `Length.FromMeters(5)` (the unit
+Reading is lenient: `"5 m"`, `"5"`, and `5` all deserialize to a 5-metre `Length` (the unit
 suffix is validated when present, optional otherwise). The converter is fully generic — it works for
 every measurement type.
 
@@ -234,8 +236,8 @@ of `ToString` (they read the value in its **fundamental SI unit**):
 ```csharp
 Length a = Length.Parse("5 m");                       // 5 m
 Length b = Length.Parse("5m");                        // space optional
-Length c = Length.Parse("1000 m");                    // == Length.FromKilometers(1)
-Mass   m = Mass.Parse("2000 g");                       // == Mass.FromKilograms(2)
+Length c = Length.Parse("1000 m");                    // == Measure.Of(1).Kilo.Meters
+Mass   m = Mass.Parse("2000 g");                       // == Measure.Of(2).Kilo.Grams
 if (Speed.TryParse("9.8 m/s", out var s)) { /* … */ } // non-throwing
 
 // culture-aware, and usable through the generic constraint
@@ -245,7 +247,7 @@ static T Read<T>(string s) where T : IParsable<T> => T.Parse(s, CultureInfo.Inva
 
 The trailing symbol is validated when present and optional otherwise (a bare number is accepted);
 a wrong unit (`"5 kg"` for `Length`) or a unit on a dimensionless type fails. Only the SI symbol is
-recognised — for other units use the `FromXxx` factories (`Length.FromMiles(1)`).
+recognised — for other units use the fluent entries (`Measure.Of(1).Miles`).
 
 ### Dynamic parsing
 
@@ -258,7 +260,7 @@ m.UnitSymbol;                              // "m/s"
 m.CanonicalValue;                          // stored value
 if (m is Speed s) { /* strongly typed again */ }
 
-Measure.TryParse("2000 g", out var mass);  // → a Mass (== Mass.FromKilograms(2))
+Measure.TryParse("2000 g", out var mass);  // → a Mass (== Measure.Of(2).Kilo.Grams)
 ```
 
 A recognised SI unit symbol is required: a bare number is ambiguous (e.g. `Ratio` vs `Quantity`)
@@ -280,15 +282,15 @@ type system (all verified in the test suite):
 | Ohm's law, V = IR | `Voltage v = current * resistance;` |
 | Wave equation, c = fλ | `Speed c = frequency * wavelength;` |
 | Wave speed, v = λ/T | `Speed v = wavelength / period;` |
-| Period–frequency, f = 1/T | `Frequency f = Frequency.FromPeriod(period);` |
+| Period–frequency, f = 1/T | `Frequency f = period.To.Frequency;` (or `duration.To.Frequency`) |
 | de Broglie, λ = h/p | `Length lambda = planckConstant / momentum;` |
 | Work on a charge, W = QV | `Energy w = charge * voltage;` |
 | Pressure–volume work, W = PV | `Energy w = pressure * volume;` |
 | Density, ρ = m/V | `Density rho = mass / volume;` |
 | Heat / calorie, Q = m·c·ΔT | `Energy q = mass * specificHeat * deltaT;` (ΔT a `Temperature` in K) |
 
-Convenience constants mirror the unit factories: `Speed.FromSpeedOfLight(1)` (c) and
-`Action.FromPlanckConstants(1)` (h).
+Convenience constants are named units like any other: `Measure.Of(1).SpeedOfLight` (c) and
+`Measure.Of(1).PlanckConstants` (h).
 
 ---
 
@@ -315,7 +317,7 @@ Three foundational quantities have usage notes worth knowing:
   *elapsed* quantity over a huge range — from Planck time to cosmological scales. It is **not** meant
   for calendar arithmetic (adding months or years).
 - **`Quantity`** models amount of substance and plain counts. Its canonical unit is the raw **count**,
-  so integer counts (and whole pairs, dozens, gross) are exact; moles are `Quantity.FromMoles(n)`.
+  so integer counts (and whole pairs, dozens, gross) are exact; moles are `Measure.Of(n).Moles`.
   Being dimensionless, it prints a bare number.
 - **`Temperature`** is a single class (kelvin canonical); Celsius, Fahrenheit, Rankine, etc. are
   `From`/`To` methods on it rather than separate classes.
@@ -480,15 +482,16 @@ used. Each is expressed as a combination of foundational units.
 |-------|----------|---------|-------|
 | `Ratio` | dimensionless ratio | 1 | percent, ppm, ppb, ppt, dB helpers |
 
-> **Reciprocal helpers.** Reciprocal quantity pairs expose direct converters rather than an
-> operator: `ElectricResistance.ToElectricConductance()` ⇄ `ElectricConductance.ToElectricResistance()`
-> (G = 1/R), and `Resistivity.ToConductivity()` ⇄ `Conductivity.ToResistivity()` (σ = 1/ρ).
+> **Reciprocal helpers.** Reciprocal quantity pairs expose fluent cross-type reads (`this.To.<Partner>`)
+> rather than an operator: `resistance.To.ElectricConductance` ⇄ `conductance.To.ElectricResistance`
+> (G = 1/R), `resistivity.To.Conductivity` ⇄ `conductivity.To.Resistivity` (σ = 1/ρ),
+> `frequency.To.Period` ⇄ `duration.To.Frequency` (f = 1/T), and `wavenumber.To.Wavelength` ⇄
+> `length.To.Wavenumber` (k = 1/λ).
 
 > **Operator caveat.** A few classes omit their defining arithmetic operator: `Torque` (N·m)
-> would clash with `Energy` (joule, same signature `Force × Length`); `Wavenumber` uses
-> `FromWavelength`/`ToWavelength` instead of `1 / Length`; and `ThermalConductivity` and
+> would clash with `Energy` (joule, same signature `Force × Length`); and `ThermalConductivity` and
 > `Radiance` compose from three independent factors, so they are constructed via their
-> `From…` factories.
+> `.Of(…)` fluent entry.
 
 > Amount / count of entities is modeled by the foundational
 > [`Quantity`](#foundational-units) type (canonical unit: raw count), not here.

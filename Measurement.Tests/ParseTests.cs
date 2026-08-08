@@ -7,20 +7,20 @@ namespace com.hafthor.Measurement;
 public sealed class ParseTests {
     [TestMethod]
     public void ParsesSiUnitBareAndNoSpace() {
-        Assert.AreEqual(Length.FromMeters(5), Length.Parse("5 m"));
-        Assert.AreEqual(Length.FromMeters(5), Length.Parse("5m"));
-        Assert.AreEqual(Length.FromMeters(5), Length.Parse("5"));
-        Assert.AreEqual(Length.FromKilometers(1), Length.Parse("1000 m"));
-        Assert.AreEqual(Mass.FromKilograms(2), Mass.Parse("2000 g"));
-        Assert.AreEqual(HeatFluxDensity.FromWattsPerSquareMeter(1), HeatFluxDensity.Parse("1 W/m²"));
-        Assert.AreEqual(Quantity.FromCount(1000), Quantity.Parse("1000"));
-        Assert.AreEqual(Ratio.FromRatio(3), Ratio.Parse("3"));
+        Assert.AreEqual(Length.Of(5).Meters, Length.Parse("5 m"));
+        Assert.AreEqual(Length.Of(5).Meters, Length.Parse("5m"));
+        Assert.AreEqual(Length.Of(5).Meters, Length.Parse("5"));
+        Assert.AreEqual(Length.Of(1).Kilo.Meters, Length.Parse("1000 m"));
+        Assert.AreEqual(Mass.Of(2).Kilo.Grams, Mass.Parse("2000 g"));
+        Assert.AreEqual(HeatFluxDensity.Of(1).Watts.Per.Square.Meter, HeatFluxDensity.Parse("1 W/m²"));
+        Assert.AreEqual(Quantity.Of(1000).Count, Quantity.Parse("1000"));
+        Assert.AreEqual(Ratio.Of(3).Ratio, Ratio.Parse("3"));
     }
 
     [TestMethod]
     public void ParseHandlesSignAndExponent() {
-        Assert.AreEqual(Temperature.FromKelvin(-40), Temperature.Parse("-40 K"));
-        Assert.AreEqual(Capacitance.FromMicrofarads(5), Capacitance.Parse("5E-06 F"));
+        Assert.AreEqual(Temperature.Of(-40).Kelvin, Temperature.Parse("-40 K"));
+        Assert.AreEqual(Capacitance.Of(5).Micro.Farads, Capacitance.Parse("5E-06 F"));
     }
 
     [TestMethod]
@@ -30,7 +30,7 @@ public sealed class ParseTests {
         Assert.IsFalse(Length.TryParse("5 kg", out _));   // not the metre symbol
         Assert.IsFalse(Quantity.TryParse("5 m", out _));  // dimensionless carries no unit
         Assert.IsTrue(Length.TryParse("5 m", out var ok));
-        Assert.AreEqual(Length.FromMeters(5), ok);
+        Assert.AreEqual(Length.Of(5).Meters, ok);
     }
 
     [TestMethod]
@@ -40,17 +40,17 @@ public sealed class ParseTests {
     [TestMethod]
     public void SpanParseWorks() {
         ReadOnlySpan<char> s = "42 m".AsSpan();
-        Assert.AreEqual(Length.FromMeters(42), Length.Parse(s, null));
+        Assert.AreEqual(Length.Of(42).Meters, Length.Parse(s, null));
         Assert.IsTrue(Length.TryParse("42 m".AsSpan(), null, out var r));
-        Assert.AreEqual(Length.FromMeters(42), r);
+        Assert.AreEqual(Length.Of(42).Meters, r);
     }
 
     [TestMethod]
     public void ParseIsCultureAware() {
         // German uses ',' as the decimal separator
         var de = CultureInfo.GetCultureInfo("de-DE");
-        Assert.AreEqual(Length.FromMeters(1.5), Length.Parse("1,5 m", de));
-        Assert.AreEqual(Length.FromMeters(1.5), Length.Parse("1.5 m", CultureInfo.InvariantCulture));
+        Assert.AreEqual(Length.Of(1.5).Meters, Length.Parse("1,5 m", de));
+        Assert.AreEqual(Length.Of(1.5).Meters, Length.Parse("1.5 m", CultureInfo.InvariantCulture));
     }
 
     // Generic usage through the System IParsable<T> constraint.
@@ -58,7 +58,7 @@ public sealed class ParseTests {
 
     [TestMethod]
     public void WorksThroughIParsableConstraint() =>
-        Assert.AreEqual(Speed.FromMetersPerSecond(9.8), ParseGeneric<Speed>("9.8 m/s"));
+        Assert.AreEqual(Speed.Of(9.8).Meters.Per.Second, ParseGeneric<Speed>("9.8 m/s"));
 
     [TestMethod]
     public void ParseRoundTripsToStringForEveryType() {

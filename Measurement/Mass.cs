@@ -35,6 +35,5 @@ namespace com.hafthor.Measurement;
 [Product<Volume, Density>]
 [Product<Area, AreaDensity>]
 [Product<Duration, MassFlowRate>]
-public readonly partial struct Mass {
-    public static MolarMass operator /(Mass mass, Quantity quantity) => MolarMass.FromKilogramsPerMole(mass.ToKilograms() / quantity.ToMoles());
-}
+[Product<MolarMass, Quantity>]
+public readonly partial struct Mass { }

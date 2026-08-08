@@ -9,5 +9,5 @@ public readonly partial struct AngularVelocity {
     public static Angle operator *(AngularVelocity angularVelocity, Duration duration) => Angle.FromRadians(angularVelocity.ToRadiansPerSecond() * duration.ToSeconds());
     public static Angle operator *(Duration duration, AngularVelocity angularVelocity) => Angle.FromRadians(duration.ToSeconds() * angularVelocity.ToRadiansPerSecond());
     public static AngularAcceleration operator /(AngularVelocity angularVelocity, Duration duration) => AngularAcceleration.FromRadiansPerSecondSquared(angularVelocity.ToRadiansPerSecond() / duration.ToSeconds());
-    public static AngularMomentum operator *(AngularVelocity angularVelocity, MomentOfInertia momentOfInertia) => AngularMomentum.FromKilogramSquareMetersPerSecond(angularVelocity.ToRadiansPerSecond() * momentOfInertia.ToKilogramSquareMeters());
+    public static AngularMomentum operator *(AngularVelocity angularVelocity, MomentOfInertia momentOfInertia) => AngularMomentum.FromGramSquareMetersPerSecond(angularVelocity.ToRadiansPerSecond() * momentOfInertia.ToGramSquareMeters());
 }

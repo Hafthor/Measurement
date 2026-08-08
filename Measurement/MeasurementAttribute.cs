@@ -66,3 +66,17 @@ internal sealed class ProductAttribute<TLeft, TRight> : Attribute
     where TRight : struct, IMeasurement {
     public bool Primary { get; set; }
 }
+
+// Declares that this measurement is the coherent-SI reciprocal of TPartner (this = 1 / TPartner) —
+// e.g. Frequency = 1 / Duration, Wavenumber = 1 / Length. The generator emits cross-type read
+// properties on both sides' `.To` builders: `reader.To.<Name>` returns the partner (Name defaults to
+// the partner's type name) and the reverse `reader.To.<thisTypeName>` returns this type. So a single
+// [Reciprocal<Duration>(Name = "Period")] on Frequency yields both `frequency.To.Period` (→ Duration)
+// and `period.To.Frequency` (→ Frequency). Declare it on one side of each pair.
+[AttributeUsage(AttributeTargets.Struct, AllowMultiple = true)]
+internal sealed class ReciprocalAttribute<TPartner> : Attribute
+    where TPartner : struct, IMeasurement {
+    // How this type names its reciprocal in the fluent read (`reader.To.<Name>`); defaults to the
+    // partner's type name.
+    public string Name { get; set; }
+}

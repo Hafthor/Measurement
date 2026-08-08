@@ -10,6 +10,6 @@ namespace com.hafthor.Measurement;
 [UnitHook("Decibels")]
 public readonly partial struct Ratio {
     // Logarithmic (power) decibels
-    public static Ratio FromDecibels(double decibels) => new(Math.Pow(10, decibels / 10) * 1e12);
-    public double ToDecibels() => 10 * Math.Log10(picoratio / 1e12);
+    internal static Ratio FromDecibels(double decibels) => new(Math.Pow(10, decibels / 10) * 1e12);
+    internal double ToDecibels() => 10 * Math.Log10(picoratio / 1e12);
 }

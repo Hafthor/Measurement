@@ -4,43 +4,43 @@ namespace com.hafthor.Measurement;
 public sealed class EqualityTests {
     [TestMethod]
     public void EqualWhenCanonicalValuesMatch() {
-        Assert.IsTrue(Length.FromMeters(5).Equals(Length.FromMeters(5)));
+        Assert.IsTrue(Length.Of(5).Meters.Equals(Length.Of(5).Meters));
         // equality is on the canonical value, regardless of the unit used to construct
-        Assert.IsTrue(Length.FromKilometers(1).Equals(Length.FromMeters(1000)));
-        Assert.AreEqual(Length.FromMeters(1000), Length.FromKilometers(1));
+        Assert.IsTrue(Length.Of(1).Kilo.Meters.Equals(Length.Of(1000).Meters));
+        Assert.AreEqual(Length.Of(1000).Meters, Length.Of(1).Kilo.Meters);
     }
 
     [TestMethod]
     public void NotEqualWhenValuesDiffer() {
-        Assert.IsFalse(Length.FromMeters(5).Equals(Length.FromMeters(6)));
+        Assert.IsFalse(Length.Of(5).Meters.Equals(Length.Of(6).Meters));
     }
 
     [TestMethod]
     public void NotEqualAcrossDifferentTypes() {
-        object mass = Mass.FromKilograms(5);
-        Assert.IsFalse(Length.FromMeters(5).Equals(mass));
+        object mass = Mass.Of(5).Kilo.Grams;
+        Assert.IsFalse(Length.Of(5).Meters.Equals(mass));
     }
 
     [TestMethod]
     public void EqualValuesShareHashCode() {
         Assert.AreEqual(
-            Length.FromKilometers(1).GetHashCode(),
-            Length.FromMeters(1000).GetHashCode());
+            Length.Of(1).Kilo.Meters.GetHashCode(),
+            Length.Of(1000).Meters.GetHashCode());
     }
 
     [TestMethod]
     public void UsableAsDictionaryKey() {
-        var seen = new HashSet<Force> { Force.FromNewtons(10), Force.FromKilonewtons(0.01) };
+        var seen = new HashSet<Force> { Force.Of(10).Newtons, Force.Of(0.01).Kilo.Newtons };
         Assert.HasCount(1, seen); // 10 N == 0.01 kN
-        Assert.Contains(Force.FromNewtons(10), seen);
+        Assert.Contains(Force.Of(10).Newtons, seen);
     }
 
     [TestMethod]
     public void NearlyEquals_AllowsUlpSlop() {
         // 0.1 + 0.2 != 0.3 exactly, but they are one ULP apart (sub-nanometre, so below the
         // exact-integer anchor scale where the rounding would otherwise vanish)
-        Length a = Length.FromNanometers(0.1) + Length.FromNanometers(0.2);
-        Length b = Length.FromNanometers(0.3);
+        Length a = Length.Of(0.1).Nano.Meters + Length.Of(0.2).Nano.Meters;
+        Length b = Length.Of(0.3).Nano.Meters;
         Assert.IsFalse(a.Equals(b));         // exact equality: not equal
         Assert.IsTrue(a.NearlyEquals(b));     // within the default 4 ULPs
         Assert.IsFalse(a.NearlyEquals(b, 0)); // zero slop → strict
@@ -63,43 +63,43 @@ public sealed class EqualityTests {
 
     [TestMethod]
     public void NearlyEquals_RejectsGenuinelyDifferentValues() {
-        Assert.IsFalse(Length.FromMeters(1).NearlyEquals(Length.FromMeters(2)));
-        Assert.IsTrue(Length.FromMeters(5).NearlyEquals(Length.FromMeters(5)));
+        Assert.IsFalse(Length.Of(1).Meters.NearlyEquals(Length.Of(2).Meters));
+        Assert.IsTrue(Length.Of(5).Meters.NearlyEquals(Length.Of(5).Meters));
     }
 
     [TestMethod]
     public void RelationalOperators() {
-        Assert.IsTrue(Length.FromMeters(1) < Length.FromMeters(2));
-        Assert.IsTrue(Length.FromKilometers(1) > Length.FromMeters(999));
-        Assert.IsTrue(Length.FromMeters(5) <= Length.FromMeters(5));
-        Assert.IsTrue(Length.FromMeters(5) >= Length.FromMeters(5));
-        Assert.IsFalse(Length.FromMeters(2) < Length.FromMeters(2));
+        Assert.IsTrue(Length.Of(1).Meters < Length.Of(2).Meters);
+        Assert.IsTrue(Length.Of(1).Kilo.Meters > Length.Of(999).Meters);
+        Assert.IsTrue(Length.Of(5).Meters <= Length.Of(5).Meters);
+        Assert.IsTrue(Length.Of(5).Meters >= Length.Of(5).Meters);
+        Assert.IsFalse(Length.Of(2).Meters < Length.Of(2).Meters);
     }
 
     [TestMethod]
     public void EqualityOperators() {
-        Assert.IsTrue(Length.FromKilometers(1) == Length.FromMeters(1000)); // exact, unit-independent
-        Assert.IsTrue(Length.FromMeters(1) != Length.FromMeters(2));
-        Assert.IsFalse(Length.FromMeters(1) == Length.FromMeters(2));
+        Assert.IsTrue(Length.Of(1).Kilo.Meters == Length.Of(1000).Meters); // exact, unit-independent
+        Assert.IsTrue(Length.Of(1).Meters != Length.Of(2).Meters);
+        Assert.IsFalse(Length.Of(1).Meters == Length.Of(2).Meters);
     }
 
     [TestMethod]
     public void SortableAndMinMax() {
         var list = new List<Length> {
-            Length.FromMeters(3), Length.FromKilometers(1), Length.FromMeters(2),
+            Length.Of(3).Meters, Length.Of(1).Kilo.Meters, Length.Of(2).Meters,
         };
         list.Sort();
-        Assert.AreEqual(2.0, list[0].ToMeters());
-        Assert.AreEqual(3.0, list[1].ToMeters());
-        Assert.AreEqual(1000.0, list[2].ToMeters());
-        Assert.AreEqual(1000.0, list.Max().ToMeters());
-        Assert.AreEqual(2.0, list.Min().ToMeters());
+        Assert.AreEqual(2.0, list[0].To.Meters);
+        Assert.AreEqual(3.0, list[1].To.Meters);
+        Assert.AreEqual(1000.0, list[2].To.Meters);
+        Assert.AreEqual(1000.0, list.Max().To.Meters);
+        Assert.AreEqual(2.0, list.Min().To.Meters);
     }
 
     [TestMethod]
     public void CompareTo_IsTypeSafe() {
-        Assert.AreEqual(-1, Math.Sign(Length.FromMeters(1).CompareTo(Length.FromMeters(2))));
-        System.IComparable boxed = Length.FromMeters(1);
-        Assert.ThrowsExactly<ArgumentException>(() => boxed.CompareTo(Mass.FromKilograms(1)));
+        Assert.AreEqual(-1, Math.Sign(Length.Of(1).Meters.CompareTo(Length.Of(2).Meters)));
+        System.IComparable boxed = Length.Of(1).Meters;
+        Assert.ThrowsExactly<ArgumentException>(() => boxed.CompareTo(Mass.Of(1).Kilo.Grams));
     }
 }

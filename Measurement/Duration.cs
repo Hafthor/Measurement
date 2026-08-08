@@ -18,8 +18,4 @@ namespace com.hafthor.Measurement;
 [Unit("Annums", 31557600)]
 [Unit("HubbleTimes", 4.803349612e17)]
 [Unit("PlanckTimes", 5.391247e-44)]
-public readonly partial struct Duration {
-    // Frequency (reciprocal relationship: T = 1 / f)
-    public static Duration FromFrequency(Frequency frequency) => new(1 / frequency.ToHertz());
-    public Frequency ToFrequency() => Frequency.FromHertz(1 / seconds);
-}
+public readonly partial struct Duration { }

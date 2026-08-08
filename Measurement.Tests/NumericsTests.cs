@@ -17,20 +17,20 @@ public sealed class NumericsTests {
 
     [TestMethod]
     public void GenericSumAndAverage() {
-        var lengths = new[] { Length.FromMeters(1), Length.FromMeters(2), Length.FromMeters(3) };
-        Assert.AreEqual(6.0, Sum(lengths).ToMeters());
-        Assert.AreEqual(2.0, Average(lengths).ToMeters());
+        var lengths = new[] { Length.Of(1).Meters, Length.Of(2).Meters, Length.Of(3).Meters };
+        Assert.AreEqual(6.0, Sum(lengths).To.Meters);
+        Assert.AreEqual(2.0, Average(lengths).To.Meters);
 
-        var masses = new[] { Mass.FromKilograms(10), Mass.FromKilograms(20) };
-        Assert.AreEqual(30.0, Sum(masses).ToKilograms());
+        var masses = new[] { Mass.Of(10).Kilo.Grams, Mass.Of(20).Kilo.Grams };
+        Assert.AreEqual(30.0, Sum(masses).To.Kilo.Grams);
     }
 
     [TestMethod]
     public void AdditiveIdentityIsZero() {
-        Assert.AreEqual(0.0, Length.Zero.ToMeters());
-        Assert.AreEqual(0.0, Energy.Zero.ToJoules());
+        Assert.AreEqual(0.0, Length.Zero.To.Meters);
+        Assert.AreEqual(0.0, Energy.Zero.To.Joules);
         // via the interface, in a generic setting
-        Assert.AreEqual(0.0, ZeroOf<Mass>().ToKilograms());
+        Assert.AreEqual(0.0, ZeroOf<Mass>().To.Kilo.Grams);
     }
 
     private static T ZeroOf<T>() where T : IMeasurement<T> => T.AdditiveIdentity;

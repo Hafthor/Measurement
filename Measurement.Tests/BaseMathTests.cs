@@ -6,38 +6,38 @@ namespace com.hafthor.Measurement;
 public sealed class BaseMathTests {
     [TestMethod]
     public void ScalarMultiplyAndDivide() {
-        Assert.AreEqual(15.0, (Length.FromMeters(5) * 3).ToMeters());
-        Assert.AreEqual(15.0, (3 * Length.FromMeters(5)).ToMeters());
-        Assert.AreEqual(2.5, (Length.FromMeters(5) / 2).ToMeters());
+        Assert.AreEqual(15.0, (Length.Of(5).Meters * 3).To.Meters);
+        Assert.AreEqual(15.0, (3 * Length.Of(5).Meters).To.Meters);
+        Assert.AreEqual(2.5, (Length.Of(5).Meters / 2).To.Meters);
     }
 
     [TestMethod]
     public void SameTypeDivisionIsDimensionlessRatio() {
-        double ratio = Length.FromKilometers(1) / Length.FromMeters(250);
+        double ratio = Length.Of(1).Kilo.Meters / Length.Of(250).Meters;
         Assert.AreEqual(4.0, ratio);
     }
 
     [TestMethod]
     public void AbsMinMaxClampLerp() {
-        Assert.AreEqual(5.0, (-Length.FromMeters(5)).Abs().ToMeters());
-        Assert.AreEqual(2.0, Length.FromMeters(2).Min(Length.FromMeters(7)).ToMeters());
-        Assert.AreEqual(7.0, Length.FromMeters(2).Max(Length.FromMeters(7)).ToMeters());
-        Assert.AreEqual(0.0, (-Length.FromMeters(5)).Clamp(Length.FromMeters(0), Length.FromMeters(10)).ToMeters());
-        Assert.AreEqual(3.0, Length.FromMeters(3).Clamp(Length.FromMeters(0), Length.FromMeters(10)).ToMeters());
+        Assert.AreEqual(5.0, (-Length.Of(5).Meters).Abs().To.Meters);
+        Assert.AreEqual(2.0, Length.Of(2).Meters.Min(Length.Of(7).Meters).To.Meters);
+        Assert.AreEqual(7.0, Length.Of(2).Meters.Max(Length.Of(7).Meters).To.Meters);
+        Assert.AreEqual(0.0, (-Length.Of(5).Meters).Clamp(Length.Of(0).Meters, Length.Of(10).Meters).To.Meters);
+        Assert.AreEqual(3.0, Length.Of(3).Meters.Clamp(Length.Of(0).Meters, Length.Of(10).Meters).To.Meters);
         // static Lerp is inherited, callable on the concrete type
-        Assert.AreEqual(5.0, Length.Lerp(Length.FromMeters(0), Length.FromMeters(10), 0.5).ToMeters());
+        Assert.AreEqual(5.0, Length.Lerp(Length.Of(0).Meters, Length.Of(10).Meters, 0.5).To.Meters);
     }
 
     [TestMethod]
     public void Equatable_NoBoxing() {
-        Assert.IsTrue(Length.FromMeters(1000).Equals(Length.FromKilometers(1)));
-        Assert.IsFalse(Length.FromMeters(1).Equals(Length.FromMeters(2)));
+        Assert.IsTrue(Length.Of(1000).Meters.Equals(Length.Of(1).Kilo.Meters));
+        Assert.IsFalse(Length.Of(1).Meters.Equals(Length.Of(2).Meters));
     }
 
     [TestMethod]
     public void Formattable() {
-        Assert.AreEqual("5.00 m", Length.FromMeters(5).ToString("F2", CultureInfo.InvariantCulture));
-        Assert.AreEqual("5.00", Ratio.FromRatio(5).ToString("F2", CultureInfo.InvariantCulture));
-        Assert.AreEqual("1,000 m", Length.FromMeters(1000).ToString("N0", CultureInfo.InvariantCulture));
+        Assert.AreEqual("5.00 m", Length.Of(5).Meters.ToString("F2", CultureInfo.InvariantCulture));
+        Assert.AreEqual("5.00", Ratio.Of(5).Ratio.ToString("F2", CultureInfo.InvariantCulture));
+        Assert.AreEqual("1,000 m", Length.Of(1000).Meters.ToString("N0", CultureInfo.InvariantCulture));
     }
 }

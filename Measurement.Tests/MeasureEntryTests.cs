@@ -7,11 +7,11 @@ public sealed class MeasureEntryTests {
     [TestMethod]
     public void NonDoubleEntry_Build() {
         Mass m = Measure.Of(5).Kilo.Grams;    // 5 kg without touching double
-        Assert.AreEqual(5.0, m.ToKilograms());
+        Assert.AreEqual(5.0, m.To.Kilo.Grams);
         Length d = Measure.Of(3).Kilo.Meters; // 3 km
-        Assert.AreEqual(3000.0, d.ToMeters());
+        Assert.AreEqual(3000.0, d.To.Meters);
         Mass mg = Measure.Of(250).Milli.Grams; // 250 mg
-        Assert.AreEqual(0.25, mg.ToGrams());
+        Assert.AreEqual(0.25, mg.To.Grams);
     }
 
     [TestMethod]

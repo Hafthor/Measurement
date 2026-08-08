@@ -13,28 +13,28 @@ public sealed class ValueTypeTests {
 
     [TestMethod]
     public void DefaultIsZero() {
-        Assert.AreEqual(0.0, default(Length).ToMeters());
-        Assert.AreEqual(0.0, Length.Zero.ToMeters());
+        Assert.AreEqual(0.0, default(Length).To.Meters);
+        Assert.AreEqual(0.0, Length.Zero.To.Meters);
     }
 
     [TestMethod]
     public void GeneratedOperatorsWork() {
-        Assert.AreEqual(7.0, (Length.FromMeters(3) + Length.FromMeters(4)).ToMeters());
-        Assert.AreEqual(15.0, (Length.FromMeters(5) * 3).ToMeters());
-        Assert.AreEqual(4.0, Length.FromKilometers(1) / Length.FromMeters(250)); // ratio
-        Assert.IsTrue(Length.FromMeters(1) < Length.FromMeters(2));
-        Assert.IsTrue(Length.FromKilometers(1) == Length.FromMeters(1000));
-        Assert.AreEqual("5 m", Length.FromMeters(5).ToString());
+        Assert.AreEqual(7.0, (Length.Of(3).Meters + Length.Of(4).Meters).To.Meters);
+        Assert.AreEqual(15.0, (Length.Of(5).Meters * 3).To.Meters);
+        Assert.AreEqual(4.0, Length.Of(1).Kilo.Meters / Length.Of(250).Meters); // ratio
+        Assert.IsTrue(Length.Of(1).Meters < Length.Of(2).Meters);
+        Assert.IsTrue(Length.Of(1).Kilo.Meters == Length.Of(1000).Meters);
+        Assert.AreEqual("5 m", Length.Of(5).Meters.ToString());
     }
 
     [TestMethod]
     public void CrossTypeOperatorsStillWork() {
         // Length (struct) / Duration (struct) => Speed (class)
-        Speed s = Length.FromMeters(100) / Duration.FromSeconds(10);
-        Assert.AreEqual(10.0, s.ToMetersPerSecond());
+        Speed s = Length.Of(100).Meters / Duration.Of(10).Seconds;
+        Assert.AreEqual(10.0, s.To.Meters.Per.Second);
         // Mass (struct) * Acceleration (class) => Force (class)
-        Force f = Mass.FromKilograms(2) * Acceleration.FromMetersPerSecondSquared(3);
-        Assert.AreEqual(6.0, f.ToNewtons());
+        Force f = Mass.Of(2).Kilo.Grams * Acceleration.Of(3).Meters.Per.Second.Squared;
+        Assert.AreEqual(6.0, f.To.Newtons);
     }
 
     private static T Sum<T>(IEnumerable<T> xs) where T : IMeasurement<T> {
@@ -45,8 +45,8 @@ public sealed class ValueTypeTests {
 
     [TestMethod]
     public void GenericMathWorksForStructs() {
-        var lengths = new[] { Length.FromMeters(1), Length.FromMeters(2), Length.FromMeters(3) };
-        Assert.AreEqual(6.0, Sum(lengths).ToMeters());
-        Assert.AreEqual(0.0, Length.Zero.ToMeters());
+        var lengths = new[] { Length.Of(1).Meters, Length.Of(2).Meters, Length.Of(3).Meters };
+        Assert.AreEqual(6.0, Sum(lengths).To.Meters);
+        Assert.AreEqual(0.0, Length.Zero.To.Meters);
     }
 }
