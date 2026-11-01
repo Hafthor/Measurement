@@ -6,21 +6,23 @@ namespace com.hafthor.Measurement;
 public sealed class MeasureParseTests {
     [TestMethod]
     public void PicksTypeFromUnitSymbol() {
-        Assert.IsInstanceOfType<Speed>(Measure.Parse("5 m/s"));
-        Assert.IsInstanceOfType<Mass>(Measure.Parse("2000 g"));
-        Assert.IsInstanceOfType<Temperature>(Measure.Parse("300 K"));
-        Assert.IsInstanceOfType<HeatFluxDensity>(Measure.Parse("1 W/m²"));
-        Assert.IsInstanceOfType<MolarHeatCapacity>(Measure.Parse("5 J/(mol·K)"));
-        Assert.IsInstanceOfType<Resistivity>(Measure.Parse("2 Ω·m"));
-    }
-
-    [TestMethod]
-    public void ReturnsEquivalentValue() {
-        var m = Measure.Parse("2000 g");
-        Assert.AreEqual(Mass.Of(2).Kilo.Grams, (Mass)m);
-        // usable through the non-generic surface
-        Assert.AreEqual("m/s", Measure.Parse("5 m/s").UnitSymbol);
-        Assert.AreEqual(Speed.Of(5).Meters.Per.Second.CanonicalValue, Measure.Parse("5 m/s").CanonicalValue);
+        (string s, IMeasurement m)[] equivalents = [
+            ("5 m/s", Speed.Of(5).Meters.Per.Second),
+            ("2000 g", Mass.Of(2000).Grams),
+            ("300 K", Temperature.Of(300).Kelvin),
+            ("1 W/m²", HeatFluxDensity.Of(1).Watts.Per.Square.Meter),
+            ("5 J/(mol·K)", MolarHeatCapacity.Of(5).Joules.Per.Mole.Kelvin),
+            ("2 Ω·m", Resistivity.Of(2).Ohm.Meters)
+        ];
+        foreach (var equivalent in equivalents) {
+            var message = "Testing " + equivalent.s;
+            var parsed = Measure.Parse(equivalent.s);
+            Assert.AreEqual(equivalent.m.GetType(), parsed.GetType(), message);
+            Assert.AreEqual(equivalent.m, parsed, message);
+            Assert.AreEqual(equivalent.s, parsed.ToString(), message);
+            Assert.AreEqual(equivalent.s.Split(' ', 2)[1], parsed.UnitSymbol, message);
+            Assert.AreEqual(equivalent.m.CanonicalValue, parsed.CanonicalValue, message);
+        }
     }
 
     [TestMethod]
@@ -53,6 +55,6 @@ public sealed class MeasureParseTests {
             if (relErr > 1e-9) Assert.Fail($"{t.Name}: '{s}' round-trip {a} → {b} (relErr {relErr:E2})");
             count++;
         }
-        if (count < 70) Assert.Fail($"expected to round-trip most types, only did {count}");
+        if (count < 78) Assert.Fail($"expected to round-trip most types, only did {count}");
     }
 }

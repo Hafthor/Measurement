@@ -5,4 +5,4 @@ namespace com.hafthor.Measurement;
 [Unit("LumenHours", 3600)]
 [SiUnit("Talbots", 0)]
 [Product<LuminousFlux, Duration>]
-public readonly partial struct LuminousEnergy { }
+public readonly partial struct LuminousEnergy;

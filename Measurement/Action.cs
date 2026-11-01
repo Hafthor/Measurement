@@ -6,4 +6,4 @@ namespace com.hafthor.Measurement;
 [Unit("PlanckConstants", 6.62607015e-25)]
 [Product<Energy, Duration>(Primary = true)]
 [Product<Length, Momentum>]
-public readonly partial struct Action { }
+public readonly partial struct Action;

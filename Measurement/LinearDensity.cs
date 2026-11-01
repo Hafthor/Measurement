@@ -5,4 +5,4 @@ namespace com.hafthor.Measurement;
 [SiUnit("GramsPerCentimeter", 2)]
 [SiUnit("Tex", -3)]
 [Unit("Denier", 1.1111111111111e-4)]
-public readonly partial struct LinearDensity { }
+public readonly partial struct LinearDensity;

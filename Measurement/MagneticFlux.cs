@@ -7,4 +7,4 @@ namespace com.hafthor.Measurement;
 [Product<Inductance, ElectricCurrent>]
 [Product<MagneticFluxDensity, Area>]
 [Product<LinearMagneticFluxDensity, Length>]
-public readonly partial struct MagneticFlux { }
+public readonly partial struct MagneticFlux;

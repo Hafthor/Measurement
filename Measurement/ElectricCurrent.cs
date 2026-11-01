@@ -6,4 +6,4 @@ namespace com.hafthor.Measurement;
 [Unit("Statamperes", 3.335641e-4)]
 [Product<Area, CurrentDensity>]
 [Product<Length, MagneticFieldStrength>]
-public readonly partial struct ElectricCurrent { }
+public readonly partial struct ElectricCurrent;

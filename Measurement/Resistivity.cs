@@ -4,4 +4,4 @@ namespace com.hafthor.Measurement;
 [SiUnit("OhmMeters", 8)]
 [SiUnit("OhmCentimeters", 6, "None Micro")]
 [Product<ElectricResistance, Length>]
-public readonly partial struct Resistivity { }
+public readonly partial struct Resistivity;

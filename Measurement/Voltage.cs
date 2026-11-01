@@ -6,4 +6,4 @@ namespace com.hafthor.Measurement;
 [Unit("Statvolts", 299.792458e6)]
 [Product<ElectricResistance, ElectricCurrent>]
 [Product<Length, ElectricFieldStrength>]
-public readonly partial struct Voltage { }
+public readonly partial struct Voltage;

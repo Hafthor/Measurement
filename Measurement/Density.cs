@@ -7,4 +7,4 @@ namespace com.hafthor.Measurement;
 [SiUnit("GramsPerMilliliter", 6)]
 [Unit("PoundsPerCubicFoot", 16.018463373947e3)]
 [Unit("PoundsPerGallon", 119.82642731689e3)]
-public readonly partial struct Density { }
+public readonly partial struct Density;

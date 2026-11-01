@@ -20,8 +20,7 @@ internal static class MeasurementReflection {
     }
 
     public static double DisplayFactor(Type t) {
-        var a = AttributeData(t);
-        foreach (var na in a.NamedArguments)
+        foreach (var na in AttributeData(t).NamedArguments)
             if (na.MemberName == "DisplayFactor") return System.Convert.ToDouble(na.TypedValue.Value);
         return 1.0;
     }

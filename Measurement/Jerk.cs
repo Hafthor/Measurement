@@ -4,4 +4,4 @@ namespace com.hafthor.Measurement;
 [SiUnit("MetersPerSecondCubed", 0)]
 [Unit("FeetPerSecondCubed", 0.3048)]
 [SiUnit("GalsPerSecond", -2)]
-public readonly partial struct Jerk { }
+public readonly partial struct Jerk;

@@ -3,7 +3,7 @@ using System.Reflection;
 namespace com.hafthor.Measurement;
 
 // Dynamic, unit-driven parsing: Measure.Parse("5 m/s") inspects the trailing unit symbol, picks
-// the matching measurement type, and returns it boxed as IMeasurement. A recognised SI unit
+// the matching measurement type, and returns it boxed as IMeasurement. A recognized SI unit
 // symbol is required — a bare number is ambiguous (e.g. Ratio vs Quantity) and is rejected.
 public static partial class Measure {
     private static readonly Dictionary<string, Func<string, IFormatProvider, IMeasurement>> BySymbol = BuildRegistry();
@@ -22,7 +22,7 @@ public static partial class Measure {
         if (unit.Length == 0) return false;                       // no unit → can't choose a type
         if (!BySymbol.TryGetValue(unit, out var parse)) return false;
         result = parse(s, provider);
-        return result != null;
+        return result is not null;
     }
 
     // The unit is whatever follows the last ASCII digit (SI symbols contain none — superscripts

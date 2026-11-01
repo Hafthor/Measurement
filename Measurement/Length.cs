@@ -19,4 +19,4 @@ namespace com.hafthor.Measurement;
 [Unit("AstronomicalUnits", 149_597_870_700e9)]
 [Unit("PlanckLengths", 1.616255e-26)]
 [Product<Duration, Speed>]
-public readonly partial struct Length { }
+public readonly partial struct Length;

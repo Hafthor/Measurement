@@ -4,4 +4,4 @@ namespace com.hafthor.Measurement;
 [Unit("GraysPerSecond", 3600e3)]
 [Unit("MilligraysPerSecond", 3600)]
 [SiUnit("GraysPerHour", 3)]
-public readonly partial struct DoseRate { }
+public readonly partial struct DoseRate;

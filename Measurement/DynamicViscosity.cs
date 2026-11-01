@@ -4,4 +4,4 @@ namespace com.hafthor.Measurement;
 [SiUnit("PascalSeconds", 3, "None Milli")]
 [SiUnit("Poise", 2, "None Centi")]
 [Product<Pressure, Duration>]
-public readonly partial struct DynamicViscosity { }
+public readonly partial struct DynamicViscosity;

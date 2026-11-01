@@ -6,4 +6,4 @@ namespace com.hafthor.Measurement;
 [Unit("Hefnerkerze", 0.903e3)]
 [Unit("Carcels", 9.74e3)]
 [Product<Area, Luminance>]
-public readonly partial struct LuminousIntensity { }
+public readonly partial struct LuminousIntensity;

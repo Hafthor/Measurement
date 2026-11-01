@@ -10,4 +10,4 @@ namespace com.hafthor.Measurement;
 [Unit("Celsius", 9.0, Offset = 273.15)]
 [Unit("Fahrenheit", 5.0, Offset = 459.67)]
 [Product<Power, ThermalResistance>]
-public readonly partial struct Temperature { }
+public readonly partial struct Temperature;

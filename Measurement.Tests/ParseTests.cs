@@ -27,10 +27,12 @@ public sealed class ParseTests {
     public void TryParseRejectsGarbageAndWrongUnit() {
         Assert.IsFalse(Length.TryParse("abc", out _));
         Assert.IsFalse(Length.TryParse("", out _));
-        Assert.IsFalse(Length.TryParse("5 kg", out _));   // not the metre symbol
+        Assert.IsFalse(Length.TryParse("5 kg", out _));   // not the "m" length symbol
+        Assert.IsFalse(Length.TryParse("5 km", out _));
+
         Assert.IsFalse(Quantity.TryParse("5 m", out _));  // dimensionless carries no unit
-        Assert.IsTrue(Length.TryParse("5 m", out var ok));
-        Assert.AreEqual(Length.Of(5).Meters, ok);
+
+        Assert.IsTrue(Length.TryParse("5 m", out var ok) && ok == Length.Of(5).Meters);
     }
 
     [TestMethod]
@@ -40,9 +42,9 @@ public sealed class ParseTests {
     [TestMethod]
     public void SpanParseWorks() {
         ReadOnlySpan<char> s = "42 m".AsSpan();
-        Assert.AreEqual(Length.Of(42).Meters, Length.Parse(s, null));
-        Assert.IsTrue(Length.TryParse("42 m".AsSpan(), null, out var r));
-        Assert.AreEqual(Length.Of(42).Meters, r);
+        var expected = Length.Of(42).Meters;
+        Assert.AreEqual(expected, Length.Parse(s, null));
+        Assert.IsTrue(Length.TryParse(s, null, out var length) && length == expected);
     }
 
     [TestMethod]
@@ -62,6 +64,7 @@ public sealed class ParseTests {
 
     [TestMethod]
     public void ParseRoundTripsToStringForEveryType() {
+        int count = 0;
         foreach (var t in MeasurementReflection.AllMeasurementTypes()) {
             var parse = t.GetMethod("Parse", BindingFlags.Public | BindingFlags.Static, [typeof(string)]);
             object original = MeasurementReflection.FromCanonical(t, 1234.5);
@@ -71,6 +74,8 @@ public sealed class ParseTests {
             double b = MeasurementReflection.Canonical(parsed);
             double relErr = Math.Abs(b - a) / Math.Abs(a);
             if (relErr > 1e-9) Assert.Fail($"{t.Name}: '{s}' round-trip {a} → {b} (relErr {relErr:E2})");
+            count++;
         }
+        Assert.IsGreaterThanOrEqualTo(80, count, $"expected to check all measurement types, only saw {count}");
     }
 }

@@ -4,4 +4,4 @@ namespace com.hafthor.Measurement;
 [SiUnit("CubicMetersPerKilogram", 6)]
 [SiUnit("LitersPerKilogram", 3)]
 [SiUnit("CubicCentimetersPerGram", 3)]
-public readonly partial struct SpecificVolume { }
+public readonly partial struct SpecificVolume;

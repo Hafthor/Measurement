@@ -6,4 +6,4 @@ namespace com.hafthor.Measurement;
 [Unit("PoundsPerSecond", 0.45359237e3)]
 [Unit("PoundsPerHour", 0.45359237e3 / 3600)]
 [Unit("TonnesPerHour", 1000e3 / 3600)]
-public readonly partial struct MassFlowRate { }
+public readonly partial struct MassFlowRate;

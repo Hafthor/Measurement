@@ -4,4 +4,4 @@ namespace com.hafthor.Measurement;
 [SiUnit("SiemensPerMeter", 1)]
 [SiUnit("SiemensPerCentimeter", 3, "None Milli")]
 [Reciprocal<Resistivity>]
-public readonly partial struct Conductivity { }
+public readonly partial struct Conductivity;

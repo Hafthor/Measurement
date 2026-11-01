@@ -5,4 +5,4 @@ namespace com.hafthor.Measurement;
 [SiUnit("Abfarads", 21)]
 [Unit("Statfarads", 1.1126500560536185)]
 [Product<Length, Permittivity>]
-public readonly partial struct Capacitance { }
+public readonly partial struct Capacitance;

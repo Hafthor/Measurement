@@ -9,4 +9,4 @@ namespace com.hafthor.Measurement;
 [Unit("InchesOfMercury", 3386.389)]
 [Unit("InchesOfWater", 249.08891)]
 [Unit("PoundsPerSquareInch", 6894.757293168)]
-public readonly partial struct Pressure { }
+public readonly partial struct Pressure;

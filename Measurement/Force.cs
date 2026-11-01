@@ -11,4 +11,4 @@ namespace com.hafthor.Measurement;
 [Product<Pressure, Area>]
 [Product<SurfaceTension, Length>]
 [Product<Length, SurfaceTension>]
-public readonly partial struct Force { }
+public readonly partial struct Force;

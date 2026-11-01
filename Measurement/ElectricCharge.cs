@@ -13,4 +13,4 @@ namespace com.hafthor.Measurement;
 [Product<ElectricCurrent, Duration>]
 [Product<Volume, ChargeDensity>]
 [Product<Area, SurfaceChargeDensity>]
-public readonly partial struct ElectricCharge { }
+public readonly partial struct ElectricCharge;

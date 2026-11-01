@@ -20,4 +20,4 @@ namespace com.hafthor.Measurement;
 [Product<Area, Length>]
 [Product<Duration, VolumetricFlowRate>]
 [Product<Mass, SpecificVolume>]
-public readonly partial struct Volume { }
+public readonly partial struct Volume;

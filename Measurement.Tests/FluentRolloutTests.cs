@@ -5,23 +5,23 @@ namespace com.hafthor.Measurement;
 // Spot-checks that the fluent API is wired across a broad sample of classes.
 [TestClass]
 public sealed class FluentRolloutTests {
-[TestMethod]
-public void CompositionalWalk_DisambiguatesSharedUnitNames() {
-    // JouleSeconds is a product spelling (Joule·Seconds), so the compositional walk disambiguates it:
-    // `.Joule.Seconds` is implicitly the Primary (Action); `.Action`/`.AngularMomentum` name the reading.
-    Action implicitlyAction = 5.0.Joule.Seconds;
-    Assert.AreEqual(5.0, implicitlyAction.To.JouleSeconds);
-    Action a = 5.0.Joule.Seconds.Action;
-    Assert.AreEqual(5.0, a.To.JouleSeconds);
-    AngularMomentum am = 5.0.Joule.Seconds.AngularMomentum;
-    Assert.AreEqual(5.0, am.To.JouleSeconds);
-    Action ka = Measure.Of(5).Kilo.Joule.Seconds.Action;
-    Assert.AreEqual(5000.0, ka.To.JouleSeconds);
-    // rpm is an angular rate — a revolution is one turn — so it composes directly, no selector.
-    AngularVelocity w = Measure.Of(3).Revolutions.Per.Minute;
-    Assert.AreEqual(AngularVelocity.Of(3).Revolutions.Per.Minute.To.Radians.Per.Second,
-        w.To.Radians.Per.Second, 1e-12);
-}
+    [TestMethod]
+    public void CompositionalWalk_DisambiguatesSharedUnitNames() {
+        // JouleSeconds is a product spelling (Joule·Seconds), so the compositional walk disambiguates it:
+        // `.Joule.Seconds` is implicitly the Primary (Action); `.Action`/`.AngularMomentum` name the reading.
+        Action implicitlyAction = 5.0.Joule.Seconds;
+        Assert.AreEqual(5.0, implicitlyAction.To.JouleSeconds);
+        Action a = 5.0.Joule.Seconds.Action;
+        Assert.AreEqual(5.0, a.To.JouleSeconds);
+        AngularMomentum am = 5.0.Joule.Seconds.AngularMomentum;
+        Assert.AreEqual(5.0, am.To.JouleSeconds);
+        Action ka = Measure.Of(5).Kilo.Joule.Seconds.Action;
+        Assert.AreEqual(5000.0, ka.To.JouleSeconds);
+        // rpm is an angular rate — a revolution is one turn — so it composes directly, no selector.
+        AngularVelocity w = Measure.Of(3).Revolutions.Per.Minute;
+        Assert.AreEqual(AngularVelocity.Of(3).Revolutions.Per.Minute.To.Radians.Per.Second,
+            w.To.Radians.Per.Second, 1e-12);
+    }
 
     [TestMethod]
     public void PrefixInput_AcrossClasses() {

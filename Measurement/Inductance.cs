@@ -5,4 +5,4 @@ namespace com.hafthor.Measurement;
 [SiUnit("Abhenries", 0)]
 [Unit("Stathenries", 8.987551787368176e20)]
 [Product<Length, Permeability>]
-public readonly partial struct Inductance { }
+public readonly partial struct Inductance;

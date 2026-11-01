@@ -5,7 +5,7 @@ namespace com.hafthor.Measurement;
 // Shared parsing for the generated Parse/TryParse (IParsable / ISpanParsable), the inverse of
 // ToString. Accepts the value in its display SI unit — "5 m", "5m", or a bare "5" — validating the
 // trailing unit symbol when present, then scales by DisplayFactor back to the stored canonical
-// value. Only the SI unit symbol is recognised (use the FromXxx factories for other units).
+// value. Only the SI unit symbol is recognized (use the FromXxx factories for other units).
 internal static class MeasurementParsing {
     public static bool TryParseCanonical(ReadOnlySpan<char> s, string symbol, double displayFactor,
         IFormatProvider provider, out double canonical) {

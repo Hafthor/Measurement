@@ -5,4 +5,4 @@ namespace com.hafthor.Measurement;
 [SiUnit("Mhos", 9)]
 [Product<Length, Conductivity>]
 [Reciprocal<ElectricResistance>]
-public readonly partial struct ElectricConductance { }
+public readonly partial struct ElectricConductance;

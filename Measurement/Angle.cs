@@ -8,6 +8,5 @@ namespace com.hafthor.Measurement;
 [Unit("Gradians", 3240)]
 [Unit("Arcminutes", 60)]
 [SiUnit("Arcseconds", 0)]
-public readonly partial struct Angle {
-    public static AngularVelocity operator /(Angle angle, Duration duration) => AngularVelocity.FromRadiansPerSecond(angle.ToRadians() / duration.ToSeconds());
-}
+[Product<AngularVelocity, Duration>]
+public readonly partial struct Angle;

@@ -21,10 +21,10 @@ public sealed class MeasurementJsonConverterFactory : JsonConverterFactory {
 }
 
 public sealed class MeasurementJsonConverter<T> : JsonConverter<T> where T : IMeasurement<T> {
-    private static readonly string Symbol;
-    private static readonly double DisplayFactor;
+    private readonly string Symbol;
+    private readonly double DisplayFactor;
 
-    static MeasurementJsonConverter() {
+    public MeasurementJsonConverter() {
         var attr = typeof(T).GetCustomAttribute<MeasurementAttribute>()
             ?? throw new InvalidOperationException($"{typeof(T)} is not a [Measurement] type.");
         Symbol = attr.Symbol;

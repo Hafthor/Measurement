@@ -4,4 +4,4 @@ namespace com.hafthor.Measurement;
 [SiUnit("Lumens", 3, "None Kilo Milli")]
 [Product<Illuminance, Area>]
 [Product<SolidAngle, LuminousIntensity>]
-public readonly partial struct LuminousFlux { }
+public readonly partial struct LuminousFlux;

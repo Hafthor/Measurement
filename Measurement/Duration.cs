@@ -18,4 +18,4 @@ namespace com.hafthor.Measurement;
 [Unit("Annums", 31557600)]
 [Unit("HubbleTimes", 4.803349612e17)]
 [Unit("PlanckTimes", 5.391247e-44)]
-public readonly partial struct Duration { }
+public readonly partial struct Duration;

@@ -4,4 +4,4 @@ namespace com.hafthor.Measurement;
 [SiUnit("MolesPerCubicMeter", 3)]
 [SiUnit("MolesPerLiter", 6, "None Milli Micro")]
 [Product<Duration, ReactionRate>]
-public readonly partial struct Concentration { }
+public readonly partial struct Concentration;

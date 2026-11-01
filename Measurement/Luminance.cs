@@ -5,4 +5,4 @@ namespace com.hafthor.Measurement;
 [SiUnit("Nits", 0)]
 [SiUnit("Stilbs", 4)]
 [Unit("FootLamberts", 3.4262590996)]
-public readonly partial struct Luminance { }
+public readonly partial struct Luminance;

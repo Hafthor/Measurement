@@ -4,4 +4,4 @@ namespace com.hafthor.Measurement;
 [SiUnit("Grays", 6, "None Kilo Milli Micro")]
 [SiUnit("Rads", 4, "None Milli")]
 [Product<Duration, DoseRate>]
-public readonly partial struct AbsorbedDose { }
+public readonly partial struct AbsorbedDose;

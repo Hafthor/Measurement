@@ -10,4 +10,4 @@ namespace com.hafthor.Measurement;
 [Product<Voltage, ElectricCurrent>]
 [Product<SolidAngle, RadiantIntensity>]
 [Product<Area, HeatFluxDensity>]
-public readonly partial struct Power { }
+public readonly partial struct Power;

@@ -4,4 +4,4 @@ namespace com.hafthor.Measurement;
 [SiUnit("JoulesPerKilogramKelvin", -3, "None Kilo")]
 [SiUnit("JoulesPerGramKelvin", 0)]
 [Unit("CaloriesPerGramKelvin", 4.184)]
-public readonly partial struct SpecificHeatCapacity { }
+public readonly partial struct SpecificHeatCapacity;

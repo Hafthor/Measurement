@@ -72,5 +72,4 @@ public static partial class Measure {
 // output hooks on Reader<T>) are generated per struct into the partial class Units — see
 // MeasurementGenerator.EmitFluent. Only base and non-metric unit names get a direct hook; SI
 // prefixes are expressed through the prefix chain (e.g. Measure.Of(1).Kilo.Grams).
-public static partial class Units {
-}
+public static partial class Units;

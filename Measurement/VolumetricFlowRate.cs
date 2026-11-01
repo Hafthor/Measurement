@@ -6,4 +6,4 @@ namespace com.hafthor.Measurement;
 [Unit("LitersPerMinute", 1e6 / 60)]
 [Unit("CubicFeetPerSecond", 0.028316846592e9)]
 [Unit("GallonsPerMinute", 0.003785411784e9 / 60)]
-public readonly partial struct VolumetricFlowRate { }
+public readonly partial struct VolumetricFlowRate;

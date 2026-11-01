@@ -5,4 +5,4 @@ namespace com.hafthor.Measurement;
 [Unit("CaloriesPerKelvin", 4.184)]
 [Product<Mass, SpecificHeatCapacity>]
 [Product<MolarHeatCapacity, Quantity>]
-public readonly partial struct HeatCapacity { }
+public readonly partial struct HeatCapacity;

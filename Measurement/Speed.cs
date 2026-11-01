@@ -13,4 +13,4 @@ namespace com.hafthor.Measurement;
 [Unit("SpeedOfLight", 299792458)]
 [Product<Acceleration, Duration>]
 [Product<Length, Frequency>]
-public readonly partial struct Speed { }
+public readonly partial struct Speed;

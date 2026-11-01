@@ -36,4 +36,4 @@ namespace com.hafthor.Measurement;
 [Product<Area, AreaDensity>]
 [Product<Duration, MassFlowRate>]
 [Product<MolarMass, Quantity>]
-public readonly partial struct Mass { }
+public readonly partial struct Mass;

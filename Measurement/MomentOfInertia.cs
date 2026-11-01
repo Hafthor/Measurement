@@ -5,6 +5,4 @@ namespace com.hafthor.Measurement;
 [SiUnit("GramSquareCentimeters", -4, "None Kilo")]
 [Unit("PoundSquareFeet", 0.04214011009380e3)]
 [Product<Area, Mass>]
-public readonly partial struct MomentOfInertia {
-    public static AngularMomentum operator *(MomentOfInertia momentOfInertia, AngularVelocity angularVelocity) => AngularMomentum.FromGramSquareMetersPerSecond(momentOfInertia.ToGramSquareMeters() * angularVelocity.ToRadiansPerSecond());
-}
+public readonly partial struct MomentOfInertia;

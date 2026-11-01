@@ -4,4 +4,4 @@ namespace com.hafthor.Measurement;
 [SiUnit("Lux", 3, "None Kilo Milli")]
 [SiUnit("Phots", 7)]
 [Unit("Footcandles", 10.763910416709722e3)]
-public readonly partial struct Illuminance { }
+public readonly partial struct Illuminance;

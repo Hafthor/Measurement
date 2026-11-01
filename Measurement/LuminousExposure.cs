@@ -4,4 +4,4 @@ namespace com.hafthor.Measurement;
 [SiUnit("LuxSeconds", 0)]
 [Unit("LuxHours", 3600)]
 [Product<Duration, Illuminance>]
-public readonly partial struct LuminousExposure { }
+public readonly partial struct LuminousExposure;

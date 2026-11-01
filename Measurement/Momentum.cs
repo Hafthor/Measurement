@@ -5,4 +5,4 @@ namespace com.hafthor.Measurement;
 [SiUnit("NewtonSeconds", 3)]
 [Product<Mass, Speed>]
 [Product<Force, Duration>]
-public readonly partial struct Momentum { }
+public readonly partial struct Momentum;

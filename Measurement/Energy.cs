@@ -18,6 +18,4 @@ namespace com.hafthor.Measurement;
 [Product<Pressure, Volume>]
 [Product<HeatCapacity, Temperature>]
 [Product<Action, Frequency>]
-[Product<Frequency, Action>]
-[Product<Speed, Momentum>]
-public readonly partial struct Energy { }
+public readonly partial struct Energy;

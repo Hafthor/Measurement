@@ -2,4 +2,4 @@ namespace com.hafthor.Measurement;
 
 [Measurement("W/m²", VariableName = "milliwattsPerSquareMeter", DisplayFactor = 1e3)]
 [SiUnit("WattsPerSquareMeter", 3, "None Milli", PerPrefixes = "None Centi Milli")]
-public readonly partial struct HeatFluxDensity { }
+public readonly partial struct HeatFluxDensity;

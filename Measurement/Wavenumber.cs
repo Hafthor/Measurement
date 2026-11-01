@@ -4,4 +4,4 @@ namespace com.hafthor.Measurement;
 [SiUnit("PerMeter", 0)]
 [SiUnit("PerCentimeter", 2)]
 [Reciprocal<Length>(Name = "Wavelength")]
-public readonly partial struct Wavenumber { }
+public readonly partial struct Wavenumber;

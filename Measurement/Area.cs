@@ -15,4 +15,4 @@ namespace com.hafthor.Measurement;
 [SiUnit("Barns", -22)]
 [Product<Length, Length>]
 [Product<Duration, KinematicViscosity>]
-public readonly partial struct Area { }
+public readonly partial struct Area;

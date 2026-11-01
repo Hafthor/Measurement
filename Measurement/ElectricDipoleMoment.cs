@@ -4,4 +4,4 @@ namespace com.hafthor.Measurement;
 [SiUnit("CoulombMeters", 0)]
 [Unit("Debyes", 3.33564095198e-30)]
 [Product<ElectricCharge, Length>]
-public readonly partial struct ElectricDipoleMoment { }
+public readonly partial struct ElectricDipoleMoment;
