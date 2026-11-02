@@ -37,7 +37,8 @@ public sealed class MeasurementGenerator : IIncrementalGenerator {
     }
 
     // $"si|{baseName}|{tenExp}|{prefixes}|{perPrefixes}"
-    private readonly record struct SiUnitSpec(string Name, int TenExp, string Prefixes, string PerPrefixes) : IUnitSpec {
+    private readonly record struct SiUnitSpec(string Name, int TenExp, string Prefixes, string PerPrefixes)
+        : IUnitSpec {
         public string[] PrefixesSplit { get; } = Prefixes.Split(' ');
         public string[] PerPrefixesSplitOrNone { get; } = PerPrefixes == "" ? None : PerPrefixes.Split(' ');
     }
@@ -177,6 +178,25 @@ public sealed class MeasurementGenerator : IIncrementalGenerator {
         ["Atto"] = -18, ["Zepto"] = -21, ["Yocto"] = -24, ["Ronto"] = -27, ["Quecto"] = -30,
     };
 
+    private static readonly Dictionary<string, int> PrefixExponentsWithoutNone = MakePrefixExponentsWithoutNone();
+
+    private static Dictionary<string, int> MakePrefixExponentsWithoutNone() {
+        Dictionary<string, int> d = new(PrefixExponents);
+        d.Remove("None");
+        return d;
+    }
+
+    private static List<string> AllowedNext(IEnumerable<string> source, List<string> s) {
+        HashSet<string> set = new(StringComparer.Ordinal);
+        foreach (var key in source) {
+            var parts = key.Split(',');
+            if (parts.Length > s.Count && parts.Take(s.Count).SequenceEqual(s))
+                set.Add(parts[s.Count]);
+        }
+
+        return [.. set.OrderBy(s => s, StringComparer.Ordinal)];
+    }
+
     // Expands the encoded SiUnit families into a From/To method source. The base unit's factor to
     // the anchor is 10^tenExponent; a numerator prefix shifts the exponent by prefix×power, a
     // denominator (Per) prefix by −prefix×power, so factors stay exact powers of ten (identity at 0).
@@ -190,11 +210,11 @@ public sealed class MeasurementGenerator : IIncrementalGenerator {
             if (!lookup.ContainsKey(kv.Key))
                 lookup[kv.Key] = kv.Value;
         foreach (var spec in units) {
-            if (spec is HookSpec) continue;
             if (spec is UnitSpec u) {
                 if (TryPrefixAlias(u.Name, u.Factor, lookup) != null) continue;
                 var inv = CultureInfo.InvariantCulture;
-                EmitExplicitUnit(sb, name, variableName, u.Name, u.Factor.ToString("R", inv), u.Offset.ToString("R", inv));
+                EmitExplicitUnit(sb, name, variableName, u.Name, u.Factor.ToString("R", inv),
+                    u.Offset.ToString("R", inv));
                 continue;
             }
 
@@ -218,11 +238,11 @@ public sealed class MeasurementGenerator : IIncrementalGenerator {
                     if (dp.Length == 0 || !PrefixExponents.TryGetValue(dp, out int dpExp)) continue;
                     int exp = baseExp + npExp * numPow - (denRoot < 0 ? 0 : dpExp * denPow);
                     var w = new List<string>(words);
-                    if (np != "None") w[numRoot] = np + Lower(words[numRoot]);
-                    if (denRoot >= 0 && dp != "None") w[denRoot] = dp + Lower(words[denRoot]);
+                    if (np != "None") w[numRoot] = np + LowerFirstChar(words[numRoot]);
+                    if (denRoot >= 0 && dp != "None") w[denRoot] = dp + LowerFirstChar(words[denRoot]);
                     string full = string.Concat(w);
                     if (TryPrefixAlias(full, Math.Pow(10, exp), lookup) != null) continue;
-                    string param = Lower(full);
+                    string param = LowerFirstChar(full);
                     if (exp == 0) {
                         sb.Append(
                             $"    internal static {name} From{full}(double {param}) => new {name}({param});\n");
@@ -275,8 +295,8 @@ public sealed class MeasurementGenerator : IIncrementalGenerator {
                     if (dp.Length == 0 || !PrefixExponents.TryGetValue(dp, out int dpExp)) continue;
                     int exp = baseExp + npExp * numPow - (denRoot < 0 ? 0 : dpExp * denPow);
                     var w = new List<string>(words);
-                    if (np != "None") w[numRoot] = np + Lower(words[numRoot]);
-                    if (denRoot >= 0 && dp != "None") w[denRoot] = dp + Lower(words[denRoot]);
+                    if (np != "None") w[numRoot] = np + LowerFirstChar(words[numRoot]);
+                    if (denRoot >= 0 && dp != "None") w[denRoot] = dp + LowerFirstChar(words[denRoot]);
                     yield return new(string.Concat(w), Math.Pow(10, exp));
                 }
             }
@@ -303,8 +323,8 @@ public sealed class MeasurementGenerator : IIncrementalGenerator {
     private static (string Base, int Exp)? TryPrefixAlias(string unitName, double factor,
         Dictionary<string, double> lookup) {
         if (double.IsNaN(factor)) return null;
-        foreach (var kv in PrefixExponents) {
-            if (kv.Value == 0 || !unitName.StartsWith(kv.Key)) continue;
+        foreach (var kv in PrefixExponentsWithoutNone) {
+            if (!unitName.StartsWith(kv.Key)) continue;
             string rest = unitName.Substring(kv.Key.Length);
             if (rest.Length == 0) continue;
             string baseRest = char.ToUpperInvariant(rest[0]) + rest.Substring(1);
@@ -354,7 +374,7 @@ public sealed class MeasurementGenerator : IIncrementalGenerator {
     // scale where anchor = (value + offset) * factor.
     private static void EmitExplicitUnit(StringBuilder sb, string name, string variableName, string unitName,
         string factorLit, string offsetLit) {
-        string param = Lower(unitName);
+        string param = LowerFirstChar(unitName);
         bool affine = offsetLit != "0";
         if (!affine) {
             sb.Append(
@@ -376,21 +396,24 @@ public sealed class MeasurementGenerator : IIncrementalGenerator {
         power = 1;
         int pending = 1;
         for (int i = start; i < end; i++)
-            if (words[i] == "Square") pending = 2;
-            else if (words[i] == "Cubic") pending = 3;
-            else if (words[i] is not ("Squared" or "Cubed" or "Per")) {
-                rootIndex = i;
-                power = pending;
-                return;
+            switch (words[i]) {
+                case "Square": pending = 2; break;
+                case "Cubic": pending = 3; break;
+                case "Squared":
+                case "Cubed":
+                case "Per": break;
+                default:
+                    rootIndex = i;
+                    power = pending;
+                    return;
             }
     }
 
-    private static string Lower(string s) => char.ToLowerInvariant(s[0]) + s.Substring(1);
+    private static string LowerFirstChar(string s) => char.ToLowerInvariant(s[0]) + s.Substring(1);
 
     // Single-word unit names across all types (Meters, Grams, Newtons, …) — the roots used when
     // prefix-splitting compound spellings (Millimeters → Milli·Meters).
-    private static HashSet<string>
-        SingleWordBases(ImmutableArray<MeasurementInfo> all) {
+    private static HashSet<string> SingleWordBases(ImmutableArray<MeasurementInfo> all) {
         var bases = new HashSet<string>();
         foreach (var info in all)
             foreach (var u in EnumerateUnitNames(info.Units))
@@ -399,18 +422,20 @@ public sealed class MeasurementGenerator : IIncrementalGenerator {
         return bases;
     }
 
+    private readonly record struct DemonInfo(
+        string Partner,
+        Dictionary<string, string> Term,
+        Dictionary<string, SortedSet<string>> Children);
+
     // Square/Cubic denominator sub-trie shared by the input and read-out `.Per` walks. For each of
     // Area (Square) / Volume (Cubic), maps a singularized, prefix-decomposed length path to the areal/
     // cubic unit name (so `.Cubic.Centi.Meter` resolves to CubicCentimeters' exact coherent value),
     // with the child-word sets along the way.
-    private static Dictionary<string, (string Partner, Dictionary<string, string> Term,
-            Dictionary<string, SortedSet<string>> Children)>
-        BuildDenomModTrie(ImmutableArray<MeasurementInfo> all,
-            Dictionary<string, (double DF, int G)> meta) {
+    private static Dictionary<string, DemonInfo> BuildDenomModTrie(ImmutableArray<MeasurementInfo> all,
+        Dictionary<string, (double DF, int G)> meta) {
         string StripS(string s) => s.Length > 1 && s.EndsWith("s") ? s.Substring(0, s.Length - 1) : s;
         var bases = SingleWordBases(all);
-        var mod =
-            new Dictionary<string, (string, Dictionary<string, string>, Dictionary<string, SortedSet<string>>)>();
+        var mod = new Dictionary<string, DemonInfo>();
         foreach (var (kw, partner) in new[] { ("Square", "Area"), ("Cubic", "Volume") }) {
             if (!meta.ContainsKey(partner)) continue;
             var pinfo = all.First(a => a.Name == partner);
@@ -433,7 +458,7 @@ public sealed class MeasurementGenerator : IIncrementalGenerator {
                 }
             }
 
-            mod[kw] = (partner, term, childs);
+            mod[kw] = new DemonInfo(partner, term, childs);
         }
 
         return mod;
@@ -472,17 +497,14 @@ public sealed class MeasurementGenerator : IIncrementalGenerator {
 
     private static List<string> SplitWords(string camel) {
         var words = new List<string>();
-        var sb = new StringBuilder();
-        foreach (char c in camel) {
-            if (char.IsUpper(c) && sb.Length > 0) {
-                words.Add(sb.ToString());
-                sb.Clear();
+        var left = 0;
+        for (int right = 0; right < camel.Length; right++)
+            if (char.IsUpper(camel[right]) && right > left) {
+                words.Add(camel.Substring(left, right - left));
+                left = right;
             }
 
-            sb.Append(c);
-        }
-
-        if (sb.Length > 0) words.Add(sb.ToString());
+        words.Add(camel.Substring(left));
         return words;
     }
 
@@ -494,8 +516,7 @@ public sealed class MeasurementGenerator : IIncrementalGenerator {
     // (distinct Reader<T>). Prefixed aliases (Kilomoles == Kilo + Moles) are dropped from both sides —
     // reach them via the prefix chain (Measure.Of(x).Kilo.Moles). Other SI-prefixed variants likewise
     // go through the chain; only unprefixed bases and non-metric units get a direct hook.
-    private static void EmitFluentSet(SourceProductionContext ctx,
-        ImmutableArray<MeasurementInfo> all) {
+    private static void EmitFluentSet(SourceProductionContext ctx, ImmutableArray<MeasurementInfo> all) {
         // Per struct: ordered hook candidates minus prefixed aliases.
         var perType = new List<(string Name, string Ns, List<string> Hooks)>();
         var inputCounts = new Dictionary<string, int>();
@@ -680,26 +701,21 @@ namespace {ns}.Fluent {{
 
     // Divides/multiplies a value expression by a coherent-SI divisor, keeping powers of ten exact.
     private static string ToCoherentExpr(string val, (int Ten, double Res) d) {
-        var s = new StringBuilder(val);
-        if (d.Ten > 0) s.Append($" / 1e{d.Ten}");
-        else if (d.Ten < 0) s.Append($" * 1e{-d.Ten}");
-        if (d.Res != 1) s.Append($" / {d.Res.ToString("R", CultureInfo.InvariantCulture)}");
-        return d.Ten != 0 || d.Res != 1 ? $"({s})" : val;
+        string s1 = d.Ten > 0 ? $" / 1e{d.Ten}" : d.Ten < 0 ? $" * 1e{-d.Ten}" : null;
+        string s2 = d.Res != 1 ? $" / {d.Res.ToString("R", CultureInfo.InvariantCulture)}" : null;
+        return d.Ten != 0 || d.Res != 1 ? $"({val}{s1}{s2})" : $"{val}{s1}{s2}";
     }
 
     private static string FromCoherentExpr(string expr, (int Ten, double Res) d) {
-        var s = new StringBuilder(expr);
-        if (d.Ten > 0) s.Append($" * 1e{d.Ten}");
-        else if (d.Ten < 0) s.Append($" / 1e{-d.Ten}");
-        if (d.Res != 1) s.Append($" * {d.Res.ToString("R", CultureInfo.InvariantCulture)}");
-        return s.ToString();
+        string s1 = d.Ten > 0 ? $" * 1e{d.Ten}" : d.Ten < 0 ? $" / 1e{-d.Ten}" : null;
+        string s2 = d.Res != 1 ? $" * {d.Res.ToString("R", CultureInfo.InvariantCulture)}" : null;
+        return $"{expr}{s1}{s2}";
     }
 
     // Emits every cross-type operator implied by the [Product] relations. For C = A × B it writes
     // A*B, B*A → C and C/A → B, C/B → A, each with an exact factor derived from the symbols'
     // gram-power and DisplayFactor, placed in a partial of one of its parameter types.
-    private static void EmitProducts(SourceProductionContext ctx,
-        ImmutableArray<MeasurementInfo> all) {
+    private static void EmitProducts(SourceProductionContext ctx, ImmutableArray<MeasurementInfo> all) {
         var meta = new Dictionary<string, (double DF, int G)>();
         string ns = all.Length > 0 ? all[0].Namespace : "com.hafthor.Measurement";
         foreach (var info in all) meta[info.Name] = (info.DisplayFactor, GramPower(info.Symbol));
@@ -830,8 +846,7 @@ namespace {ns}.Fluent {{
     // Reader<P> returning S, each computed as P.FromCanonical(1 / S) through the shared coherent-SI
     // conversion so DisplayFactor/anchor scaling stays exact. Replaces the handwritten reciprocal
     // From/To methods (Frequency↔Duration, Wavenumber↔Length, Conductivity↔Resistivity, …).
-    private static void EmitReciprocals(SourceProductionContext ctx,
-        ImmutableArray<MeasurementInfo> all) {
+    private static void EmitReciprocals(SourceProductionContext ctx, ImmutableArray<MeasurementInfo> all) {
         string ns = all.Length > 0 ? all[0].Namespace : "com.hafthor.Measurement";
         var meta = new Dictionary<string, (double DF, int G)>();
         foreach (var info in all) meta[info.Name] = (info.DisplayFactor, GramPower(info.Symbol));
@@ -930,8 +945,7 @@ namespace {ns} {{
     // ones literally spelled in a compound unit. A completed denominator type-sequence implicitly
     // converts to the measurement that names it. `.Squared`/`.Cubed` repeat the last unit; a further
     // `.Per` (or, for a differently typed factor, a bare unit word) appends another denominator.
-    private static void EmitPerBuilders(SourceProductionContext ctx,
-        ImmutableArray<MeasurementInfo> all) {
+    private static void EmitPerBuilders(SourceProductionContext ctx, ImmutableArray<MeasurementInfo> all) {
         string ns = all.Length > 0 ? all[0].Namespace : "com.hafthor.Measurement";
         var (meta, typeOfUnit, unitWordType, unitOpts) = BuildPerCommon(all);
         var removable = BuildRemovable(all);
@@ -1028,24 +1042,6 @@ namespace {ns} {{
 
         string Su(List<string> s) => string.Join("_", s);
 
-        List<string> AllowedNext(string n, List<string> s) {
-            var set = new SortedSet<string>(StringComparer.Ordinal);
-            foreach (var key in seqMap[n].Keys) {
-                var parts = key.Split(',');
-                if (parts.Length <= s.Count) continue;
-                bool pre = true;
-                for (int i = 0; i < s.Count; i++)
-                    if (parts[i] != s[i]) {
-                        pre = false;
-                        break;
-                    }
-
-                if (pre) set.Add(parts[s.Count]);
-            }
-
-            return new List<string>(set);
-        }
-
         List<string> TerminalR(string n, List<string> s) =>
             seqMap[n].TryGetValue(string.Join(",", s), out var rl) ? rl : new List<string>();
 
@@ -1067,13 +1063,12 @@ namespace {ns} {{
             var prefixable = new SortedSet<string>(StringComparer.Ordinal);
             if (rootSet != null)
                 foreach (var w in rootSet)
-                    if (PrefixExponents.ContainsKey(w) && w != "None" && childs.TryGetValue(w, out var gk))
+                    if (PrefixExponentsWithoutNone.ContainsKey(w) && childs.TryGetValue(w, out var gk))
                         foreach (var b in gk)
                             if (term.ContainsKey(b))
                                 prefixable.Add(b);
 
-            bool IsPrefixNode(string p) => p.Length > 0 && PrefixExponents.ContainsKey(p.Split('_')[0]) &&
-                                           p.Split('_')[0] != "None";
+            bool IsPrefixNode(string p) => p.Length > 0 && PrefixExponentsWithoutNone.ContainsKey(p.Split('_')[0]);
 
             string Terminal(string w, string unit) {
                 string cu = CUnit(partner, unit);
@@ -1099,7 +1094,7 @@ namespace {ns} {{
                     $"        internal {nn}(double run, double last, double pfx) {{ this.run = run; this.last = last; this.pfx = pfx; }}\n");
                 if (childs.TryGetValue(prog, out var set))
                     foreach (var w in set) {
-                        if (prog.Length == 0 && PrefixExponents.ContainsKey(w) && w != "None")
+                        if (prog.Length == 0 && PrefixExponentsWithoutNone.ContainsKey(w))
                             continue; // collapsed SI-prefix child
                         string cp = prog.Length == 0 ? w : prog + "_" + w;
                         node.Append(term.TryGetValue(cp, out var unit)
@@ -1108,10 +1103,9 @@ namespace {ns} {{
                     }
 
                 if (prog.Length == 0 && prefixable.Count > 0)
-                    foreach (var px in PrefixExponents.Keys)
-                        if (px != "None")
-                            node.Append(
-                                $"        public {mid}__Pre {px} => new(run, last, pfx * 1e{power * PrefixExponents[px]});\n");
+                    foreach (var px in PrefixExponentsWithoutNone.Keys)
+                        node.Append(
+                            $"        public {mid}__Pre {px} => new(run, last, pfx * 1e{power * PrefixExponents[px]});\n");
                 node.Append("    }\n");
                 sb.Append(node);
             }
@@ -1146,11 +1140,11 @@ namespace {ns} {{
                 foreach (var r in rl)
                     body.Append($"        public {r} {r} => {r}.FromCanonical({FromCoherentVal(r, "run")});\n");
             string sLast = s[s.Count - 1];
-            var nxt = AllowedNext(n, s);
+            var nxt = AllowedNext(seqMap[n].Keys, s);
             if (nxt.Contains(sLast)) {
                 var s1 = new List<string>(s) { sLast };
                 body.Append($"        public {EmitPost(n, s1)} Squared => new(run / last, last, 1.0);\n");
-                if (AllowedNext(n, s1).Contains(sLast)) {
+                if (AllowedNext(seqMap[n].Keys, s1).Contains(sLast)) {
                     var s2 = new List<string>(s1) { sLast };
                     body.Append($"        public {EmitPost(n, s2)} Cubed => new(run / last / last, last, 1.0);\n");
                 }
@@ -1172,10 +1166,9 @@ namespace {ns} {{
 
                 if (baseC.Any(kv =>
                         kv.Key.Length > 0 && kv.Value.Count > 0)) // full SI range → shared prefixed entry
-                    foreach (var px in PrefixExponents.Keys)
-                        if (px != "None")
-                            body.Append(
-                                $"        public {colId}__Pre {px} => new(run, last, 1e{PrefixExponents[px]});\n");
+                    foreach (var px in PrefixExponentsWithoutNone.Keys)
+                        body.Append(
+                            $"        public {colId}__Pre {px} => new(run, last, 1e{PrefixExponents[px]});\n");
                 if (prodTypes.Contains("Area") && mod.ContainsKey("Square"))
                     body.Append($"        public {EmitMod(n, s, "Square")} Square => new(run, last, 1.0);\n");
                 if (prodTypes.Contains("Volume") && mod.ContainsKey("Cubic"))
@@ -1226,10 +1219,9 @@ namespace {ns} {{
                 $"        internal {root}(double run, double last, double pfx) {{ this.run = run; this.last = last; this.pfx = pfx; }}\n");
             if (baseC.TryGetValue("", out var bl0)) node.Append(BaseChildren(bl0));
             if (prefBases.Count > 0)
-                foreach (var px in PrefixExponents.Keys)
-                    if (px != "None")
-                        node.Append(
-                            $"        public {colId}__Pre {px} => new(run, last, pfx * 1e{PrefixExponents[px]});\n");
+                foreach (var px in PrefixExponentsWithoutNone.Keys)
+                    node.Append(
+                        $"        public {colId}__Pre {px} => new(run, last, pfx * 1e{PrefixExponents[px]});\n");
             if (types.Contains("Area") && mod.ContainsKey("Square"))
                 node.Append($"        public {EmitMod(n, ss, "Square")} Square => new(run, last, pfx);\n");
             if (types.Contains("Volume") && mod.ContainsKey("Cubic"))
@@ -1252,7 +1244,7 @@ namespace {ns} {{
 
         var ext = new StringBuilder();
         foreach (var n in new SortedSet<string>(seqMap.Keys, StringComparer.Ordinal)) {
-            string root = EmitCol(n, new List<string>(), "root", AllowedNext(n, new List<string>()));
+            string root = EmitCol(n, new List<string>(), "root", AllowedNext(seqMap[n].Keys, new List<string>()));
             ext.Append(
                 $"        extension({n} x) {{ public {root} Per => new({CoherentVal(n, "x.CanonicalValue")}, 0.0, 1.0); }}\n");
         }
@@ -1363,24 +1355,6 @@ namespace {ns} {{
                 var (numType, seqs) = readMap[c][numFlat];
                 string cn = c + "_" + numFlat;
 
-                List<string> AllowedNext(List<string> s) {
-                    var set = new SortedSet<string>(StringComparer.Ordinal);
-                    foreach (var key in seqs) {
-                        var parts = key.Split(',');
-                        if (parts.Length <= s.Count) continue;
-                        bool pre = true;
-                        for (int i = 0; i < s.Count; i++)
-                            if (parts[i] != s[i]) {
-                                pre = false;
-                                break;
-                            }
-
-                        if (pre) set.Add(parts[s.Count]);
-                    }
-
-                    return new List<string>(set);
-                }
-
                 bool IsTerminal(List<string> s) => seqs.Contains(string.Join(",", s));
 
                 string EmitMod(List<string> s, string kw) {
@@ -1393,13 +1367,12 @@ namespace {ns} {{
                     var prefixable = new SortedSet<string>(StringComparer.Ordinal);
                     if (rootSet != null)
                         foreach (var w in rootSet)
-                            if (PrefixExponents.ContainsKey(w) && w != "None" && childs.TryGetValue(w, out var gk))
+                            if (PrefixExponentsWithoutNone.ContainsKey(w) && childs.TryGetValue(w, out var gk))
                                 foreach (var b in gk)
                                     if (term.ContainsKey(b))
                                         prefixable.Add(b);
 
-                    bool IsPrefixNode(string p) => p.Length > 0 && PrefixExponents.ContainsKey(p.Split('_')[0]) &&
-                                                   p.Split('_')[0] != "None";
+                    bool IsPrefixNode(string p) => p.Length > 0 && PrefixExponentsWithoutNone.ContainsKey(p.Split('_')[0]);
 
                     string Terminal(string w, string unit) {
                         string cu = CUnit(partner, unit);
@@ -1425,7 +1398,7 @@ namespace {ns} {{
                             $"        internal {nn}(double run, double last, double pfx) {{ this.run = run; this.last = last; this.pfx = pfx; }}\n");
                         if (childs.TryGetValue(prog, out var set))
                             foreach (var w in set) {
-                                if (prog.Length == 0 && PrefixExponents.ContainsKey(w) && w != "None")
+                                if (prog.Length == 0 && PrefixExponentsWithoutNone.ContainsKey(w))
                                     continue; // collapsed SI-prefix child
                                 string cp = prog.Length == 0 ? w : prog + "_" + w;
                                 node.Append(term.TryGetValue(cp, out var unit)
@@ -1434,10 +1407,9 @@ namespace {ns} {{
                             }
 
                         if (prog.Length == 0 && prefixable.Count > 0)
-                            foreach (var px in PrefixExponents.Keys)
-                                if (px != "None")
-                                    node.Append(
-                                        $"        public {mid}__Pre {px} => new(run, last, pfx * 1e{power * PrefixExponents[px]});\n");
+                            foreach (var px in PrefixExponentsWithoutNone.Keys)
+                                node.Append(
+                                    $"        public {mid}__Pre {px} => new(run, last, pfx * 1e{power * PrefixExponents[px]});\n");
                         node.Append("    }\n");
                         sb.Append(node);
                     }
@@ -1492,10 +1464,9 @@ namespace {ns} {{
                         $"        internal {root}(double run, double last, double pfx) {{ this.run = run; this.last = last; this.pfx = pfx; }}\n");
                     if (baseC.TryGetValue("", out var bl0)) node.Append(BaseChildren(bl0));
                     if (prefBases.Count > 0)
-                        foreach (var px in PrefixExponents.Keys)
-                            if (px != "None")
-                                node.Append(
-                                    $"        public {colId}__Pre {px} => new(run, last, pfx * 1e{PrefixExponents[px]});\n");
+                        foreach (var px in PrefixExponentsWithoutNone.Keys)
+                            node.Append(
+                                $"        public {colId}__Pre {px} => new(run, last, pfx * 1e{PrefixExponents[px]});\n");
                     if (types.Contains("Area") && mod.ContainsKey("Square"))
                         node.Append($"        public {EmitMod(ss, "Square")} Square => new(run, last, pfx);\n");
                     if (types.Contains("Volume") && mod.ContainsKey("Cubic"))
@@ -1527,11 +1498,11 @@ namespace {ns} {{
                     if (IsTerminal(s))
                         body.Append($"        public static implicit operator double({post} n) => n.run;\n");
                     string sLast = s[s.Count - 1];
-                    var nxt = AllowedNext(s);
+                    var nxt = AllowedNext(seqs, s);
                     if (nxt.Contains(sLast)) {
                         var s1 = new List<string>(s) { sLast };
                         body.Append($"        public {EmitPostRef(s1)} Squared => new(run * last, last, 1.0);\n");
-                        if (AllowedNext(s1).Contains(sLast)) {
+                        if (AllowedNext(seqs, s1).Contains(sLast)) {
                             var s2 = new List<string>(s1) { sLast };
                             body.Append(
                                 $"        public {EmitPostRef(s2)} Cubed => new(run * last * last, last, 1.0);\n");
@@ -1553,10 +1524,9 @@ namespace {ns} {{
 
                         if (baseC.Any(kv =>
                                 kv.Key.Length > 0 && kv.Value.Count > 0)) // full SI range → shared prefixed entry
-                            foreach (var px in PrefixExponents.Keys)
-                                if (px != "None")
-                                    body.Append(
-                                        $"        public {colId}__Pre {px} => new(run, last, 1e{PrefixExponents[px]});\n");
+                            foreach (var px in PrefixExponentsWithoutNone.Keys)
+                                body.Append(
+                                    $"        public {colId}__Pre {px} => new(run, last, 1e{PrefixExponents[px]});\n");
                         if (nxt.Contains("Area") && mod.ContainsKey("Square"))
                             body.Append($"        public {EmitMod(s, "Square")} Square => new(run, last, 1.0);\n");
                         if (nxt.Contains("Volume") && mod.ContainsKey("Cubic"))
@@ -1573,7 +1543,7 @@ namespace {ns} {{
                 string runStart = $"(({ToCoherentExpr("r.Value.CanonicalValue", Div(c))}) / ({numCoh}) / r.Factor)";
                 starts.Append(
                     $"        extension(Reader<{c}> r) {{ public {start} {numFlat} => new({runStart}, 0.0, 1.0); }}\n");
-                string colRoot = EmitCol(new List<string>(), AllowedNext(new List<string>()));
+                string colRoot = EmitCol(new List<string>(), AllowedNext(seqs, new List<string>()));
                 sb.Append($"    public readonly struct {start} {{\n");
                 sb.Append($"        private readonly double run, last, pfx;\n");
                 sb.Append(
@@ -1600,8 +1570,7 @@ namespace {ns} {{
     // product type via the [Product] relations, with the exact operator factor. Dimensionally
     // ambiguous products (Force × Length → Torque or Energy) resolve to a selector naming each result.
     // So `.Ampere.Hours`, `.Joule.Minutes`, `.Light.Seconds`, `.Newton.Meters.Torque` all compose.
-    private static void EmitTokenAlgebra(SourceProductionContext ctx,
-        ImmutableArray<MeasurementInfo> all) {
+    private static void EmitTokenAlgebra(SourceProductionContext ctx, ImmutableArray<MeasurementInfo> all) {
         string ns = all.Length > 0 ? all[0].Namespace : "com.hafthor.Measurement";
         var removable = BuildRemovable(all);
         var meta = new Dictionary<string, (double DF, int G)>();
@@ -1839,8 +1808,7 @@ namespace {ns}.Fluent {{
     // exponent e scales an n-th-power unit by 1e{n·e}) via a shared prefixed entry, so `.Square.Milli.Meters`,
     // `.Cubic.Kilo.Meters`, etc. compose without per-prefix nodes. Each base terminal maps to the
     // Square<Unit>/Cubic<Unit> factory; non-metric spellings (`.Square.Miles`, `.Square.Degrees`) stay direct.
-    private static void EmitSquareCubic(SourceProductionContext ctx,
-        ImmutableArray<MeasurementInfo> all) {
+    private static void EmitSquareCubic(SourceProductionContext ctx, ImmutableArray<MeasurementInfo> all) {
         string ns = all.Length > 0 ? all[0].Namespace : "com.hafthor.Measurement";
         // Known single-word unit bases (for prefix splitting Millimeters → Milli, Meters).
         var bases = SingleWordBases(all);
@@ -1875,13 +1843,12 @@ namespace {ns}.Fluent {{
             string preName = modifier + "Of__Pre";
             children.TryGetValue("", out var rootKids);
 
-            bool IsPrefixNode(string p) => p.Length > 0 && PrefixExponents.ContainsKey(p.Split('_')[0]) &&
-                                           p.Split('_')[0] != "None";
+            bool IsPrefixNode(string p) => p.Length > 0 && PrefixExponentsWithoutNone.ContainsKey(p.Split('_')[0]);
 
             var prefixable = new SortedSet<string>(StringComparer.Ordinal);
             if (rootKids != null)
                 foreach (var w in rootKids)
-                    if (PrefixExponents.ContainsKey(w) && w != "None" && children.TryGetValue(w, out var gk))
+                    if (PrefixExponentsWithoutNone.ContainsKey(w) && children.TryGetValue(w, out var gk))
                         foreach (var b in gk)
                             if (terminal.ContainsKey(b))
                                 prefixable.Add(b);
@@ -1895,15 +1862,13 @@ namespace {ns}.Fluent {{
                     $"    public readonly struct {nn} {{\n        private readonly double v;\n        internal {nn}(double v) => this.v = v;\n");
                 if (children.TryGetValue(p, out var set))
                     foreach (var w in set)
-                        if (!PrefixExponents.ContainsKey(w) ||
-                            w == "None") // skip SI-prefix children (handled below)
+                        if (!PrefixExponentsWithoutNone.ContainsKey(w)) // skip SI-prefix children (handled below)
                             structs.Append(
                                 $"        public {Node(p.Length == 0 ? w : p + "_" + w)} {w} => new(v);\n");
                 if (p.Length == 0 && prefixable.Count > 0) // full SI prefix range on the modifier entry
-                    foreach (var px in PrefixExponents.Keys)
-                        if (px != "None")
-                            structs.Append(
-                                $"        public {preName} {px} => new(v * 1e{power * PrefixExponents[px]});\n");
+                    foreach (var px in PrefixExponentsWithoutNone.Keys)
+                        structs.Append(
+                            $"        public {preName} {px} => new(v * 1e{power * PrefixExponents[px]});\n");
                 if (p.Length > 0 && terminal.TryGetValue(p, out var t))
                     structs.Append(
                         $"        public static implicit operator {t.Type}({nn} n) => {t.Type}.From{t.Unit}(n.v);\n");
@@ -1943,8 +1908,7 @@ namespace {ns}.Fluent {{
     // reader's running factor as an exact power of ten (a prefix of ten-exponent e scales an n-th-power
     // unit by 1e{n·e}) via a shared prefixed entry, so `.Square.Yotta.Meters` etc. compose too.
     // Non-metric spellings (Square.Miles, Cubic.Feet) remain direct terminals.
-    private static void EmitSquareCubicRead(SourceProductionContext ctx,
-        ImmutableArray<MeasurementInfo> all) {
+    private static void EmitSquareCubicRead(SourceProductionContext ctx, ImmutableArray<MeasurementInfo> all) {
         string ns = all.Length > 0 ? all[0].Namespace : "com.hafthor.Measurement";
         var bases = SingleWordBases(all);
 
@@ -1982,15 +1946,14 @@ namespace {ns}.Fluent {{
                 string preName = "R" + modifier + "_" + T + "__Pre";
                 children.TryGetValue("", out var rootKids);
 
-                bool IsPrefixNode(string p) => p.Length > 0 && PrefixExponents.ContainsKey(p.Split('_')[0]) &&
-                                               p.Split('_')[0] != "None";
+                bool IsPrefixNode(string p) => p.Length > 0 && PrefixExponentsWithoutNone.ContainsKey(p.Split('_')[0]);
 
                 // base words reachable via a declared SI prefix (Meters) and also present unprefixed:
                 // these get the full SI range via the shared prefixed entry.
                 var prefixable = new SortedSet<string>(StringComparer.Ordinal);
                 if (rootKids != null)
                     foreach (var w in rootKids)
-                        if (PrefixExponents.ContainsKey(w) && w != "None" && children.TryGetValue(w, out var gk))
+                        if (PrefixExponentsWithoutNone.ContainsKey(w) && children.TryGetValue(w, out var gk))
                             foreach (var b in gk)
                                 if (terminal.ContainsKey(b))
                                     prefixable.Add(b);
@@ -2005,15 +1968,13 @@ namespace {ns}.Fluent {{
                         $"    public readonly struct {nn} {{\n        private readonly {T} v; private readonly double f;\n        internal {nn}({T} v, double f) {{ this.v = v; this.f = f; }}\n");
                     if (children.TryGetValue(p, out var set))
                         foreach (var w in set)
-                            if (!PrefixExponents.ContainsKey(w) ||
-                                w == "None") // skip SI-prefix children (handled below)
+                            if (!PrefixExponentsWithoutNone.ContainsKey(w)) // skip SI-prefix children (handled below)
                                 structs.Append(
                                     $"        public {Node(p.Length == 0 ? w : p + "_" + w)} {w} => new(v, f);\n");
                     if (p.Length == 0 && prefixable.Count > 0) // full SI prefix range on the modifier entry
-                        foreach (var px in PrefixExponents.Keys)
-                            if (px != "None")
-                                structs.Append(
-                                    $"        public {preName} {px} => new(v, f * 1e{power * PrefixExponents[px]});\n");
+                        foreach (var px in PrefixExponentsWithoutNone.Keys)
+                            structs.Append(
+                                $"        public {preName} {px} => new(v, f * 1e{power * PrefixExponents[px]});\n");
                     if (p.Length > 0 && terminal.TryGetValue(p, out var u))
                         structs.Append(
                             $"        public static implicit operator double({nn} n) => n.v.To{u}() / n.f;\n");
@@ -2053,7 +2014,7 @@ namespace {ns} {{
             var words = SplitWords(si.Name);
             if (words.Contains("Per")) continue; // compound → not collapsed here
             var declaredNum = si.PrefixesSplit;
-            if (!Array.Exists(declaredNum, p => p != "None" && PrefixExponents.ContainsKey(p))) continue;
+            if (!Array.Exists(declaredNum, p => PrefixExponentsWithoutNone.ContainsKey(p))) continue;
             var path = new List<string>();
             foreach (var w in words) path.AddRange(DecomposeDenom(w, bases));
             if (path.Count > 0) er.Add(path[0]);
@@ -2088,7 +2049,7 @@ namespace {ns} {{
             int denRoot = -1;
             if (perIdx >= 0) FindRoot(words, perIdx + 1, words.Count, out denRoot, out _);
             bool expandable = numRoot >= 0 &&
-                              Array.Exists(declaredNum, p => p != "None" && PrefixExponents.ContainsKey(p));
+                              Array.Exists(declaredNum, p => PrefixExponentsWithoutNone.ContainsKey(p));
             bool compound = perIdx >= 0;
             // simple expandable → unprefixed (Pre adds the range); compound expandable → full range
             // here (merges with declared compounds); otherwise as declared.
@@ -2100,13 +2061,13 @@ namespace {ns} {{
                 foreach (var dp in dps) {
                     if (dp.Length == 0 || !PrefixExponents.ContainsKey(dp)) continue;
                     var w = new List<string>(words);
-                    if (np != "None") w[numRoot] = np + Lower(words[numRoot]);
-                    if (denRoot >= 0 && dp != "None") w[denRoot] = dp + Lower(words[denRoot]);
+                    if (np != "None") w[numRoot] = np + LowerFirstChar(words[numRoot]);
+                    if (denRoot >= 0 && dp != "None") w[denRoot] = dp + LowerFirstChar(words[denRoot]);
                     string full = string.Concat(w);
                     names.Add(full);
                     if (expandable && compound && np != "None") {
                         var nv = new List<string>(words); // None-numerator base variant (same denominator)
-                        if (denRoot >= 0 && dp != "None") nv[denRoot] = dp + Lower(words[denRoot]);
+                        if (denRoot >= 0 && dp != "None") nv[denRoot] = dp + LowerFirstChar(words[denRoot]);
                         construct[typeName + "|" + full] = (string.Concat(nv), npExp * numPow);
                     }
                 }
@@ -2190,8 +2151,7 @@ namespace {ns} {{
             var injected = new Dictionary<string, StringBuilder>();
             bool usePre = false;
             if (erWords.Count > 0)
-                foreach (var px in PrefixExponents.Keys) {
-                    if (px == "None") continue;
+                foreach (var px in PrefixExponentsWithoutNone.Keys) {
                     int exp = PrefixExponents[px];
                     if (children.TryGetValue("", out var rc) && rc.ContainsKey(px)) {
                         if (!injected.TryGetValue(px, out var inj)) injected[px] = inj = new StringBuilder();
@@ -2218,7 +2178,7 @@ namespace {ns} {{
                 int power = mp == "Square" ? 2 : 3;
                 var bs = new List<string>();
                 foreach (var w in kids.Keys)
-                    if (PrefixExponents.ContainsKey(w) && w != "None") {
+                    if (PrefixExponentsWithoutNone.ContainsKey(w)) {
                         string pnode = mp + "_" + w;
                         if (children.TryGetValue(pnode, out var gk))
                             foreach (var b in gk.Keys)
@@ -2247,14 +2207,12 @@ namespace {ns} {{
                 structs.Append($"        internal {nn}(double v) => this.v = v;\n");
                 bool scHere = scPre.ContainsKey(p);
                 foreach (var kv in children[p])
-                    if (!(scHere && PrefixExponents.ContainsKey(kv.Key) &&
-                          kv.Key != "None")) // skip collapsed SI-prefix children
+                    if (!(scHere && PrefixExponentsWithoutNone.ContainsKey(kv.Key))) // skip collapsed SI-prefix children
                         structs.Append(ChildMember(kv.Key, kv.Value));
                 if (scHere) // full SI range on the Square/Cubic node
-                    foreach (var px in PrefixExponents.Keys)
-                        if (px != "None")
-                            structs.Append(
-                                $"        public {ScPreName(p)} {px} => new(v * 1e{scPre[p].Power * PrefixExponents[px]});\n");
+                    foreach (var px in PrefixExponentsWithoutNone.Keys)
+                        structs.Append(
+                            $"        public {ScPreName(p)} {px} => new(v * 1e{scPre[p].Power * PrefixExponents[px]});\n");
                 if (injected.TryGetValue(p, out var inj)) structs.Append(inj); // merged SI-prefix expandable roots
                 if (p.Length == 0) structs.Append(rootPrefixProps); // non-colliding SI-prefix properties
                 if (terminal.TryGetValue(p, out var tu)) // node both internal and a unit
@@ -2295,8 +2253,8 @@ namespace {ns} {{
     // [Kilo, Gram], Centimeter → [Centi, Meter], Milliliter → [Milli, Liter]); otherwise returns [w].
     private static List<string> DecomposeDenom(string w, HashSet<string> rawDenom) {
         string bestPrefix = "", bestBase = "";
-        foreach (var kv in PrefixExponents) {
-            if (kv.Value == 0 || w.Length <= kv.Key.Length ||
+        foreach (var kv in PrefixExponentsWithoutNone) {
+            if (w.Length <= kv.Key.Length ||
                 !w.StartsWith(kv.Key, StringComparison.Ordinal)) continue;
             string rest = w.Substring(kv.Key.Length);
             string baseW = char.ToUpperInvariant(rest[0]) + rest.Substring(1);
