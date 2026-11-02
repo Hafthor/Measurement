@@ -36,22 +36,80 @@ public sealed class MeasurementGenerator : IIncrementalGenerator {
         string Name { get; }
     }
 
+    private static IUnitSpec FromAttribute(AttributeData a) =>
+        (IUnitSpec)SiUnitSpec.FromAttribute(a) ??
+        (IUnitSpec)UnitSpec.FromAttribute(a) ??
+        (IUnitSpec)HookSpec.FromAttribute(a);
+
     // $"si|{baseName}|{tenExp}|{prefixes}|{perPrefixes}"
     private readonly record struct SiUnitSpec(string Name, int TenExp, string Prefixes, string PerPrefixes)
         : IUnitSpec {
         public string[] PrefixesSplit { get; } = Prefixes.Split(' ');
         public string[] PerPrefixesSplitOrNone { get; } = PerPrefixes == "" ? None : PerPrefixes.Split(' ');
+
+        public static SiUnitSpec? FromAttribute(AttributeData a) {
+            if (a.AttributeClass?.Name != "SiUnitAttribute") return null;
+            var args = a.ConstructorArguments;
+            string baseName = args.Length > 0 ? args[0].Value as string ?? "" : "";
+            int tenExp = args.Length > 1 && args[1].Value is int e ? e : 0;
+            string prefixes = args.Length > 2 ? args[2].Value as string ?? "None" : "None";
+            string perPrefixes = "None";
+            foreach (var na in a.NamedArguments)
+                if (na is { Key: "PerPrefixes", Value.Value: string pp })
+                    perPrefixes = pp;
+            return new SiUnitSpec(baseName, tenExp, prefixes, perPrefixes);
+        }
     }
 
     // $"u|{unitName}|{factor.ToString("R", inv)}|{offset.ToString("R", inv)}"
-    private readonly record struct UnitSpec(string Name, double Factor, double Offset) : IUnitSpec;
+    private readonly record struct UnitSpec(string Name, double Factor, double Offset) : IUnitSpec {
+        public static UnitSpec? FromAttribute(AttributeData a) {
+            if (a.AttributeClass?.Name != "UnitAttribute") return null;
+            var args = a.ConstructorArguments;
+            string unitName = args.Length > 0 ? args[0].Value as string ?? "" : "";
+            double factor = args.Length > 1 && args[1].Value is double f ? f : 1;
+            double offset = 0;
+            foreach (var na in a.NamedArguments)
+                if (na is { Key: "Offset", Value.Value: double o })
+                    offset = o;
+            return new UnitSpec(unitName, factor, offset);
+        }
+    }
 
     // $"h|{hookName}"
-    private readonly record struct HookSpec(string Name) : IUnitSpec;
+    private readonly record struct HookSpec(string Name) : IUnitSpec {
+        public static HookSpec? FromAttribute(AttributeData a) {
+            if (a.AttributeClass?.Name != "UnitHookAttribute") return null;
+            var args = a.ConstructorArguments;
+            string hookName = args.Length > 0 ? args[0].Value as string ?? "" : "";
+            return new HookSpec(hookName);
+        }
+    }
 
-    private readonly record struct ProductSpec(string LeftName, string RightName, bool IsPrimary);
+    private readonly record struct ProductSpec(string LeftName, string RightName, bool IsPrimary) {
+        public static ProductSpec? FromAttribute(AttributeData a) {
+            if (a.AttributeClass is not { Name: "ProductAttribute", TypeArguments.Length: 2 }
+                || a.AttributeClass.TypeArguments[0] is not INamedTypeSymbol l
+                || a.AttributeClass.TypeArguments[1] is not INamedTypeSymbol r) return null;
+            bool primary = false;
+            foreach (var na in a.NamedArguments)
+                if (na is { Key: "Primary", Value.Value: bool p })
+                    primary = p;
+            return new ProductSpec(l.Name, r.Name, primary);
+        }
+    }
 
-    private readonly record struct ReciprocalSpec(string Partner, string ReadName);
+    private readonly record struct ReciprocalSpec(string Partner, string ReadName) {
+        public static ReciprocalSpec? FromAttribute(AttributeData a) {
+            if (a.AttributeClass is not { Name: "ReciprocalAttribute", TypeArguments.Length: 1 }
+                || a.AttributeClass.TypeArguments[0] is not INamedTypeSymbol partner) return null;
+            string readName = partner.Name;
+            foreach (var na in a.NamedArguments)
+                if (na is { Key: "Name", Value.Value: string { Length: > 0 } s })
+                    readName = s;
+            return new ReciprocalSpec(partner.Name, readName);
+        }
+    }
 
     public void Initialize(IncrementalGeneratorInitializationContext context) {
         var types = context.SyntaxProvider.ForAttributeWithMetadataName(
@@ -59,72 +117,39 @@ public sealed class MeasurementGenerator : IIncrementalGenerator {
             predicate: static (node, _) => node is StructDeclarationSyntax,
             transform: static (ctx, _) => {
                 var type = (INamedTypeSymbol)ctx.TargetSymbol;
-                var symbol = ctx.Attributes[0].ConstructorArguments.Length > 0
-                    ? ctx.Attributes[0].ConstructorArguments[0].Value as string ?? ""
+                var a0 = ctx.Attributes[0];
+                var symbol = a0.ConstructorArguments.Length > 0
+                    ? a0.ConstructorArguments[0].Value as string ?? ""
                     : "";
+
                 double displayFactor = 1;
                 string variableName = "value";
-                foreach (var na in ctx.Attributes[0].NamedArguments)
+                foreach (var na in a0.NamedArguments)
                     if (na is { Key: "DisplayFactor", Value.Value: double d })
                         displayFactor = d;
                     else if (na is { Key: "VariableName", Value.Value: string s })
                         variableName = s;
-                // Collect [SiUnit] and [Unit] declarations, tagged and encoded as an equatable
-                // string so the incremental pipeline caches correctly.
-                var unitSpecs = new List<IUnitSpec>();
-                foreach (var a in type.GetAttributes()) {
-                    if (a.AttributeClass?.Name == "SiUnitAttribute") {
-                        var args = a.ConstructorArguments;
-                        string baseName = args.Length > 0 ? args[0].Value as string ?? "" : "";
-                        int tenExp = args.Length > 1 && args[1].Value is int e ? e : 0;
-                        string prefixes = args.Length > 2 ? args[2].Value as string ?? "None" : "None";
-                        string perPrefixes = "None";
-                        foreach (var na in a.NamedArguments)
-                            if (na is { Key: "PerPrefixes", Value.Value: string pp })
-                                perPrefixes = pp;
-                        unitSpecs.Add(new SiUnitSpec(baseName, tenExp, prefixes, perPrefixes));
-                    } else if (a.AttributeClass?.Name == "UnitAttribute") {
-                        var args = a.ConstructorArguments;
-                        string unitName = args.Length > 0 ? args[0].Value as string ?? "" : "";
-                        double factor = args.Length > 1 && args[1].Value is double f ? f : 1;
-                        double offset = 0;
-                        foreach (var na in a.NamedArguments)
-                            if (na is { Key: "Offset", Value.Value: double o })
-                                offset = o;
-                        unitSpecs.Add(new UnitSpec(unitName, factor, offset));
-                    } else if (a.AttributeClass?.Name == "UnitHookAttribute") {
-                        var args = a.ConstructorArguments;
-                        string hookName = args.Length > 0 ? args[0].Value as string ?? "" : "";
-                        unitSpecs.Add(new HookSpec(hookName));
-                    }
-                }
+
+                List<IUnitSpec> unitSpecs = type.GetAttributes()
+                    .Select(a => FromAttribute(a))
+                    .Where(spec => spec is not null)
+                    .ToList();
 
                 // [Product<TLeft, TRight>] relations: Name = Left × Right (Primary marks the result a
                 // selector implicitly converts to when the product is shared by several types).
-                var products = new List<ProductSpec>();
-                foreach (var a in type.GetAttributes())
-                    if (a.AttributeClass is { Name: "ProductAttribute", TypeArguments.Length: 2 }
-                        && a.AttributeClass.TypeArguments[0] is INamedTypeSymbol l
-                        && a.AttributeClass.TypeArguments[1] is INamedTypeSymbol r) {
-                        bool primary = false;
-                        foreach (var na in a.NamedArguments)
-                            if (na is { Key: "Primary", Value.Value: bool p })
-                                primary = p;
-                        products.Add(new ProductSpec(l.Name, r.Name, primary));
-                    }
+                List<ProductSpec> products = type.GetAttributes()
+                    .Select(a => ProductSpec.FromAttribute(a))
+                    .Where(spec => spec.HasValue)
+                    .Select(spec => spec.Value)
+                    .ToList();
 
                 // [Reciprocal<TPartner>(Name=…)]: this = 1 / TPartner in coherent SI, encoded as
                 // "partnerType|readName".
-                var reciprocals = new List<ReciprocalSpec>();
-                foreach (var a in type.GetAttributes())
-                    if (a.AttributeClass is { Name: "ReciprocalAttribute", TypeArguments.Length: 1 }
-                        && a.AttributeClass.TypeArguments[0] is INamedTypeSymbol partner) {
-                        string readName = partner.Name;
-                        foreach (var na in a.NamedArguments)
-                            if (na is { Key: "Name", Value.Value: string { Length: > 0 } s })
-                                readName = s;
-                        reciprocals.Add(new ReciprocalSpec(partner.Name, readName));
-                    }
+                List<ReciprocalSpec> reciprocals = type.GetAttributes()
+                    .Select(a => ReciprocalSpec.FromAttribute(a))
+                    .Where(spec => spec.HasValue)
+                    .Select(spec => spec.Value)
+                    .ToList();
 
                 return new MeasurementInfo(type.Name, type.ContainingNamespace.ToDisplayString(), symbol,
                     displayFactor, variableName, unitSpecs, products, reciprocals);
@@ -209,9 +234,10 @@ public sealed class MeasurementGenerator : IIncrementalGenerator {
         foreach (var kv in EnumerateUnitFactors(units))
             if (!lookup.ContainsKey(kv.Key))
                 lookup[kv.Key] = kv.Value;
+
         foreach (var spec in units) {
             if (spec is UnitSpec u) {
-                if (TryPrefixAlias(u.Name, u.Factor, lookup) != null) continue;
+                if (TryPrefixAlias(u.Name, u.Factor, lookup).HasValue) continue;
                 var inv = CultureInfo.InvariantCulture;
                 EmitExplicitUnit(sb, name, variableName, u.Name, u.Factor.ToString("R", inv),
                     u.Offset.ToString("R", inv));
@@ -227,9 +253,9 @@ public sealed class MeasurementGenerator : IIncrementalGenerator {
 
             var words = SplitWords(baseName);
             int perIdx = words.IndexOf("Per");
-            FindRoot(words, 0, perIdx < 0 ? words.Count : perIdx, out int numRoot, out int numPow);
+            (int numRoot, int numPow) = FindRoot(words, 0, perIdx < 0 ? words.Count : perIdx);
             int denRoot = -1, denPow = 1;
-            if (perIdx >= 0) FindRoot(words, perIdx + 1, words.Count, out denRoot, out denPow);
+            if (perIdx >= 0) (denRoot, denPow) = FindRoot(words, perIdx + 1, words.Count);
 
             foreach (var np in numPrefixes) {
                 if (np.Length == 0 || !PrefixExponents.TryGetValue(np, out int npExp)) continue;
@@ -265,18 +291,9 @@ public sealed class MeasurementGenerator : IIncrementalGenerator {
     // numerator×denominator prefix. When hookMode is set, only the unprefixed numerator base is
     // produced (SI-prefixed numerators are reached through the prefix chain instead).
     private static IEnumerable<KeyValuePair<string, double>> ExpandUnits(List<IUnitSpec> units, bool hookMode) {
-        if (units.Count == 0) yield break;
         foreach (var unit in units) {
-            if (unit is HookSpec h) {
-                yield return new(h.Name, double.NaN);
-                continue;
-            }
-
-            if (unit is UnitSpec u) {
-                yield return new(u.Name, u.Factor);
-                continue;
-            }
-
+            if (unit is HookSpec h) yield return new(h.Name, double.NaN);
+            if (unit is UnitSpec u) yield return new(u.Name, u.Factor);
             if (unit is not SiUnitSpec si) continue;
             // si|baseName|exp|prefixes|perPrefixes
             string baseName = si.Name;
@@ -285,9 +302,9 @@ public sealed class MeasurementGenerator : IIncrementalGenerator {
             string[] denPrefixes = si.PerPrefixesSplitOrNone;
             var words = SplitWords(baseName);
             int perIdx = words.IndexOf("Per");
-            FindRoot(words, 0, perIdx < 0 ? words.Count : perIdx, out int numRoot, out int numPow);
+            (int numRoot, int numPow) = FindRoot(words, 0, perIdx < 0 ? words.Count : perIdx);
             int denRoot = -1, denPow = 1;
-            if (perIdx >= 0) FindRoot(words, perIdx + 1, words.Count, out denRoot, out denPow);
+            if (perIdx >= 0) (denRoot, denPow) = FindRoot(words, perIdx + 1, words.Count);
             foreach (var np in numPrefixes) {
                 if (np.Length == 0 || !PrefixExponents.TryGetValue(np, out int npExp)) continue;
                 string[] dps = denRoot < 0 ? ["None"] : denPrefixes;
@@ -323,33 +340,37 @@ public sealed class MeasurementGenerator : IIncrementalGenerator {
     private static (string Base, int Exp)? TryPrefixAlias(string unitName, double factor,
         Dictionary<string, double> lookup) {
         if (double.IsNaN(factor)) return null;
+
         foreach (var kv in PrefixExponentsWithoutNone) {
             if (!unitName.StartsWith(kv.Key)) continue;
+
             string rest = unitName.Substring(kv.Key.Length);
             if (rest.Length == 0) continue;
-            string baseRest = char.ToUpperInvariant(rest[0]) + rest.Substring(1);
+
+            string baseRest = UpperFirstChar(rest);
             if (baseRest == unitName || !lookup.TryGetValue(baseRest, out double bf) || double.IsNaN(bf)) continue;
             double expected = bf * Math.Pow(10, kv.Value);
             double scale = Math.Max(Math.Abs(factor), Math.Abs(expected));
-            if (scale == 0 || Math.Abs(factor - expected) <= 1e-6 * scale) return (baseRest, kv.Value);
+            if (scale == 0 || Math.Abs(factor - expected) <= 1e-6 * scale)
+                return (baseRest, kv.Value);
         }
 
         return null;
     }
 
     // type|unit → (base unit, prefix ten-exponent) for every removable prefix alias.
-    private static Dictionary<string, (string Base, int Exp)> BuildRemovable(
-        ImmutableArray<MeasurementInfo> all) {
-        var map = new Dictionary<string, (string, int)>();
+    private static Dictionary<string, (string Base, int Exp)> BuildRemovable(ImmutableArray<MeasurementInfo> all) {
+        var map = new Dictionary<string, (string Base, int Exp)>();
         foreach (var info in all) {
             var factors = EnumerateUnitFactors(info.Units);
             var lookup = new Dictionary<string, double>();
             foreach (var kv in factors)
                 if (!lookup.ContainsKey(kv.Key))
                     lookup[kv.Key] = kv.Value;
+
             foreach (var kv in factors) {
                 var alias = TryPrefixAlias(kv.Key, kv.Value, lookup);
-                if (alias != null) map[info.Name + "|" + kv.Key] = alias.Value;
+                if (alias.HasValue) map[info.Name + "|" + kv.Key] = alias.Value;
             }
         }
 
@@ -391,25 +412,22 @@ public sealed class MeasurementGenerator : IIncrementalGenerator {
     }
 
     // Finds the first root word in words[start..end) and its power (Square ⇒ 2, Cubic ⇒ 3, else 1).
-    private static void FindRoot(List<string> words, int start, int end, out int rootIndex, out int power) {
-        rootIndex = -1;
-        power = 1;
-        int pending = 1;
-        for (int i = start; i < end; i++)
+    private static (int rootIndex, int power) FindRoot(List<string> words, int start, int end) {
+        for (int pending = 1, i = start; i < end; i++)
             switch (words[i]) {
                 case "Square": pending = 2; break;
                 case "Cubic": pending = 3; break;
                 case "Squared":
                 case "Cubed":
                 case "Per": break;
-                default:
-                    rootIndex = i;
-                    power = pending;
-                    return;
+                default: return (i, pending);
             }
+
+        return (-1, 1);
     }
 
     private static string LowerFirstChar(string s) => char.ToLowerInvariant(s[0]) + s.Substring(1);
+    private static string UpperFirstChar(string s) => char.ToUpperInvariant(s[0]) + s.Substring(1);
 
     // Single-word unit names across all types (Meters, Grams, Newtons, …) — the roots used when
     // prefix-splitting compound spellings (Millimeters → Milli·Meters).
@@ -422,7 +440,7 @@ public sealed class MeasurementGenerator : IIncrementalGenerator {
         return bases;
     }
 
-    private readonly record struct DemonInfo(
+    private readonly record struct DenomInfo(
         string Partner,
         Dictionary<string, string> Term,
         Dictionary<string, SortedSet<string>> Children);
@@ -431,13 +449,14 @@ public sealed class MeasurementGenerator : IIncrementalGenerator {
     // Area (Square) / Volume (Cubic), maps a singularized, prefix-decomposed length path to the areal/
     // cubic unit name (so `.Cubic.Centi.Meter` resolves to CubicCentimeters' exact coherent value),
     // with the child-word sets along the way.
-    private static Dictionary<string, DemonInfo> BuildDenomModTrie(ImmutableArray<MeasurementInfo> all,
+    private static Dictionary<string, DenomInfo> BuildDenomModTrie(ImmutableArray<MeasurementInfo> all,
         Dictionary<string, (double DF, int G)> meta) {
         string StripS(string s) => s.Length > 1 && s.EndsWith("s") ? s.Substring(0, s.Length - 1) : s;
         var bases = SingleWordBases(all);
-        var mod = new Dictionary<string, DemonInfo>();
+        var mod = new Dictionary<string, DenomInfo>();
         foreach (var (kw, partner) in new[] { ("Square", "Area"), ("Cubic", "Volume") }) {
             if (!meta.ContainsKey(partner)) continue;
+
             var pinfo = all.First(a => a.Name == partner);
             var term = new Dictionary<string, string>();
             var childs = new Dictionary<string, SortedSet<string>>();
@@ -448,6 +467,7 @@ public sealed class MeasurementGenerator : IIncrementalGenerator {
                 for (int i = 1; i < ws.Count; i++)
                     foreach (var d in DecomposeDenom(ws[i], bases))
                         lw.Add(StripS(d));
+
                 string key = string.Join("_", lw);
                 if (!term.ContainsKey(key)) term[key] = u;
                 for (int k = 0; k < lw.Count; k++) {
@@ -458,20 +478,26 @@ public sealed class MeasurementGenerator : IIncrementalGenerator {
                 }
             }
 
-            mod[kw] = new DemonInfo(partner, term, childs);
+            mod[kw] = new DenomInfo(partner, term, childs);
         }
 
         return mod;
     }
+
+    private readonly record struct Pref(string W, int Exp, string Child);
+
+    private readonly record struct BaseC(string W, string Plural, string D, string BaseUnit);
+
+    private readonly record struct Opt(List<string> Path, string BaseUnit);
 
     // Merged denominator sub-trie over a set of factor types (used by both `.Per` walks). Produces,
     // per accumulated path: `pref` = prefix children (carrying the SI ten-exponent) and `baseC` =
     // base children that complete one unit of a dimension (W = singular word, Plural, D = its type,
     // BaseUnit = the factory unit name). First spelling wins on collisions.
     private static void BuildDenomTrie(List<string> types,
-        Dictionary<string, List<(List<string> Path, string BaseUnit)>> unitOpts,
-        out Dictionary<string, List<(string W, int Exp, string Child)>> pref,
-        out Dictionary<string, List<(string w, string plural, string d, string baseUnit)>> baseC) {
+        Dictionary<string, List<Opt>> unitOpts,
+        out Dictionary<string, List<Pref>> pref,
+        out Dictionary<string, List<BaseC>> baseC) {
         pref = new();
         baseC = new();
         foreach (var d in types) {
@@ -482,12 +508,12 @@ public sealed class MeasurementGenerator : IIncrementalGenerator {
                     string w = path[i];
                     if (i == path.Count - 1) {
                         if (!baseC.TryGetValue(prog, out var bl)) baseC[prog] = bl = new();
-                        if (!bl.Exists(e => e.w == w)) bl.Add((w, baseUnit, d, baseUnit));
+                        if (!bl.Exists(e => e.W == w)) bl.Add(new BaseC(w, baseUnit, d, baseUnit));
                     } else {
                         int exp = PrefixExponents.TryGetValue(w, out var e) ? e : 0;
                         string child = prog.Length == 0 ? w : prog + "_" + w;
                         if (!pref.TryGetValue(prog, out var pl)) pref[prog] = pl = new();
-                        if (!pl.Exists(x => x.W == w)) pl.Add((w, exp, child));
+                        if (!pl.Exists(x => x.W == w)) pl.Add(new Pref(w, exp, child));
                         prog = child;
                     }
                 }
@@ -892,13 +918,15 @@ namespace {ns} {{
     private static (Dictionary<string, (double DF, int G)> Meta,
         Dictionary<string, string> TypeOfUnit,
         Dictionary<string, string> UnitWordType,
-        Dictionary<string, List<(List<string> Path, string BaseUnit)>> UnitOpts)
+        Dictionary<string, List<Opt>> UnitOpts)
         BuildPerCommon(ImmutableArray<MeasurementInfo> all) {
         var meta = new Dictionary<string, (double, int)>();
         var typeOfUnit = new Dictionary<string, string>();
         var unitWordType = new Dictionary<string, string>();
-        var unitOpts = new Dictionary<string, List<(List<string>, string)>>();
+        var unitOpts = new Dictionary<string, List<Opt>>();
+
         string StripS(string s) => s.Length > 1 && s.EndsWith("s") ? s.Substring(0, s.Length - 1) : s;
+
         foreach (var info in all) {
             meta[info.Name] = (info.DisplayFactor, GramPower(info.Symbol));
             var affine = new HashSet<string>();
@@ -922,7 +950,7 @@ namespace {ns} {{
             }
 
             var rawSet = new HashSet<string>(single);
-            var opts = new List<(List<string>, string)>();
+            var opts = new List<Opt>();
             foreach (var n in single) {
                 if (affine.Contains(n)) continue;
                 var dec = DecomposeDenom(n, rawSet);
@@ -930,7 +958,7 @@ namespace {ns} {{
                 var path = new List<string>();
                 for (int i = 0; i < dec.Count - 1; i++) path.Add(dec[i]);
                 path.Add(StripS(baseUnit));
-                opts.Add((path, baseUnit));
+                opts.Add(new Opt(path, baseUnit));
             }
 
             unitOpts[info.Name] = opts;
@@ -1190,16 +1218,16 @@ namespace {ns} {{
             // Prefixable denominator bases = those reachable after any SI prefix (Milligrams → Grams).
             // The per-prefix nodes are collapsed into one shared `__Pre` entry offering these bases; the
             // root exposes the FULL SI range as properties that scale `pfx` and re-enter that entry.
-            var prefBases = new List<(string w, string plural, string d, string baseUnit)>();
+            var prefBases = new List<BaseC>();
             var seenPb = new HashSet<string>();
             foreach (var kv in baseC)
                 if (kv.Key.Length > 0)
                     foreach (var e in kv.Value)
-                        if (seenPb.Add(e.w))
+                        if (seenPb.Add(e.W))
                             prefBases.Add(e);
-            prefBases.Sort((a, b) => string.CompareOrdinal(a.w, b.w));
+            prefBases.Sort((a, b) => string.CompareOrdinal(a.W, b.W));
 
-            string BaseChildren(IEnumerable<(string w, string plural, string d, string baseUnit)> bl) {
+            string BaseChildren(IEnumerable<BaseC> bl) {
                 var s = new StringBuilder();
                 foreach (var (w, plural, d, baseUnit) in bl) {
                     string cu = CUnit(d, baseUnit);
@@ -1435,16 +1463,16 @@ namespace {ns} {{
                     BuildDenomTrie(types, unitOpts, out _, out var baseC);
                     // SI-prefixable denominator bases collapse into one shared `__Pre`; the root exposes
                     // the full SI range as properties that scale pfx and re-enter it (read multiplies).
-                    var prefBases = new List<(string w, string plural, string d, string baseUnit)>();
+                    var prefBases = new List<BaseC>();
                     var seenPb = new HashSet<string>();
                     foreach (var kv in baseC)
                         if (kv.Key.Length > 0)
                             foreach (var e in kv.Value)
-                                if (seenPb.Add(e.w))
+                                if (seenPb.Add(e.W))
                                     prefBases.Add(e);
-                    prefBases.Sort((a, b) => string.CompareOrdinal(a.w, b.w));
+                    prefBases.Sort((a, b) => string.CompareOrdinal(a.W, b.W));
 
-                    string BaseChildren(IEnumerable<(string w, string plural, string d, string baseUnit)> bl) {
+                    string BaseChildren(IEnumerable<BaseC> bl) {
                         var s = new StringBuilder();
                         foreach (var (w, plural, d, baseUnit) in bl) {
                             string cu = CUnit(d, baseUnit);
@@ -2045,9 +2073,9 @@ namespace {ns} {{
             string[] denPrefixes = si.PerPrefixesSplitOrNone;
             var words = SplitWords(baseName);
             int perIdx = words.IndexOf("Per");
-            FindRoot(words, 0, perIdx < 0 ? words.Count : perIdx, out int numRoot, out int numPow);
+            (int numRoot, int numPow) = FindRoot(words, 0, perIdx < 0 ? words.Count : perIdx);
             int denRoot = -1;
-            if (perIdx >= 0) FindRoot(words, perIdx + 1, words.Count, out denRoot, out _);
+            if (perIdx >= 0) (denRoot, _) = FindRoot(words, perIdx + 1, words.Count);
             bool expandable = numRoot >= 0 &&
                               Array.Exists(declaredNum, p => PrefixExponentsWithoutNone.ContainsKey(p));
             bool compound = perIdx >= 0;
