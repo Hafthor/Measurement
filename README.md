@@ -2,7 +2,7 @@
 
 A library of strongly-typed C# measurement classes — `Length`, `Mass`, `Force`, `Energy`, and about
 80 more. Each quantity is its own immutable value type, so the compiler stops you mixing incompatible
-units, and dimensioned arithmetic (`Speed = Length / Duration`) just works.
+units. Dimensioned arithmetic (`Speed = Length / Duration`) just works!
 
 Requires C# 14 / .NET 10.
 
