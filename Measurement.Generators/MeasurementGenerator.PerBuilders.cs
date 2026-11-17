@@ -5,18 +5,19 @@ using System.Linq;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
+using static Measurement.Generators.Utils;
 
 namespace Measurement.Generators;
 
 // `.Per` denominator-walk builders hung off numerator measurement types (input side).
-public partial class MeasurementGenerator {
+public class MeasurementGenerator_PerBuilders {
     // Emits the compositional `.Per` denominator walk (input side). `.Per` on a numerator measurement
     // enters a running-value trie; each denominator step divides the running coherent value by one unit
     // of the chosen dimension, so ANY (non-affine) unit of a slot's dimension composes — not only the
     // ones literally spelled in a compound unit. A completed denominator type-sequence implicitly
     // converts to the measurement that names it. `.Squared`/`.Cubed` repeat the last unit; a further
     // `.Per` (or, for a differently typed factor, a bare unit word) appends another denominator.
-    private static void EmitPerBuilders(SourceProductionContext ctx, ImmutableArray<MeasurementInfo> all) {
+    public static void EmitPerBuilders(SourceProductionContext ctx, ImmutableArray<MeasurementInfo> all) {
         string ns = ResolveNamespace(all);
         var (meta, typeOfUnit, unitWordType, unitOpts) = BuildPerCommon(all);
         var removable = BuildRemovable(all);

@@ -5,18 +5,19 @@ using System.Linq;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
+using static Measurement.Generators.Utils;
 
 namespace Measurement.Generators;
 
 // Read-out mirror: `reader.To.<Numerator>.Per.<denominator…>` word-walk returning a double.
-public partial class MeasurementGenerator {
+public class MeasurementGenerator_PerReadBuilders {
     // Read-out mirror of EmitPerBuilders: `reader.To.<flatNumerator>.Per.<denominator…>` reads a
     // double. The numerator is a flat spelling on Reader<C> (its coherent value seeds the running
     // product); each denominator step multiplies by one coherent unit of the chosen dimension, so any
     // (non-affine) unit composes. Squared/Cubed repeat the last unit; `.Square`/`.Cubic` and bare
     // product factors (`.Per.Kilo.Gram.Kelvin`) extend the denominator. A completed type-sequence
     // returns the value in those units via implicit conversion to double.
-    private static void EmitPerReadBuilders(SourceProductionContext ctx,
+    public static void EmitPerReadBuilders(SourceProductionContext ctx,
         ImmutableArray<MeasurementInfo> all) {
         string ns = ResolveNamespace(all);
         var (meta, typeOfUnit, unitWordType, unitOpts) = BuildPerCommon(all);

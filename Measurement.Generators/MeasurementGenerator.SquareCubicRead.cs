@@ -4,17 +4,18 @@ using System.Collections.Immutable;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
+using static Measurement.Generators.Utils;
 
 namespace Measurement.Generators;
 
 // Square/Cubic area & volume modifier: `.Square.Milli.Meters`, `.Cubic.Centi.Meters`.
-public partial class MeasurementGenerator {
+public class MeasurementGenerator_SquareCubicRead {
     // Read-out mirror of EmitSquareCubic: `reader.To.Square.Milli.Meters` / `.To.Cubic.Centi.Meters`
     // read a double. The areal/cubic base (Meters) accepts the FULL SI prefix range, folded into the
     // reader's running factor as an exact power of ten (a prefix of ten-exponent e scales an n-th-power
     // unit by 1e{n·e}) via a shared prefixed entry, so `.Square.Yotta.Meters` etc. compose too.
     // Non-metric spellings (Square.Miles, Cubic.Feet) remain direct terminals.
-    private static void EmitSquareCubicRead(SourceProductionContext ctx, ImmutableArray<MeasurementInfo> all) {
+    public static void EmitSquareCubicRead(SourceProductionContext ctx, ImmutableArray<MeasurementInfo> all) {
         string ns = ResolveNamespace(all);
         var bases = SingleWordBases(all);
 

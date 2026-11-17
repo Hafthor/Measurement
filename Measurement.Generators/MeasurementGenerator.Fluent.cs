@@ -3,12 +3,13 @@ using System.Collections.Immutable;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
+using static Measurement.Generators.Utils;
 
 namespace Measurement.Generators;
 
 // Fluent sugar: needs every type at once so input-hook name collisions across
 // dimensionally equivalent types can be detected and dropped.
-public partial class MeasurementGenerator {
+public class MeasurementGenerator_Fluent {
     // Emits the fluent-sugar wiring for every struct. Runs once over all types so that input-hook
     // names shared by two-dimensionally equivalent types (e.g., JouleSeconds on Action and
     // AngularMomentum) can be detected. Such names would collide on the shared Prefixed/double
@@ -17,7 +18,7 @@ public partial class MeasurementGenerator {
     // (distinct Reader<T>). Prefixed aliases (Kilomoles == Kilo + Moles) are dropped from both sides —
     // reach them via the prefix chain (Measure.Of(x).Kilo.Moles). Other SI-prefixed variants likewise
     // go through the chain; only unprefixed bases and non-metric units get a direct hook.
-    private static void EmitFluentSet(SourceProductionContext ctx, ImmutableArray<MeasurementInfo> all) {
+    public static void EmitFluentSet(SourceProductionContext ctx, ImmutableArray<MeasurementInfo> all) {
         // Per struct: ordered hook candidates minus prefixed aliases.
         var perType = new List<PerType>();
         var inputCounts = new Dictionary<string, int>();

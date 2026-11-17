@@ -4,11 +4,12 @@ using System.Globalization;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
+using static Measurement.Generators.Utils;
 
 namespace Measurement.Generators;
 
-public partial class MeasurementGenerator {
-    private static void EmitBase(SourceProductionContext ctx, MeasurementInfo info) =>
+public class MeasurementGenerator_Base {
+    public static void EmitBase(SourceProductionContext ctx, MeasurementInfo info) =>
         ctx.AddSource(info.Name + ".g.cs", SourceText.From(
             Emit(info.Name, info.Namespace, info.Symbol, info.DisplayFactor, info.VariableName, info.Units),
             Encoding.UTF8));

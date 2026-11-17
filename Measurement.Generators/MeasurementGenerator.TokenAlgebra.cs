@@ -5,12 +5,13 @@ using System.Linq;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
+using static Measurement.Generators.Utils;
 
 namespace Measurement.Generators;
 
 // Product-unit token algebra: `.Ampere.Hours`, `.Joule.Minutes`, `.Light.Seconds`,
 // `.Newton.Meters` (→ Torque|Energy) — tokens compose via the [Product] relations.
-public partial class MeasurementGenerator {
+public class MeasurementGenerator_TokenAlgebra {
     // Product-unit token algebra (input side). Each measurement type reachable as a running product
     // becomes a `ProductState_<Type>` struct carrying the running canonical value and implicitly
     // convertible to that type. A first token on Prefixed/double (the singular base unit of a
@@ -19,7 +20,7 @@ public partial class MeasurementGenerator {
     // product type via the [Product] relations, with the exact operator factor. Dimensionally
     // ambiguous products (Force × Length → Torque or Energy) resolve to a selector naming each result.
     // So `.Ampere.Hours`, `.Joule.Minutes`, `.Light.Seconds`, `.Newton.Meters.Torque` all compose.
-    private static void EmitTokenAlgebra(SourceProductionContext ctx, ImmutableArray<MeasurementInfo> all) {
+    public static void EmitTokenAlgebra(SourceProductionContext ctx, ImmutableArray<MeasurementInfo> all) {
         string ns = ResolveNamespace(all);
         var removable = BuildRemovable(all);
         var meta = new Dictionary<string, (double DF, int G)>();

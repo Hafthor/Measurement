@@ -5,16 +5,17 @@ using System.Linq;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
+using static Measurement.Generators.Utils;
 
 namespace Measurement.Generators;
 
 // Type-constrained fluent entry: `Area.Of(4).Square.Milli.Meters` — only T's own units.
-public partial class MeasurementGenerator {
+public class MeasurementGenerator_TypedEntry {
     // is limited to ways of constructing T (e.g. `Area.Of(4).Square.Milli.Meters`). Each unit name is
     // decomposed into fluent path segments (SplitWords + SI-prefix splitting: `SquareMillimeters` →
     // Square·Milli·Meters, `Kilometers` → Kilo·Meters, `MetersPerSecond` → Meters·Per·Second); a
     // completed path returns `T.From<Unit>(value)`. Purely reuses the existing From factories.
-    private static void EmitTypedEntry(SourceProductionContext ctx,
+    public static void EmitTypedEntry(SourceProductionContext ctx,
         ImmutableArray<MeasurementInfo> all) {
         string ns = ResolveNamespace(all);
         // Start from the removable prefix aliases (Kilometers→Meters, Hectares→Ares, …); the typed

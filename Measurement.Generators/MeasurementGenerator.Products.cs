@@ -3,15 +3,16 @@ using System.Collections.Immutable;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
+using static Measurement.Generators.Utils;
 
 namespace Measurement.Generators;
 
 // Cross-type operators from [Product] relations: needs every type's symbol + DisplayFactor.
-public partial class MeasurementGenerator {
+public class MeasurementGenerator_Products {
     // Emits every cross-type operator implied by the [Product] relations. For C = A × B it writes
     // A*B, B*A → C and C/A → B, C/B → A, each with an exact factor derived from the symbols'
     // gram-power and DisplayFactor, placed in a partial of one of its parameter types.
-    private static void EmitProducts(SourceProductionContext ctx, ImmutableArray<MeasurementInfo> all) {
+    public static void EmitProducts(SourceProductionContext ctx, ImmutableArray<MeasurementInfo> all) {
         var meta = new Dictionary<string, (double DF, int G)>();
         string ns = ResolveNamespace(all);
         foreach (var info in all) meta[info.Name] = (info.DisplayFactor, GramPower(info.Symbol));

@@ -3,17 +3,18 @@ using System.Collections.Immutable;
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
+using static Measurement.Generators.Utils;
 
 namespace Measurement.Generators;
 
 // Reciprocal cross-type reads from [Reciprocal] relations: `frequency.To.Period` → Duration.
-public partial class MeasurementGenerator {
+public class MeasurementGenerator_Reciprocals {
     // Emits the cross-type reciprocal reads declared by [Reciprocal] relations. For S = 1 / P (in
     // coherent SI) it writes `reader.To.<Name>` on Reader<S> returning P and the reverse read on
     // Reader<P> returning S, each computed as P.FromCanonical(1 / S) through the shared coherent-SI
     // conversion so DisplayFactor/anchor scaling stays exact. Replaces the handwritten reciprocal
     // From/To methods (Frequency↔Duration, Wavenumber↔Length, Conductivity↔Resistivity, …).
-    private static void EmitReciprocals(SourceProductionContext ctx, ImmutableArray<MeasurementInfo> all) {
+    public static void EmitReciprocals(SourceProductionContext ctx, ImmutableArray<MeasurementInfo> all) {
         string ns = ResolveNamespace(all);
         var meta = new Dictionary<string, (double DF, int G)>();
         foreach (var info in all) meta[info.Name] = (info.DisplayFactor, GramPower(info.Symbol));
